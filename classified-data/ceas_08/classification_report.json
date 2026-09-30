@@ -608,7 +608,7 @@
     "emails_per_second": 764.29
   },
   "quality_metrics": {
-    "method_agreement_rate": 94.77,
+    "method_agreement_rate": 21.62,
     "domain_distribution_evenness": 0.8817,
     "unsure_rate": 5.23
   },

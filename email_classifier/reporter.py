@@ -180,10 +180,12 @@ class ClassificationReporter:
 
     def _generate_quality_metrics(self, stats: ProcessingStats) -> dict:
         """Generate quality and confidence metrics."""
-        # Calculate agreement rate (how often both methods agreed)
-        agreed = stats.total_classified
-        total_attempts = stats.total_processed - stats.errors
-        agreement_rate = agreed / total_attempts * 100 if total_attempts > 0 else 0
+        # Share of classified emails where method1 and method2 chose the same
+        # domain (not the share of emails that received any domain)
+        classified = stats.total_classified
+        agreement_rate = (
+            stats.method_agreement_count / classified * 100 if classified > 0 else 0
+        )
 
         # Domain distribution evenness (entropy-based)
         domain_counts = [v for k, v in stats.domain_counts.items() if k != "unsure"]

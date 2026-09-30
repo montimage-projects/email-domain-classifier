@@ -75,6 +75,8 @@ class ProcessingStats:
     total_processed: int = 0
     total_classified: int = 0
     total_unsure: int = 0
+    # Classified emails where method1 and method2 named the same domain
+    method_agreement_count: int = 0
     domain_counts: dict[str, int] = field(default_factory=lambda: defaultdict(int))
     errors: int = 0
     start_time: datetime | None = None
@@ -105,6 +107,7 @@ class ProcessingStats:
             "total_processed": self.total_processed,
             "total_classified": self.total_classified,
             "total_unsure": self.total_unsure,
+            "method_agreement_count": self.method_agreement_count,
             "domain_counts": dict(self.domain_counts),
             "errors": self.errors,
             "start_time": self.start_time.isoformat() if self.start_time else None,
@@ -546,6 +549,12 @@ class StreamingProcessor:
 
                     if domain != "unsure":
                         self.stats.total_classified += 1
+                        method1_domain = details["method1"]["domain"]
+                        if (
+                            method1_domain is not None
+                            and method1_domain == details["method2"]["domain"]
+                        ):
+                            self.stats.method_agreement_count += 1
                     else:
                         self.stats.total_unsure += 1
 

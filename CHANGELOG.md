@@ -18,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enhanced package configuration with complete metadata
 - Improved README structure for better discoverability
 
+### Fixed
+- `method_agreement_rate` in the report now measures how often the keyword
+  and structural methods chose the same domain, over classified emails. It
+  previously reported the classification rate (94.77% on CEAS_08; the real
+  agreement is 21.62%) (#14)
+
 ## [1.0.0] - 2024-12-22
 
 ### Added
