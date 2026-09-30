@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Written definition of "domain" (the sector an email claims to come from), with the
+  pharma-spam ruling, per-domain scope, worked examples and TypeSafe Choice text
+  (docs/design/domain-profiles.md, #15; proposed, pending owner sign-off)
 - Standard Python project structure for GitHub publication
 - Comprehensive documentation and development workflow
 - GitHub Actions CI/CD pipelines

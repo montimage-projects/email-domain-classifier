@@ -1,5 +1,8 @@
 """
 Domain definitions, keyword taxonomies, and structural templates for email classification.
+
+What counts as the correct domain for an email (the sector it claims to come from)
+is defined in docs/design/domain-profiles.md, section "Domain definition".
 """
 
 import re
