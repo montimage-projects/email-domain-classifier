@@ -245,3 +245,110 @@ class TestEnhancedStatistics:
         assert "label_distribution_analysis" in report
         assert "url_distribution_analysis" in report
         assert "cross_tabulation_analysis" in report
+
+
+class _ScriptedClassifier:
+    """Test double returning scripted (domain, method1, method2) per subject."""
+
+    def __init__(self, script: dict[str, tuple[str, str | None, str | None]]):
+        self.script = script
+
+    def classify_dict(self, row: dict) -> tuple[str, dict]:
+        domain, method1, method2 = self.script[row["subject"]]
+        details = {
+            "method1": {"domain": method1, "confidence": 0.5, "scores": {}},
+            "method2": {"domain": method2, "confidence": 0.5, "scores": {}},
+        }
+        return domain, details
+
+
+class TestMethodAgreementRate:
+    """Regression tests for issue #14: real method1/method2 agreement rate."""
+
+    def test_rate_uses_agreement_count_not_classification_count(self):
+        """Agreement rate is agreed / classified, not classified / processed."""
+        stats = ProcessingStats()
+        stats.total_processed = 100
+        stats.total_classified = 90
+        stats.total_unsure = 10
+        stats.method_agreement_count = 18
+        stats.domain_counts["finance"] = 90
+        stats.domain_counts["unsure"] = 10
+
+        report = ClassificationReporter().generate_report(stats, Path("/tmp"))
+
+        # 18 / 90 = 20%, while the classification rate would be 90%
+        assert report["quality_metrics"]["method_agreement_rate"] == 20.0
+
+    def test_rate_matches_ceas_08_counts(self):
+        """CEAS_08 figures (7,143 agreed of 33,036 classified) give ~21.6%."""
+        stats = ProcessingStats()
+        stats.total_processed = 34858
+        stats.total_classified = 33036
+        stats.total_unsure = 1822
+        stats.method_agreement_count = 7143
+        stats.domain_counts["finance"] = 33036
+        stats.domain_counts["unsure"] = 1822
+
+        report = ClassificationReporter().generate_report(stats, Path("/tmp"))
+
+        assert report["quality_metrics"]["method_agreement_rate"] == 21.62
+
+    def test_rate_is_zero_when_nothing_classified(self):
+        """No classified emails yields a 0% rate instead of a division error."""
+        stats = ProcessingStats()
+        stats.total_processed = 3
+        stats.total_unsure = 3
+        stats.domain_counts["unsure"] = 3
+
+        report = ClassificationReporter().generate_report(stats, Path("/tmp"))
+
+        assert report["quality_metrics"]["method_agreement_rate"] == 0
+
+    def test_to_dict_includes_agreement_count(self):
+        """The agreement counter is serialized with the other stats."""
+        stats = ProcessingStats()
+        stats.method_agreement_count = 7
+
+        assert stats.to_dict()["method_agreement_count"] == 7
+
+    def test_processor_counts_only_classified_agreeing_emails(self):
+        """Count rows where both methods name the same domain and it is kept."""
+        script = {
+            "agree-finance": ("finance", "finance", "finance"),
+            "agree-tech": ("technology", "technology", "technology"),
+            "disagree": ("finance", "finance", "technology"),
+            "both-none": ("unsure", None, None),
+            "agree-below-threshold": ("unsure", "retail", "retail"),
+            "one-none": ("hr", "hr", None),
+        }
+        with tempfile.TemporaryDirectory() as temp_dir:
+            input_path = Path(temp_dir) / "input.csv"
+            with open(input_path, "w", newline="") as f:
+                writer = csv.DictWriter(
+                    f,
+                    fieldnames=["sender", "receiver", "date", "subject", "body"],
+                )
+                writer.writeheader()
+                for subject in script:
+                    writer.writerow(
+                        {
+                            "sender": "alice@example.com",
+                            "receiver": "bob@example.com",
+                            "date": "2024-01-15 10:00:00",
+                            "subject": subject,
+                            "body": f"Body for {subject}",
+                        }
+                    )
+
+            processor = StreamingProcessor(
+                classifier=_ScriptedClassifier(script)  # type: ignore[arg-type]
+            )
+            stats = processor.process(input_path, Path(temp_dir) / "out")
+
+        assert stats.total_processed == 6
+        assert stats.total_classified == 4
+        assert stats.method_agreement_count == 2
+
+        report = ClassificationReporter().generate_report(stats, Path("/tmp"))
+        assert report["quality_metrics"]["method_agreement_rate"] == 50.0

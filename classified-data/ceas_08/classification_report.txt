@@ -199,7 +199,7 @@ Output: /Users/montimage/workspace/montimage/email-classifier/classified-data/ce
 ────────────────────────────────────────────────────────────────────────────────
   QUALITY METRICS
 ────────────────────────────────────────────────────────────────────────────────
-  Method Agreement Rate:      94.77%
+  Method Agreement Rate:      21.62%
   Unsure Rate:                5.23%
   Domain Distribution Score:  0.8817
 
