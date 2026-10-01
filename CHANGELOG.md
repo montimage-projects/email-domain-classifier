@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Written definition of "domain" (the sector an email claims to come from), with the
   pharma-spam ruling, per-domain scope, worked examples and TypeSafe Choice text
   (docs/design/domain-profiles.md, #15; proposed, pending owner sign-off)
+- CEAS_08 domain ground-truth set: 180 emails drawn by a seeded sampler from all
+  11 output files, including `email_unsure.csv`, each labeled with a domain or
+  `none` (data/ground-truth/, scripts/sample_ground_truth.py, #16). The labels
+  are agent-generated and not yet verified by a human
 - Standard Python project structure for GitHub publication
 - Comprehensive documentation and development workflow
 - GitHub Actions CI/CD pipelines

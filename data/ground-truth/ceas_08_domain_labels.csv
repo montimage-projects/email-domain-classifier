@@ -1,0 +1,181 @@
+email_id,raw_row,source_file,source_row,label,domain,confidence,ambiguous,rationale,labeler,verified,definition_ref
+3643c5f62be939aa,342,email_education.csv,8,1,retail,high,false,Replica watch shop,agent,false,docs/design/domain-profiles.md@27963a9
+00fa27c880fe8d1e,3542,email_education.csv,122,1,retail,high,false,Replica watch shop,agent,false,docs/design/domain-profiles.md@27963a9
+d073f463d56f79ac,5683,email_education.csv,226,1,retail,high,false,Replica watch and jewellery shop,agent,false,docs/design/domain-profiles.md@27963a9
+b68ee06c0e28925b,7491,email_education.csv,321,0,technology,high,false,Software project development list,agent,false,docs/design/domain-profiles.md@27963a9
+cd87951b3acc85e5,8761,email_education.csv,375,0,education,high,false,University student learning centre workshop announcement,agent,false,docs/design/domain-profiles.md@27963a9
+58a80a20b38330fe,11193,email_education.csv,520,1,retail,high,false,Replica watch shop,agent,false,docs/design/domain-profiles.md@27963a9
+6975642121aada15,12199,email_education.csv,557,1,retail,high,false,Sells copy watches,agent,false,docs/design/domain-profiles.md@27963a9
+8d1e73b6941fb3ee,14161,email_education.csv,662,1,none,low,true,Enlargement promise with no pill or product named (worked example 4); could be healthcare,agent,false,docs/design/domain-profiles.md@27963a9
+1b16c25a642cbaea,17201,email_education.csv,851,0,technology,high,false,Software project test discussion,agent,false,docs/design/domain-profiles.md@27963a9
+3f87fb946a1762f5,18496,email_education.csv,948,0,technology,high,false,Software project development list,agent,false,docs/design/domain-profiles.md@27963a9
+2eaf6d2cc7c43bef,23214,email_education.csv,1223,0,technology,high,false,Software project development list,agent,false,docs/design/domain-profiles.md@27963a9
+ed57e0be11fcac68,25844,email_education.csv,1307,0,technology,high,false,Anti-spam software users list,agent,false,docs/design/domain-profiles.md@27963a9
+5d3d3375b8975603,27272,email_education.csv,1405,0,technology,high,false,Software project test-failure report,agent,false,docs/design/domain-profiles.md@27963a9
+a9c6d774a233fb1c,29468,email_education.csv,1570,1,none,high,false,Random word filler with no claimed sector,agent,false,docs/design/domain-profiles.md@27963a9
+5d2b9f089b4c8545,29488,email_education.csv,1572,1,retail,high,false,Replica watch shop,agent,false,docs/design/domain-profiles.md@27963a9
+9131df8b0a86df13,29949,email_education.csv,1644,0,education,medium,true,"College staff email about marks, timetable and handbook; also mentions a teaching contract sent to payroll (hr)",agent,false,docs/design/domain-profiles.md@27963a9
+3ce544061ebc62a9,1263,email_finance.csv,42,1,finance,high,false,Claims a bank payment confirmation for a mortgage payment,agent,false,docs/design/domain-profiles.md@27963a9
+b36edeb14729060b,1317,email_finance.csv,46,0,technology,high,false,Software project patch discussion,agent,false,docs/design/domain-profiles.md@27963a9
+329c10f6affb1446,2802,email_finance.csv,86,1,none,low,true,Enlargement promise with no pill or product named (worked example 4); could be healthcare,agent,false,docs/design/domain-profiles.md@27963a9
+1fdfc3551072cca7,14032,email_finance.csv,416,0,technology,high,false,Linux user group list announcing its meeting,agent,false,docs/design/domain-profiles.md@27963a9
+7bd300740826f319,17978,email_finance.csv,507,0,technology,high,false,Software project development discussion,agent,false,docs/design/domain-profiles.md@27963a9
+a219985bb0c221b1,19159,email_finance.csv,543,0,none,medium,false,General discussion list: politics and personal job-move chat,agent,false,docs/design/domain-profiles.md@27963a9
+a05288ab0e207d9d,21528,email_finance.csv,602,0,none,high,false,General discussion list chatting about politics,agent,false,docs/design/domain-profiles.md@27963a9
+f965b382e7d8338c,25354,email_finance.csv,706,1,none,low,true,Sexual enlargement promise with no pill or product named (worked example 4); could be healthcare,agent,false,docs/design/domain-profiles.md@27963a9
+be32dd12dcb7901c,27159,email_finance.csv,731,0,technology,high,false,Software project bug tracker notification,agent,false,docs/design/domain-profiles.md@27963a9
+da7ec5be28f9ffe2,27304,email_finance.csv,735,1,retail,low,true,Sells a physical enlargement device; not a pill taken (healthcare) so treated as physical goods,agent,false,docs/design/domain-profiles.md@27963a9
+8afdfd922758d563,28954,email_finance.csv,778,1,healthcare,low,true,Offers an unspecified means for enlargement; product implied but not named as a pill,agent,false,docs/design/domain-profiles.md@27963a9
+b43dceabf856f634,29089,email_finance.csv,783,1,healthcare,high,false,Claims an online pharmacy (obfuscated text),agent,false,docs/design/domain-profiles.md@27963a9
+0151be47a07e9574,31891,email_finance.csv,874,0,technology,high,false,Software project bug tracker notification,agent,false,docs/design/domain-profiles.md@27963a9
+6e8d9aee7cb8fd67,34629,email_finance.csv,960,1,none,high,false,News alert from a news outlet,agent,false,docs/design/domain-profiles.md@27963a9
+a9ba12583f2cad49,34734,email_finance.csv,965,0,none,low,true,Short personal note asking to reduce a balance; no organization or sector identifiable (could be finance),agent,false,docs/design/domain-profiles.md@27963a9
+849743a3c3a7215e,37539,email_finance.csv,1097,1,none,high,false,News alert from a news outlet,agent,false,docs/design/domain-profiles.md@27963a9
+598ac89865b41e2c,8767,email_government.csv,524,0,technology,high,false,Software project development list,agent,false,docs/design/domain-profiles.md@27963a9
+662f6b8e06b3b513,12096,email_government.csv,746,1,none,high,false,Online casino; gambling is not listed,agent,false,docs/design/domain-profiles.md@27963a9
+c31a8f816b011b56,12870,email_government.csv,785,1,none,low,true,Sexual enlargement promise with no pill or product named (worked example 4); could be healthcare,agent,false,docs/design/domain-profiles.md@27963a9
+4c5725c6c0ab95c3,14469,email_government.csv,867,1,none,low,true,Enlargement promise with no pill or product named (worked example 4); could be healthcare,agent,false,docs/design/domain-profiles.md@27963a9
+9d94740f1f8987d0,19368,email_government.csv,1194,0,technology,high,false,Patch for a software project,agent,false,docs/design/domain-profiles.md@27963a9
+7f9498987334df85,19557,email_government.csv,1213,0,technology,high,false,Software project patch discussion,agent,false,docs/design/domain-profiles.md@27963a9
+a4ae330d49109815,21214,email_government.csv,1312,0,none,high,false,Discussion list chat about a TV show; entertainment,agent,false,docs/design/domain-profiles.md@27963a9
+7bf0fdbf5c1e3c1f,22233,email_government.csv,1394,1,retail,high,false,Replica watch shop,agent,false,docs/design/domain-profiles.md@27963a9
+aee45f55d8938ab1,24629,email_government.csv,1539,1,retail,high,false,Sells copy watches,agent,false,docs/design/domain-profiles.md@27963a9
+f1e14d23f22d7e5b,27686,email_government.csv,1802,1,hr,high,false,Job offer for regional managers (jobs rule),agent,false,docs/design/domain-profiles.md@27963a9
+36df8bfe6898b02e,30318,email_government.csv,2001,0,technology,high,false,Software project user mailing list,agent,false,docs/design/domain-profiles.md@27963a9
+e2807509b4da2358,35024,email_government.csv,2325,1,none,medium,false,Adult content with no product named,agent,false,docs/design/domain-profiles.md@27963a9
+306b638a2213f94d,35842,email_government.csv,2364,1,none,high,false,Random word filler with no claimed sector,agent,false,docs/design/domain-profiles.md@27963a9
+aadf2ce16e4c40c1,38191,email_government.csv,2479,0,technology,high,false,Software project patch discussion,agent,false,docs/design/domain-profiles.md@27963a9
+ad99a7fa6ecbd348,38692,email_government.csv,2508,0,technology,high,false,Software project development list,agent,false,docs/design/domain-profiles.md@27963a9
+03a4c295136e1e23,38740,email_government.csv,2512,0,technology,high,false,Software project development list,agent,false,docs/design/domain-profiles.md@27963a9
+e7748e08da84f849,3416,email_healthcare.csv,107,0,none,medium,true,Personal family letter that mentions a hospital visit and medication; no organization claimed,agent,false,docs/design/domain-profiles.md@27963a9
+d71fde7ba5c0b234,6392,email_healthcare.csv,254,1,healthcare,high,false,Herbal and medical products; link host ignored,agent,false,docs/design/domain-profiles.md@27963a9
+b1efb2afb99d9207,9266,email_healthcare.csv,488,1,healthcare,low,true,Potency offer framed as health; no pill named explicitly (could be none),agent,false,docs/design/domain-profiles.md@27963a9
+314dad9a6d3a8559,15203,email_healthcare.csv,987,0,technology,high,false,Software project development list,agent,false,docs/design/domain-profiles.md@27963a9
+133f9cafdf0dbd2c,15552,email_healthcare.csv,1019,1,healthcare,high,false,Sells prescriptions,agent,false,docs/design/domain-profiles.md@27963a9
+5623065d5e8ee2d6,16495,email_healthcare.csv,1111,1,healthcare,high,false,Pharmacy selling generic drugs; link host ignored,agent,false,docs/design/domain-profiles.md@27963a9
+04558daa7aa7f197,20861,email_healthcare.csv,1433,1,none,high,false,Dating site ad,agent,false,docs/design/domain-profiles.md@27963a9
+dc4c36def025fd49,25960,email_healthcare.csv,1734,0,technology,high,false,Software project bug tracker notification,agent,false,docs/design/domain-profiles.md@27963a9
+0f05aa8b621ff569,29121,email_healthcare.csv,1929,1,healthcare,low,true,Love-life offer framed as health; no pill named explicitly (could be none),agent,false,docs/design/domain-profiles.md@27963a9
+7672d85d0cf099f4,29456,email_healthcare.csv,1962,1,healthcare,high,false,Online pharmacy selling ED and medical supplies,agent,false,docs/design/domain-profiles.md@27963a9
+a1b45ab896facc9d,30314,email_healthcare.csv,2023,0,technology,medium,false,Customer question about a paid web software product version,agent,false,docs/design/domain-profiles.md@27963a9
+45dc1c3e902d998a,31468,email_healthcare.csv,2114,0,technology,high,false,Software project patch,agent,false,docs/design/domain-profiles.md@27963a9
+04076000518146ec,32021,email_healthcare.csv,2137,0,technology,high,false,Software project bug tracker notification,agent,false,docs/design/domain-profiles.md@27963a9
+4e61a8e3f558a3fa,33955,email_healthcare.csv,2204,0,education,high,false,Research digest announced on a research mailing list,agent,false,docs/design/domain-profiles.md@27963a9
+b98f16b1a8f55991,34864,email_healthcare.csv,2235,0,education,high,false,Research digest announced on a research mailing list,agent,false,docs/design/domain-profiles.md@27963a9
+bdef6c1ebd249c01,38810,email_healthcare.csv,2377,1,healthcare,high,false,Sells affordable medications for sexual performance,agent,false,docs/design/domain-profiles.md@27963a9
+fbda7f252518b3ee,1941,email_hr.csv,24,0,none,high,false,General discussion list chatting about politics and the military,agent,false,docs/design/domain-profiles.md@27963a9
+d97f1155716c10f9,2675,email_hr.csv,37,0,technology,high,false,Software project user mailing list,agent,false,docs/design/domain-profiles.md@27963a9
+614941d330ee10b3,8960,email_hr.csv,147,0,technology,high,false,Software project test-report discussion,agent,false,docs/design/domain-profiles.md@27963a9
+073f2e2b29e9aac1,9687,email_hr.csv,167,1,healthcare,low,true,Love-life offer framed as health; no pill named explicitly (could be none),agent,false,docs/design/domain-profiles.md@27963a9
+f7e6b7d3797ef204,13521,email_hr.csv,273,0,technology,high,false,Software project development list,agent,false,docs/design/domain-profiles.md@27963a9
+72c366e5f4ea50e5,14807,email_hr.csv,315,1,healthcare,high,false,Claims to be a chemist,agent,false,docs/design/domain-profiles.md@27963a9
+ecab6ee11eb24dc4,14968,email_hr.csv,320,1,healthcare,high,false,Sells enlargement capsules to take,agent,false,docs/design/domain-profiles.md@27963a9
+2b91c166b1e36b40,17075,email_hr.csv,354,0,technology,high,false,Software project user mailing list,agent,false,docs/design/domain-profiles.md@27963a9
+fac1df941d16f20d,23679,email_hr.csv,499,1,healthcare,high,false,Subject sells pills for sexual performance,agent,false,docs/design/domain-profiles.md@27963a9
+a57ad99acf7aedfd,26931,email_hr.csv,547,0,technology,high,false,Software project development list,agent,false,docs/design/domain-profiles.md@27963a9
+f46c925cbd703832,26991,email_hr.csv,550,1,none,high,false,Random word filler with no claimed sector,agent,false,docs/design/domain-profiles.md@27963a9
+563c07e5dd5319b9,29114,email_hr.csv,631,1,healthcare,low,true,Potency-boosting offer framed as health; no pill named explicitly (could be none),agent,false,docs/design/domain-profiles.md@27963a9
+8247c3844cdd6887,29651,email_hr.csv,640,1,healthcare,high,false,Sells enlargement capsules to take,agent,false,docs/design/domain-profiles.md@27963a9
+c44c2352855816fe,33381,email_hr.csv,718,1,none,medium,false,Personal-sounding one-liner with a link; no sector,agent,false,docs/design/domain-profiles.md@27963a9
+3eddb5f924816c4b,35957,email_hr.csv,758,0,none,medium,true,"Technology news digest from a magazine; news is not listed, though the topic is technology",agent,false,docs/design/domain-profiles.md@27963a9
+f415fe915a5c17ba,38077,email_hr.csv,791,0,technology,high,false,Software project user mailing list,agent,false,docs/design/domain-profiles.md@27963a9
+8ce25143684c9c48,1256,email_logistics.csv,12,1,retail,high,false,Replica watch shop,agent,false,docs/design/domain-profiles.md@27963a9
+2670e47895e47dff,3026,email_logistics.csv,103,1,healthcare,high,false,Claims to be a chemist; slimming and medicines,agent,false,docs/design/domain-profiles.md@27963a9
+d6f2655d51bf421a,3873,email_logistics.csv,177,1,healthcare,high,false,Claims to be a chemist,agent,false,docs/design/domain-profiles.md@27963a9
+4c1fd3e4b387f3e7,4979,email_logistics.csv,261,1,healthcare,high,false,Sells medicine,agent,false,docs/design/domain-profiles.md@27963a9
+a3b5815162fb2ff6,6865,email_logistics.csv,322,1,healthcare,high,false,Claims to be a chemist selling brand-name meds,agent,false,docs/design/domain-profiles.md@27963a9
+276527327a8439cb,13874,email_logistics.csv,500,0,technology,high,false,Software project development list,agent,false,docs/design/domain-profiles.md@27963a9
+a63a40e9e60d35e6,20259,email_logistics.csv,675,0,technology,high,false,Software project user mailing list,agent,false,docs/design/domain-profiles.md@27963a9
+2eb2c33b7105b19d,24550,email_logistics.csv,818,1,none,low,true,Enlargement promise with no pill or product named (worked example 4); could be healthcare,agent,false,docs/design/domain-profiles.md@27963a9
+c602009ef3d8b25e,25112,email_logistics.csv,836,1,healthcare,medium,false,Sells a remedy to take for sexual performance,agent,false,docs/design/domain-profiles.md@27963a9
+8cea8b683b51b3a2,30474,email_logistics.csv,951,0,technology,high,false,Linux user group list about router firmware,agent,false,docs/design/domain-profiles.md@27963a9
+26544655c4ea5705,31966,email_logistics.csv,983,0,technology,high,false,Software project development list,agent,false,docs/design/domain-profiles.md@27963a9
+588b5414b4420dbf,34146,email_logistics.csv,1036,0,technology,high,false,Software project development list,agent,false,docs/design/domain-profiles.md@27963a9
+c5ae53ee1b06f6ab,35012,email_logistics.csv,1063,0,technology,high,false,Linux user group list about packaging,agent,false,docs/design/domain-profiles.md@27963a9
+603419544a9c4b1a,37221,email_logistics.csv,1101,1,healthcare,medium,true,Weight-loss offer in subject; no product named in body,agent,false,docs/design/domain-profiles.md@27963a9
+883ce2db389da71d,37869,email_logistics.csv,1121,0,technology,high,false,Software project development list,agent,false,docs/design/domain-profiles.md@27963a9
+c2fadf870f598794,38175,email_logistics.csv,1127,0,technology,high,false,Software project build-error discussion,agent,false,docs/design/domain-profiles.md@27963a9
+b716a37ba84d9d81,446,email_retail.csv,44,0,retail,high,false,Outlet shop promotion for housewares and electronics,agent,false,docs/design/domain-profiles.md@27963a9
+32a03e258d63eb63,4878,email_retail.csv,546,0,technology,high,false,Mail server software users list,agent,false,docs/design/domain-profiles.md@27963a9
+c9bb00aadf0647e0,8573,email_retail.csv,990,1,healthcare,high,false,Online pharmacy selling ED drugs,agent,false,docs/design/domain-profiles.md@27963a9
+fab86c48256689e7,10503,email_retail.csv,1241,1,healthcare,low,true,Enlargement testimonial with discreet shipping of an unnamed product; no pill named (could be none),agent,false,docs/design/domain-profiles.md@27963a9
+cefe906188603fd7,11258,email_retail.csv,1367,1,healthcare,high,false,Sells discounted pills; link host ignored,agent,false,docs/design/domain-profiles.md@27963a9
+fe2dc2ddb83cd9db,12723,email_retail.csv,1516,1,healthcare,low,true,Promotes unnamed products for male libido; no pill named (could be none),agent,false,docs/design/domain-profiles.md@27963a9
+9bdacbac12052678,15690,email_retail.csv,1894,1,healthcare,medium,false,Store selling health products for sexual performance; filler ignored,agent,false,docs/design/domain-profiles.md@27963a9
+ef10a696d475a25e,16940,email_retail.csv,2083,0,technology,high,false,Software project bug tracker,agent,false,docs/design/domain-profiles.md@27963a9
+4aa77b833bb40628,18454,email_retail.csv,2311,0,technology,high,false,Software project development list,agent,false,docs/design/domain-profiles.md@27963a9
+138f36b626af0f54,27813,email_retail.csv,3505,1,none,low,true,Enlargement promise with no pill or product named (worked example 4); could be healthcare,agent,false,docs/design/domain-profiles.md@27963a9
+c2476d631cd5071b,30430,email_retail.csv,3955,0,technology,high,false,Software project bug tracker ticket,agent,false,docs/design/domain-profiles.md@27963a9
+022cd1f155803719,31992,email_retail.csv,4126,1,retail,high,false,Replica watch shop,agent,false,docs/design/domain-profiles.md@27963a9
+a5b171a81ae45034,32390,email_retail.csv,4171,0,technology,high,false,Software project development list,agent,false,docs/design/domain-profiles.md@27963a9
+54ed65ab84f39ae4,34839,email_retail.csv,4433,0,technology,high,false,Software project user mailing list,agent,false,docs/design/domain-profiles.md@27963a9
+18858d377d5a4f46,36152,email_retail.csv,4517,0,technology,high,false,Software project development list,agent,false,docs/design/domain-profiles.md@27963a9
+a19b0736b64141fc,38229,email_retail.csv,4730,1,healthcare,high,false,Men's health shop offering medical consultations,agent,false,docs/design/domain-profiles.md@27963a9
+f732b294b560165c,3042,email_social_media.csv,1069,0,technology,low,true,"Newsgroup digest about reporting spam and spamming network blocks; list topic is email abuse, could be none",agent,false,docs/design/domain-profiles.md@27963a9
+50a34f896fc3fbdb,7053,email_social_media.csv,1947,0,technology,high,false,Newsletter from a software and online-services company about its products,agent,false,docs/design/domain-profiles.md@27963a9
+576d82aa88af122e,8226,email_social_media.csv,2185,0,technology,high,false,Software project development list,agent,false,docs/design/domain-profiles.md@27963a9
+b52078f805b7f552,9082,email_social_media.csv,2313,1,none,high,false,News digest from a news outlet,agent,false,docs/design/domain-profiles.md@27963a9
+55032456568e9b4a,13011,email_social_media.csv,3179,1,none,high,false,News digest from a news outlet,agent,false,docs/design/domain-profiles.md@27963a9
+8c188714a1bd5d1f,14037,email_social_media.csv,3531,1,none,high,false,News digest from a news outlet,agent,false,docs/design/domain-profiles.md@27963a9
+7a74493ad40a0f23,15110,email_social_media.csv,3825,1,none,high,false,News digest from a news outlet,agent,false,docs/design/domain-profiles.md@27963a9
+cfac0f0584c6f71e,23085,email_social_media.csv,5675,1,none,low,true,Celebrity-gossip subject and a one-line food delivery pitch; no clear listed sector,agent,false,docs/design/domain-profiles.md@27963a9
+eace26c2e1942167,25568,email_social_media.csv,6503,0,technology,high,false,Anti-spam software users list question,agent,false,docs/design/domain-profiles.md@27963a9
+90c67166bb60fba7,34841,email_social_media.csv,8313,1,none,high,false,News alert from a news outlet,agent,false,docs/design/domain-profiles.md@27963a9
+fb17a2dca93b6650,35209,email_social_media.csv,8499,1,none,high,false,Claims to be a news alert service; news is not a listed sector,agent,false,docs/design/domain-profiles.md@27963a9
+9496de065d560b66,36558,email_social_media.csv,9055,0,technology,high,false,Software project bug tracker notification,agent,false,docs/design/domain-profiles.md@27963a9
+2693d1b8dc6496fa,37811,email_social_media.csv,9455,0,technology,high,false,Software project user mailing list digest,agent,false,docs/design/domain-profiles.md@27963a9
+c9a61a44120442c3,37845,email_social_media.csv,9464,0,technology,high,false,Mail server software users list,agent,false,docs/design/domain-profiles.md@27963a9
+a2cd04b2be7e9d01,38216,email_social_media.csv,9625,0,social_media,high,false,Social network direct-message notification,agent,false,docs/design/domain-profiles.md@27963a9
+bb0da4a3afbe0df2,38600,email_social_media.csv,9780,1,none,high,false,News alert from a news outlet (story topic does not matter),agent,false,docs/design/domain-profiles.md@27963a9
+1749304537025d6f,1487,email_technology.csv,166,0,technology,high,false,Software project user mailing list,agent,false,docs/design/domain-profiles.md@27963a9
+9c67ed026c0ff85d,2409,email_technology.csv,265,1,healthcare,medium,false,Online shop offering medicine (obfuscated text),agent,false,docs/design/domain-profiles.md@27963a9
+8820eab20846a186,2463,email_technology.csv,274,0,technology,high,false,Mail server software users list,agent,false,docs/design/domain-profiles.md@27963a9
+1eea5b0bb53a197c,3165,email_technology.csv,370,0,technology,medium,true,Tech publisher newsletter whose calls to action are IT vendors' whitepapers; publisher is media (none),agent,false,docs/design/domain-profiles.md@27963a9
+284a86be37e4b70c,17291,email_technology.csv,2225,0,education,high,false,Academic conference session call for papers,agent,false,docs/design/domain-profiles.md@27963a9
+8d397c5bc35b9c9a,21983,email_technology.csv,2865,1,none,high,false,Romance quote with a link; no sector,agent,false,docs/design/domain-profiles.md@27963a9
+30a45a8da9dc87be,21988,email_technology.csv,2866,1,retail,high,false,Replica watch shop,agent,false,docs/design/domain-profiles.md@27963a9
+09f8153b93490176,22113,email_technology.csv,2885,1,none,low,true,Enlargement promise with no pill or product named (worked example 4); could be healthcare,agent,false,docs/design/domain-profiles.md@27963a9
+39d1dae831af4260,23146,email_technology.csv,2997,1,retail,low,true,Sells a physical enlargement traction device; not a pill taken (healthcare) so treated as physical goods,agent,false,docs/design/domain-profiles.md@27963a9
+f330d8e7aac4e786,24127,email_technology.csv,3124,1,none,high,false,Romance quote with a link; no sector,agent,false,docs/design/domain-profiles.md@27963a9
+b2b80888c8e100ef,27995,email_technology.csv,3737,0,technology,high,false,Software project user mailing list,agent,false,docs/design/domain-profiles.md@27963a9
+16f2304759fd2bdb,28506,email_technology.csv,3782,0,technology,medium,true,"Tech publisher newsletter selling an IT administration download kit; seller rule says technology, publisher is media (none)",agent,false,docs/design/domain-profiles.md@27963a9
+89eda227862a2e0c,28840,email_technology.csv,3839,1,retail,low,true,Sells a physical enlargement traction device; not a pill taken (healthcare) so treated as physical goods,agent,false,docs/design/domain-profiles.md@27963a9
+b07546ddba57a953,29539,email_technology.csv,3973,1,none,high,false,Random word filler with no claimed sector,agent,false,docs/design/domain-profiles.md@27963a9
+5c7feb98ef648483,33801,email_technology.csv,4656,0,technology,high,false,Anti-spam software users list,agent,false,docs/design/domain-profiles.md@27963a9
+d6e165fc611fe181,34072,email_technology.csv,4700,0,technology,medium,false,Customer question about a web slideshow software product,agent,false,docs/design/domain-profiles.md@27963a9
+a80cf591adc14f30,64,email_telecommunications.csv,3,1,none,low,true,Sexual promise with no pill or product named (worked example 4); could be healthcare,agent,false,docs/design/domain-profiles.md@27963a9
+10512753d371d56d,2593,email_telecommunications.csv,170,1,healthcare,high,false,Sells bottles of an enlargement product,agent,false,docs/design/domain-profiles.md@27963a9
+277807d5d5c12deb,4364,email_telecommunications.csv,263,0,education,high,false,Academic workshop call for papers,agent,false,docs/design/domain-profiles.md@27963a9
+17089597052371d1,4498,email_telecommunications.csv,271,1,healthcare,high,false,Herbal and prescription drug discounts; link host ignored,agent,false,docs/design/domain-profiles.md@27963a9
+31588d4e5459e5e2,6578,email_telecommunications.csv,427,0,technology,high,false,Linux user group list about hardware and storage,agent,false,docs/design/domain-profiles.md@27963a9
+a10d6eeac91b8469,9977,email_telecommunications.csv,684,1,retail,high,false,Sells copies of designer watches and jewellery,agent,false,docs/design/domain-profiles.md@27963a9
+1ca004df6526ba40,13698,email_telecommunications.csv,972,0,technology,high,false,Software project development list,agent,false,docs/design/domain-profiles.md@27963a9
+0b99356207a99b6d,14247,email_telecommunications.csv,1009,0,technology,high,false,Software project development list,agent,false,docs/design/domain-profiles.md@27963a9
+61cd6fce3c0ff33c,17541,email_telecommunications.csv,1235,1,healthcare,high,false,Sells herbal supplement pills for enlargement,agent,false,docs/design/domain-profiles.md@27963a9
+7ca282019ec691c7,18989,email_telecommunications.csv,1343,0,technology,high,false,Linux user group list about wireless adapters,agent,false,docs/design/domain-profiles.md@27963a9
+33ee8d7e9492432e,19042,email_telecommunications.csv,1347,1,none,low,true,Sexual promise with no product named in text; only the ignored link host hints at medicine,agent,false,docs/design/domain-profiles.md@27963a9
+98e5981646bae90a,20664,email_telecommunications.csv,1484,1,none,high,false,Romance and religion quote with a link; no sector,agent,false,docs/design/domain-profiles.md@27963a9
+5799b55bf6edd7ef,22774,email_telecommunications.csv,1608,0,technology,high,false,Anti-spam software users list discussing mail server setup,agent,false,docs/design/domain-profiles.md@27963a9
+c0292f6b4f9188f8,27663,email_telecommunications.csv,1872,0,technology,high,false,Software project development list,agent,false,docs/design/domain-profiles.md@27963a9
+9a946499f7071926,28004,email_telecommunications.csv,1892,1,healthcare,high,false,Sells an enlargement preparation (obfuscated product name),agent,false,docs/design/domain-profiles.md@27963a9
+2cc91478dbcbc48c,30458,email_telecommunications.csv,2041,0,none,medium,true,"Tech news and product-review newsletter; news is not listed, though the topic is technology",agent,false,docs/design/domain-profiles.md@27963a9
+281691a17a7099ae,1102,email_unsure.csv,41,0,technology,high,false,Software project user mailing list question,agent,false,docs/design/domain-profiles.md@27963a9
+50f471af607495bf,1556,email_unsure.csv,55,0,technology,high,false,Software project user mailing list,agent,false,docs/design/domain-profiles.md@27963a9
+5bdf2f8f896aeafc,4930,email_unsure.csv,168,1,retail,low,true,Russian ad for plastic windows at factory prices; physical goods seller vs home-improvement service (none),agent,false,docs/design/domain-profiles.md@27963a9
+30419d9fb7c18d97,6521,email_unsure.csv,258,1,retail,high,false,Sells fake watches,agent,false,docs/design/domain-profiles.md@27963a9
+c25314da97e70444,6587,email_unsure.csv,263,1,healthcare,high,false,Sells prescription drugs at discounts; link host ignored,agent,false,docs/design/domain-profiles.md@27963a9
+3cfb1e6ac56a8293,7475,email_unsure.csv,309,0,none,high,false,Discussion list chat about holidays and hotels; personal conversation,agent,false,docs/design/domain-profiles.md@27963a9
+085f034c828bf724,8943,email_unsure.csv,395,1,retail,high,false,Sells copy watches,agent,false,docs/design/domain-profiles.md@27963a9
+55a9d8b5f4138b39,16132,email_unsure.csv,735,0,none,high,false,Newspaper breaking-news alert,agent,false,docs/design/domain-profiles.md@27963a9
+bfbf2d865e8d4823,21401,email_unsure.csv,1069,1,healthcare,high,false,Pharmacy for generic drugs and refills,agent,false,docs/design/domain-profiles.md@27963a9
+147af7272d2ab914,24227,email_unsure.csv,1230,1,none,high,false,Adult video content,agent,false,docs/design/domain-profiles.md@27963a9
+262dd2c242917fb1,25754,email_unsure.csv,1302,0,none,high,false,Discussion list post sharing a video; entertainment,agent,false,docs/design/domain-profiles.md@27963a9
+3d873f8b3d6fd6e6,25840,email_unsure.csv,1306,1,healthcare,high,false,Sells medicines at discount,agent,false,docs/design/domain-profiles.md@27963a9
+306838473c10a444,27413,email_unsure.csv,1415,1,none,medium,false,Sexual content with a link; names no pill or product,agent,false,docs/design/domain-profiles.md@27963a9
+291b030c9d2e7d06,28012,email_unsure.csv,1441,0,none,high,false,Discussion list chat about a TV show; entertainment,agent,false,docs/design/domain-profiles.md@27963a9
+cfeae596d3a7b217,32223,email_unsure.csv,1590,1,none,high,false,Romance quote with a link; no sector,agent,false,docs/design/domain-profiles.md@27963a9
+5136b48457159907,32696,email_unsure.csv,1605,0,technology,medium,false,Software project mailing list post with empty body; list tag in subject,agent,false,docs/design/domain-profiles.md@27963a9
+267821749e495adf,32743,email_unsure.csv,1608,0,none,medium,true,"Tech news and product-review newsletter; news is not listed, though the topic is technology",agent,false,docs/design/domain-profiles.md@27963a9
+c0b0eb42abbbf802,33204,email_unsure.csv,1628,0,technology,high,false,Software project development discussion,agent,false,docs/design/domain-profiles.md@27963a9
+eb4b45e1065556ee,33668,email_unsure.csv,1656,1,none,high,false,Romance quote with a link; no sector,agent,false,docs/design/domain-profiles.md@27963a9
+624928a6fc1282ad,33681,email_unsure.csv,1657,0,technology,high,false,Software project bug tracker notification,agent,false,docs/design/domain-profiles.md@27963a9
