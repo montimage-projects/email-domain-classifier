@@ -62,8 +62,12 @@ openrouter = [
     "email-domain-classifier[llm]",
     "langchain-openai>=0.2.0",
 ]
+# TypeSafe classifier (LLM_PROVIDER=typesafe); does not need LangChain
+typesafe = [
+    "typesafe-sdk>=0.7.0",
+]
 all-llm = [
-    "email-domain-classifier[google,mistral,ollama,groq,openrouter]",
+    "email-domain-classifier[google,mistral,ollama,groq,openrouter,typesafe]",
 ]
 dev = [
     "pytest>=7.0.0",
@@ -142,6 +146,8 @@ module = [
     "langchain_openai.*",
     "httpx",
     "httpx.*",
+    "typesafe_sdk",
+    "typesafe_sdk.*",
 ]
 ignore_missing_imports = true
 
