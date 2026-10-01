@@ -124,6 +124,12 @@ FULL_CORPUS_AGREEMENT_RATE = 0.2162
 FLOAT_DIGITS = 4
 PROBABILITY_DIGITS = 6
 
+# The classic methods pick the best domain from a dict built from a set, so a
+# tie between two domains is broken by set order, which depends on Python's
+# per-process string hashing. Run from the command line, the script pins the
+# hash seed so that the report is the same on every run.
+PINNED_HASH_SEED = "0"
+
 # Status recorded for an attempt that got no HTTP response (connection error,
 # timeout).
 NO_RESPONSE_STATUS = 0
@@ -1681,6 +1687,12 @@ def _stratum_name(stratum: Hashable) -> str:
     return str(stratum)
 
 
+def _source_file_prediction(source_file: str) -> str:
+    """Normalized pipeline prediction encoded in an output file name."""
+    stem = source_file.removeprefix("email_").removesuffix(".csv")
+    return normalize_prediction(stem)
+
+
 def build_report(
     labels: Sequence[LabeledEmail],
     emails: Mapping[str, EmailData],
@@ -1807,6 +1819,12 @@ def build_report(
             if stratum_sizes is not None
             else None
         ),
+        "python_hash_seed": os.environ.get("PYTHONHASHSEED"),
+        "classic_reproduces_source_file": sum(
+            1
+            for label, r in zip(labels, rows)
+            if _source_file_prediction(label.source_file) == r.classic
+        ),
         "collection": collection_info(cache_records, runs),
         "systems": systems,
         "agreement": agreement,
@@ -1851,6 +1869,12 @@ def render_markdown(report: Mapping[str, Any]) -> str:
         "",
         f"Labeled rows: {report['n_labeled']}. {report['scoring_rule']}",
         "Intervals are Wilson 95%.",
+        "",
+    ]
+    lines += [
+        f"Re-running the classic classifier reproduces the pipeline's output file "
+        f"(`source_file`) for {report['classic_reproduces_source_file']}/"
+        f"{report['n_labeled']} rows (PYTHONHASHSEED={report['python_hash_seed']}).",
         "",
     ]
     col = report["collection"]
@@ -2168,4 +2192,8 @@ def main(argv: Optional[list[str]] = None) -> int:
 
 
 if __name__ == "__main__":
+    if os.environ.get("PYTHONHASHSEED") != PINNED_HASH_SEED:
+        # Re-run with string hashing pinned; see PINNED_HASH_SEED.
+        os.environ["PYTHONHASHSEED"] = PINNED_HASH_SEED
+        os.execv(sys.executable, [sys.executable, *sys.argv])
     sys.exit(main())

@@ -357,6 +357,8 @@ class TestReport:
         assert set(report["systems"]) == {"method1", "method2", "classic"}
         assert report["cutoff_sweep"] == [] and report["cutoff_choice"] is None
         assert report["typesafe_available"] is False
+        # make_labels says the pipeline wrote these rows to email_finance.csv.
+        assert report["classic_reproduces_source_file"] == 2
         assert "typesafe | missing" in ev.render_markdown(ev.round_floats(report))
 
 
