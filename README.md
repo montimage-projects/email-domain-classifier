@@ -193,6 +193,12 @@ When you enable LLM classification with `--use-llm`, the classifier uses a **hyb
    - If both classifiers agree on the domain → accept that result and **skip the LLM** (saves API costs/time)
    - If they disagree → invoke the LLM to determine the final classification
 
+3. **Gate the LLM answer on its confidence**:
+   - If the LLM's confidence is at least the cutoff → accept its domain (a confident "no listed domain fits" answer gives `unsure`)
+   - If it is below the cutoff, or the LLM call failed → ignore the LLM answer and use the classic weighted fallback (60% keyword, 40% structural; `unsure` if that is below its own threshold)
+
+   Set the cutoff (0.0 to 1.0) with `LLM_CONFIDENCE_CUTOFF` in `.env` or `--llm-confidence-cutoff`. **The default, 0.5, is provisional**: it was not measured, and issue #19 chooses the final value from an evaluation. `0.0` accepts every answer except a failed call. The gate applies to every provider: with `typesafe` the confidence comes from TypeSafe's answer probabilities; with the LangChain providers it is the confidence the model reports about itself, which is not calibrated. Each gated email's details record the decision under `llm_gate`, and `hybrid_workflow.jsonl` records it in the `llm_classify` step.
+
 This hybrid approach significantly reduces LLM API calls while maintaining classification accuracy. In typical datasets, 60-80% of emails can be classified without LLM involvement.
 
 #### Workflow Modes
@@ -259,6 +265,11 @@ Weights can be customized in the `.env` file:
 LLM_WEIGHT=0.40
 KEYWORD_WEIGHT=0.35
 STRUCTURAL_WEIGHT=0.25
+```
+
+In hybrid mode the minimum LLM confidence accepted is set with:
+```bash
+LLM_CONFIDENCE_CUTOFF=0.5   # provisional default; issue #19 sets the final value
 ```
 
 ### Migration Note

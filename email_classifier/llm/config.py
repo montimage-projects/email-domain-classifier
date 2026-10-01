@@ -51,6 +51,20 @@ PROVIDER_PACKAGES: dict[LLMProvider, str] = {
 }
 
 
+# Minimum Method 3 confidence the hybrid workflow accepts when the classic
+# methods disagree (issue #18). An answer below it is not used: the email goes
+# to the classic weighted fallback instead.
+#
+# PROVISIONAL: this value was not measured. Issue #19 chooses the final cutoff
+# from an evaluation on labelled data. Until then, override it with the
+# LLM_CONFIDENCE_CUTOFF environment variable. 0.0 accepts every answer that is
+# not a failed call.
+DEFAULT_LLM_CONFIDENCE_CUTOFF = 0.5
+
+# Environment variable that sets LLMConfig.llm_confidence_cutoff.
+LLM_CONFIDENCE_CUTOFF_ENV = "LLM_CONFIDENCE_CUTOFF"
+
+
 class LLMConfigError(Exception):
     """Error in LLM configuration."""
 
@@ -81,6 +95,10 @@ class LLMConfig:
     llm_weight: float = 0.40
     keyword_weight: float = 0.35
     structural_weight: float = 0.25
+
+    # Hybrid workflow gate: minimum Method 3 confidence accepted (0.0 to 1.0).
+    # Provisional default, see DEFAULT_LLM_CONFIDENCE_CUTOFF.
+    llm_confidence_cutoff: float = DEFAULT_LLM_CONFIDENCE_CUTOFF
 
     def __post_init__(self) -> None:
         """Validate and normalize configuration after initialization."""
@@ -131,6 +149,8 @@ class LLMConfig:
             raise LLMConfigError(
                 f"Invalid retry_count: {self.retry_count}. Must be non-negative."
             )
+
+        validate_confidence_cutoff(self.llm_confidence_cutoff)
 
     @classmethod
     def from_env(cls, env_file: Optional[Path] = None) -> "LLMConfig":
@@ -189,6 +209,11 @@ class LLMConfig:
         keyword_weight = _parse_float(os.getenv("KEYWORD_WEIGHT", ""), 0.35)
         structural_weight = _parse_float(os.getenv("STRUCTURAL_WEIGHT", ""), 0.25)
 
+        # Parse the hybrid confidence gate
+        llm_confidence_cutoff = parse_confidence_cutoff(
+            os.getenv(LLM_CONFIDENCE_CUTOFF_ENV, "")
+        )
+
         return cls(
             provider=provider,
             model=model,
@@ -201,6 +226,7 @@ class LLMConfig:
             llm_weight=llm_weight,
             keyword_weight=keyword_weight,
             structural_weight=structural_weight,
+            llm_confidence_cutoff=llm_confidence_cutoff,
         )
 
     def get_package_name(self) -> str:
@@ -211,6 +237,55 @@ class LLMConfig:
         """Get pip install command for this provider."""
         extra = self.provider.value
         return f"pip install email-domain-classifier[{extra}]"
+
+
+def validate_confidence_cutoff(value: float) -> float:
+    """Check that a confidence cutoff is a number from 0.0 to 1.0.
+
+    Args:
+        value: Cutoff to check.
+
+    Returns:
+        The cutoff, unchanged.
+
+    Raises:
+        LLMConfigError: If the cutoff is outside 0.0 to 1.0 or is NaN.
+    """
+    # Written as a chained comparison so NaN fails it.
+    if not 0.0 <= value <= 1.0:
+        raise LLMConfigError(
+            f"Invalid llm_confidence_cutoff: {value}. Must be between 0.0 and 1.0."
+        )
+    return value
+
+
+def parse_confidence_cutoff(value: str) -> float:
+    """Parse an LLM confidence cutoff from text.
+
+    Unlike the other numeric settings, an invalid value is an error instead of
+    being replaced by the default, because a silently ignored cutoff would
+    change which LLM answers the hybrid workflow accepts.
+
+    Args:
+        value: Text such as "0.7". Empty or blank text gives the default.
+
+    Returns:
+        The cutoff, from 0.0 to 1.0.
+
+    Raises:
+        LLMConfigError: If the text is not a number from 0.0 to 1.0.
+    """
+    value = value.strip()
+    if not value:
+        return DEFAULT_LLM_CONFIDENCE_CUTOFF
+    try:
+        cutoff = float(value)
+    except ValueError:
+        raise LLMConfigError(
+            f"Invalid {LLM_CONFIDENCE_CUTOFF_ENV}: {value!r}. "
+            "Must be a number between 0.0 and 1.0."
+        ) from None
+    return validate_confidence_cutoff(cutoff)
 
 
 def _parse_float(value: str, default: float) -> float:

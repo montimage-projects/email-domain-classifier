@@ -384,6 +384,18 @@ def cmd_info(args: argparse.Namespace) -> int:
         return 1
 
 
+def _confidence_cutoff_arg(value: str) -> float:
+    """Parse --llm-confidence-cutoff for argparse."""
+    from .llm.config import LLMConfigError, parse_confidence_cutoff
+
+    try:
+        return parse_confidence_cutoff(value)
+    except LLMConfigError:
+        raise argparse.ArgumentTypeError(
+            f"invalid value {value!r}: must be a number between 0.0 and 1.0"
+        ) from None
+
+
 def cmd_classify(args: argparse.Namespace) -> int:
     """Execute the classify command."""
     # Initialize UI
@@ -397,6 +409,15 @@ def cmd_classify(args: argparse.Namespace) -> int:
     force_llm = getattr(args, "force_llm", False)
     if force_llm and not args.use_llm:
         ui.print_error("--force-llm requires --use-llm")
+        return 1
+
+    # The confidence cutoff only gates the hybrid workflow
+    llm_confidence_cutoff = getattr(args, "llm_confidence_cutoff", None)
+    if llm_confidence_cutoff is not None and (not args.use_llm or force_llm):
+        ui.print_error(
+            "--llm-confidence-cutoff requires --use-llm in hybrid mode "
+            "(not with --force-llm)"
+        )
         return 1
 
     # Resolve paths
@@ -487,7 +508,9 @@ def cmd_classify(args: argparse.Namespace) -> int:
         classifier = HybridClassifier(
             llm_config=llm_config,
             workflow_logger=workflow_logger,
+            llm_confidence_cutoff=llm_confidence_cutoff,
         )
+        logger.info(f"LLM confidence cutoff: {classifier.llm_confidence_cutoff}")
     else:
         # Standard mode: dual-method or three-method (with --force-llm)
         classifier = EmailClassifier(llm_config=llm_config, use_llm=args.use_llm)
@@ -835,6 +858,17 @@ Output:
         action="store_true",
         help="Force LLM classification for every email (requires --use-llm). "
         "Overrides default hybrid mode to use three-method weighted scoring.",
+    )
+
+    classify_parser.add_argument(
+        "--llm-confidence-cutoff",
+        type=_confidence_cutoff_arg,
+        default=None,
+        metavar="CUTOFF",
+        help="Hybrid mode: minimum LLM confidence (0.0-1.0) accepted when the "
+        "classic classifiers disagree; lower-confidence answers fall back to "
+        "the classic weighted result. Overrides LLM_CONFIDENCE_CUTOFF "
+        "(provisional default 0.5, to be set by issue #19).",
     )
 
     # =========================================================================
