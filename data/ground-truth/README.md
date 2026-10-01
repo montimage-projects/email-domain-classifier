@@ -125,6 +125,20 @@ education 6, finance 1, hr 1, social_media 1, and 0 each for government,
 logistics and telecommunications. 32 rows are `ambiguous`. Confidence is high for
 138 rows, medium for 18 and low for 24.
 
+**Second-agent check.** During review, a second AI agent relabeled 52 rows blind,
+deciding each label before it saw this file's label. These were 20 random rows
+with `ambiguous=false` and all 32 rows with `ambiguous=true`.
+
+- **Unambiguous rows:** it agreed on all 20.
+- **Ambiguous rows:** it picked a different domain for 3. In each case it chose
+  the alternative already named in the rationale:
+  - `da7ec5be28f9ffe2`: retail vs healthcare
+  - `cfac0f0584c6f71e`: none vs retail
+  - `5bdf2f8f896aeafc`: retail vs none
+
+This check measures how consistent two agents are with each other, not how
+accurate the labels are. It does not replace human verification.
+
 **Limitation.** The sample is stratified by the pipeline's output file, not by the
 true domain, and CEAS_08 is mostly software mailing lists, pharma spam, replica
 watches and news. Six domains therefore have one example or none, so #19 cannot
