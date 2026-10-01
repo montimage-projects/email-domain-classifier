@@ -48,6 +48,38 @@ email-cli sample_emails.csv -o output/
 email-cli sample_emails.csv -o output/ --use-llm
 ```
 
+## Parallel Processing
+
+Processing is serial by default (`--workers 1`). To allow up to four concurrent
+classifications, while keeping CSV rows and hybrid workflow JSONL events in
+input order:
+
+```bash
+email-cli sample_emails.csv -o output/ --use-llm --workers 4
+```
+
+`--workers` must be a positive integer. The streaming scheduler holds at most
+that many uncommitted input rows, including completed tasks waiting for earlier
+rows. Invalid and overlong emails still use the normal validation/filtering
+paths. `--chunk-size` controls progress-update frequency, **not** worker count.
+
+Parallelism can improve throughput for remote LLM calls only when the server
+supports concurrent requests and its rate limits permit them; it is not a
+promised speedup for local models or CPU-bound classic classification. Workers
+use independent classifiers/clients and a snapshot of the run's configuration.
+All output writes, workflow replay, and progress updates happen on the coordinator.
+Cancellation discards queued work and waits for running calls; existing provider
+timeouts still apply (including configured retries).
+
+Library callers can pass `workers=4` to `StreamingProcessor`. For custom
+classifiers, subclasses, or post-construction method/client injections, also
+pass `classifier_factory`, a zero-argument callable returning a fresh independent
+classifier per worker. Automatic cloning supports fresh built-in templates with
+normal constructor settings, not arbitrary in-place customization. Templates
+with already initialized LLM clients also require a factory, since initialized
+and manually injected clients cannot safely be distinguished. Worker hybrid callbacks are disabled;
+the coordinator reports committed throughput rather than summed worker times.
+
 ## Supported Domains
 
 | Domain | Description |
@@ -132,7 +164,7 @@ pip install -e ".[groq]"
 # For OpenRouter (access to multiple models)
 pip install -e ".[openrouter]"
 
-# For TypeSafe (one Choice question over the domains; no LangChain needed)
+# For hosted TypeSafe (one Choice question; its SDK is required)
 pip install -e ".[typesafe]"
 
 # Install all providers
@@ -156,9 +188,16 @@ pip install -e ".[all-llm]"
    LLM_PROVIDER=google
    GOOGLE_API_KEY=your-api-key
 
-   # For TypeSafe (model defaults to jev-latest)
+   # For the local System One endpoint (no SDK or API key required)
    LLM_PROVIDER=typesafe
-   TYPESAFE_API_KEY=your-api-key
+   LLM_MODEL=kev-latest
+   TYPESAFE_BASE_URL=http://100.117.100.54:8009/v1
+   LLM_TIMEOUT=30
+
+   # Or use hosted TypeSafe: omit TYPESAFE_BASE_URL and install .[typesafe]
+   # LLM_PROVIDER=typesafe
+   # LLM_MODEL=jev-latest
+   # TYPESAFE_API_KEY=your-api-key
 
    # For other providers, set the appropriate API key
    ```
@@ -168,8 +207,13 @@ TypeSafe one Choice question over the ten domains plus `none`, using the option
 text from the [domain definition](docs/design/domain-profiles.md#domain-definition).
 The chosen option becomes the domain (`none` gives no domain), the Choice
 probabilities of the ten domains become the scores, and TypeSafe's own
-confidence becomes the confidence. Every other provider keeps the LangChain
-`LLMClassifier`.
+confidence becomes the confidence. Set `TYPESAFE_BASE_URL` for a custom System
+One server; this path uses the standard-library HTTP transport and may omit
+`TYPESAFE_API_KEY` (a key, if provided, is sent as Bearer auth). The local
+endpoint is unauthenticated and reachable only on the LAN/Tailscale tailnet;
+transport failures use the existing classic fallback and never switch to cloud.
+Without a custom URL the hosted TypeSafe SDK and `TYPESAFE_API_KEY` are required.
+Every other provider keeps the LangChain `LLMClassifier`.
 
 ### Usage
 

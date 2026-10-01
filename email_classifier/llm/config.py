@@ -5,6 +5,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
 from typing import Optional
+from urllib.parse import urlsplit
 
 from dotenv import load_dotenv
 
@@ -103,6 +104,9 @@ class LLMConfig:
     # Default evaluated in #19, see DEFAULT_LLM_CONFIDENCE_CUTOFF.
     llm_confidence_cutoff: float = DEFAULT_LLM_CONFIDENCE_CUTOFF
 
+    # Optional custom System One endpoint; absent means the hosted TypeSafe API.
+    typesafe_base_url: Optional[str] = None
+
     def __post_init__(self) -> None:
         """Validate and normalize configuration after initialization."""
         self._normalize_weights()
@@ -118,9 +122,14 @@ class LLMConfig:
 
     def _validate(self) -> None:
         """Validate configuration."""
-        # Check API key for cloud providers
+        # A custom System One endpoint may be unauthenticated. Hosted TypeSafe
+        # and all other cloud providers still require their API key.
+        if self.typesafe_base_url is not None:
+            _validate_typesafe_base_url(self.typesafe_base_url)
         if self.provider != LLMProvider.OLLAMA:
-            if not self.api_key:
+            if not self.api_key and not (
+                self.provider == LLMProvider.TYPESAFE and self.typesafe_base_url
+            ):
                 key_name = PROVIDER_API_KEYS.get(self.provider, "API_KEY")
                 raise LLMConfigError(
                     f"Missing API key for {self.provider.value}. "
@@ -204,8 +213,9 @@ class LLMConfig:
         timeout = _parse_int(os.getenv("LLM_TIMEOUT", ""), 30)
         retry_count = _parse_int(os.getenv("LLM_RETRY_COUNT", ""), 2)
 
-        # Parse Ollama settings
+        # Parse provider-specific base URLs
         ollama_base_url = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434").strip()
+        typesafe_base_url = os.getenv("TYPESAFE_BASE_URL", "").strip() or None
 
         # Parse weight settings
         llm_weight = _parse_float(os.getenv("LLM_WEIGHT", ""), 0.40)
@@ -226,6 +236,7 @@ class LLMConfig:
             timeout=timeout,
             retry_count=retry_count,
             ollama_base_url=ollama_base_url,
+            typesafe_base_url=typesafe_base_url,
             llm_weight=llm_weight,
             keyword_weight=keyword_weight,
             structural_weight=structural_weight,
@@ -240,6 +251,30 @@ class LLMConfig:
         """Get pip install command for this provider."""
         extra = self.provider.value
         return f"pip install email-domain-classifier[{extra}]"
+
+
+def _validate_typesafe_base_url(value: str) -> None:
+    """Require a usable HTTP(S) base URL for a custom TypeSafe endpoint."""
+    try:
+        parsed = urlsplit(value)
+        # Accessing port validates its numeric range and syntax.
+        parsed.port
+    except ValueError:
+        parsed = None
+
+    if (
+        parsed is None
+        or parsed.scheme not in {"http", "https"}
+        or not parsed.hostname
+        or parsed.username is not None
+        or parsed.password is not None
+        or parsed.query
+        or parsed.fragment
+        or any(character.isspace() for character in value)
+    ):
+        raise LLMConfigError(
+            f"Invalid TYPESAFE_BASE_URL: {value!r}. Must be an HTTP(S) base URL."
+        )
 
 
 def validate_confidence_cutoff(value: float) -> float:

@@ -79,6 +79,10 @@ class HybridWorkflowLogger:
         if extra:
             entry.update(extra)
 
+        self.emit_entry(entry)
+
+    def emit_entry(self, entry: dict[str, Any]) -> None:
+        """Emit a complete entry (also used for ordered coordinator replay)."""
         json_line = json.dumps(entry)
 
         if self._file_handle:
@@ -627,6 +631,8 @@ class EmailClassifier:
             self._init_llm_classifier(llm_config)
 
         self._update_weights()
+        # Identity guard: parallel cloning must not discard injected methods.
+        self._worker_methods = (self.method1, self.method2, self.method3)
 
     def _init_llm_classifier(self, config: Optional["LLMConfig"] = None) -> None:
         """Initialize the LLM classifier.
@@ -899,6 +905,8 @@ class HybridClassifier:
         self._llm_config = llm_config
         if llm_config is not None:
             self._init_llm_classifier(llm_config)
+        # Identity guard: custom methods require an explicit worker factory.
+        self._worker_methods = (self.method1, self.method2, self.llm_classifier)
 
     def _init_llm_classifier(self, config: "LLMConfig") -> None:
         """Initialize the LLM classifier."""

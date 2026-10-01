@@ -8,14 +8,24 @@ maintaining progress tracking and logging.
 import csv
 import logging
 import os
-from collections import defaultdict
+import time
+from collections import defaultdict, deque
 from collections.abc import Callable, Generator
+from concurrent.futures import Future, ThreadPoolExecutor
+from copy import deepcopy
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
+from threading import local
 from typing import IO, Any, Dict, List, Optional
 
-from .classifier import EmailClassifier, EmailData, HybridClassifier
+from .classifier import (
+    EmailClassifier,
+    EmailData,
+    HybridClassifier,
+    HybridWorkflowLogger,
+    HybridWorkflowStats,
+)
 from .domains import get_domain_names
 from .parsing import parse_url_flag
 from .validator import (
@@ -222,6 +232,41 @@ class OutputManager:
         }
 
 
+class _BufferedWorkflowLogger(HybridWorkflowLogger):
+    """Worker-owned sink; never touches a file or the UI."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.entries: list[dict[str, Any]] = []
+
+    def emit_entry(self, entry: dict[str, Any]) -> None:
+        self.entries.append(entry)
+
+
+class _WorkerLogFilter(logging.Filter):
+    """Keep application diagnostics off worker console/file handlers."""
+
+    def __init__(self, state: local) -> None:
+        super().__init__()
+        self.state = state
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        records = getattr(self.state, "log_records", None)
+        if records is None:
+            return True
+        records.append(record)
+        return False
+
+
+@dataclass
+class _TaskOutcome:
+    result: tuple[str, dict[str, Any]] | None = None
+    error: BaseException | None = None
+    events: list[dict[str, Any]] = field(default_factory=list)
+    stats: HybridWorkflowStats | None = None
+    log_records: list[logging.LogRecord] = field(default_factory=list)
+
+
 class StreamingProcessor:
     """
     Stream processes large CSV files for email classification.
@@ -261,7 +306,14 @@ class StreamingProcessor:
         strict_validation: bool = False,
         max_body_length: int | None = None,
         use_hybrid: bool = False,
+        classifier_factory: (
+            Callable[[], EmailClassifier | HybridClassifier] | None
+        ) = None,
+        workers: int = 1,
     ) -> None:
+        if isinstance(workers, bool) or not isinstance(workers, int) or workers < 1:
+            raise ValueError("workers must be an integer >= 1")
+        self.workers = workers
         self.classifier: EmailClassifier | HybridClassifier = (
             classifier or EmailClassifier()
         )
@@ -273,6 +325,237 @@ class StreamingProcessor:
         self.use_hybrid = use_hybrid
         self.validator = EmailValidator()
         self.stats = ProcessingStats()
+        self._classifier_factory = classifier_factory
+
+    def _worker_factory(self) -> Callable[[], EmailClassifier | HybridClassifier]:
+        """Snapshot constructor settings, not live clients or callbacks.
+
+        Subclasses and post-construction method injections need a factory that
+        returns a fresh independent classifier. In-place customizations also
+        require a factory; automatic cloning supports constructor settings only.
+        """
+        if self._classifier_factory is not None:
+            return self._classifier_factory
+        template = self.classifier
+        if type(template) not in (EmailClassifier, HybridClassifier):
+            raise ValueError(
+                "custom classifiers require classifier_factory with workers > 1"
+            )
+        hybrid = isinstance(template, HybridClassifier)
+        methods = (
+            template.method1,
+            template.method2,
+            template.llm_classifier if hybrid else template.method3,
+        )
+        if (
+            any(
+                current is not original
+                for current, original in zip(methods, template._worker_methods)
+            )
+            or any(
+                "classify" in method.__dict__
+                for method in methods
+                if method is not None
+            )
+            or any(
+                method.__dict__.get(name) is not None
+                for method in methods
+                if method is not None
+                for name in ("_client", "_llm", "_structured_llm")
+            )
+            or "classify_dict" in template.__dict__
+            or "classify" in template.__dict__
+        ):
+            raise ValueError(
+                "injected methods or initialized clients require "
+                "classifier_factory with workers > 1"
+            )
+
+        domains = deepcopy(template.domains)
+        config = deepcopy(template._llm_config)
+        # Respect disabled/unavailable LLMs; never reload environment settings.
+        if methods[2] is None:
+            config = None
+        cutoff = template.llm_confidence_cutoff if hybrid else None
+        threshold = template.GLOBAL_THRESHOLD
+        weights = (
+            None
+            if hybrid
+            else (
+                template.weight_method_1,
+                template.weight_method_2,
+                template.weight_method_3,
+            )
+        )
+
+        def create() -> EmailClassifier | HybridClassifier:
+            if hybrid:
+                worker = HybridClassifier(
+                    llm_config=deepcopy(config),
+                    domains=deepcopy(domains),
+                    llm_confidence_cutoff=cutoff,
+                )
+            else:
+                worker = EmailClassifier(
+                    domains=deepcopy(domains), llm_config=deepcopy(config)
+                )
+                (
+                    worker.weight_method_1,
+                    worker.weight_method_2,
+                    worker.weight_method_3,
+                ) = weights
+            worker.GLOBAL_THRESHOLD = threshold
+            return worker
+
+        return create
+
+    def _serial_rows(
+        self, input_path: Path
+    ) -> Generator[tuple[int, dict, None], None, None]:
+        """Adapt the original serial stream without prefetching or cloning."""
+        source = self._stream_emails(input_path)
+        try:
+            for idx, row in enumerate(source):
+                yield idx, row, None
+        finally:
+            source.close()
+
+    def _parallel_rows(
+        self,
+        input_path: Path,
+        total_rows: int,
+        factory: Callable[[], EmailClassifier | HybridClassifier],
+    ) -> Generator[tuple[int, dict, Future[_TaskOutcome] | None], None, None]:
+        """FIFO window of at most workers source rows, including finished tasks.
+
+        The head stays in the window while the coordinator commits it. On early
+        exit queued tasks are cancelled; running calls finish within their
+        configured provider timeouts before shutdown returns.
+        """
+        source = self._stream_emails(input_path)
+        state = local()
+        pending = deque()
+        executor = ThreadPoolExecutor(
+            max_workers=self.workers, thread_name_prefix="email"
+        )
+        # Filters must sit on emitting loggers, not only their package parent:
+        # parent logger filters do not see propagated child records.
+        diagnostic_loggers = [
+            logging.getLogger(name)
+            for name in (
+                "email_classifier",
+                "email_classifier.classifier",
+                "email_classifier.processor",
+                "email_classifier.llm.agent",
+                "email_classifier.llm.typesafe_classifier",
+            )
+        ]
+        log_filter = _WorkerLogFilter(state)
+        for diagnostic_logger in diagnostic_loggers:
+            diagnostic_logger.addFilter(log_filter)
+
+        def classify(idx: int, row: dict) -> _TaskOutcome:
+            outcome = _TaskOutcome()
+            worker = None
+            sink = _BufferedWorkflowLogger()
+            state.log_records = outcome.log_records
+            try:
+                if not hasattr(state, "classifier"):
+                    state.classifier = factory()
+                worker = state.classifier
+                if isinstance(worker, HybridClassifier):
+                    worker.status_callback = None
+                    worker.workflow_logger = sink
+                    worker.reset_stats()
+                normalized = self._normalize_row(row)
+                if self.use_hybrid and isinstance(worker, HybridClassifier):
+                    outcome.result = worker.classify_dict(
+                        normalized, email_idx=idx, total_emails=total_rows
+                    )
+                else:
+                    outcome.result = worker.classify_dict(normalized)
+            except BaseException as exc:
+                # Transport interruptions as well as ordinary row failures.
+                outcome.error = exc
+            finally:
+                state.log_records = None
+                outcome.events = sink.entries
+                if isinstance(worker, HybridClassifier):
+                    outcome.stats = deepcopy(worker.get_stats())
+            return outcome
+
+        exhausted = False
+        next_idx = 0
+        try:
+            while pending or not exhausted:
+                while len(pending) < self.workers and not exhausted:
+                    try:
+                        row = next(source)
+                    except StopIteration:
+                        exhausted = True
+                        break
+                    except Exception as exc:
+                        # Ordinary source failures must not leapfrog buffered rows.
+                        # Interruptions instead reach cleanup immediately.
+                        pending.append((next_idx, None, exc))
+                        exhausted = True
+                        break
+                    future = None
+                    try:
+                        eligible = self.validator.validate(row).is_valid and (
+                            self.max_body_length is None
+                            or len(str(row.get("body", ""))) <= self.max_body_length
+                        )
+                    except Exception:
+                        # The authoritative validation below handles this row.
+                        eligible = False
+                    if eligible:
+                        future = executor.submit(classify, next_idx, row)
+                    pending.append((next_idx, row, future))
+                    next_idx += 1
+                if pending:
+                    idx, row, task = pending[0]
+                    if row is None:
+                        raise task
+                    yield idx, row, task
+                    pending.popleft()
+        finally:
+            for _, _, task in pending:
+                if isinstance(task, Future):
+                    task.cancel()
+            try:
+                executor.shutdown(wait=True, cancel_futures=True)
+            finally:
+                try:
+                    source.close()
+                finally:
+                    for diagnostic_logger in diagnostic_loggers:
+                        diagnostic_logger.removeFilter(log_filter)
+
+    def _consume_outcome(
+        self, task: Future[_TaskOutcome]
+    ) -> tuple[str, dict[str, Any]]:
+        """Replay task effects exactly once on the coordinator, then raise/return."""
+        outcome = task.result()
+        if isinstance(self.classifier, HybridClassifier):
+            if outcome.stats is not None:
+                for name in HybridWorkflowStats.__dataclass_fields__:
+                    setattr(
+                        self.classifier.stats,
+                        name,
+                        getattr(self.classifier.stats, name)
+                        + getattr(outcome.stats, name),
+                    )
+        for record in outcome.log_records:
+            logging.getLogger(record.name).handle(record)
+        if isinstance(self.classifier, HybridClassifier):
+            if self.classifier.workflow_logger is not None:
+                for entry in outcome.events:
+                    self.classifier.workflow_logger.emit_entry(entry)
+        if outcome.error is not None:
+            raise outcome.error
+        assert outcome.result is not None
+        return outcome.result
 
     def _normalize_row(self, row: dict) -> dict:
         """
@@ -337,6 +620,7 @@ class StreamingProcessor:
 
     def _stream_emails(self, input_path: Path) -> Generator[dict, None, None]:
         """Stream emails from CSV file one at a time."""
+        current_limit = None
         try:
             # Configure CSV reader to handle large fields
             if self.allow_large_fields:
@@ -390,6 +674,9 @@ class StreamingProcessor:
         except Exception as e:
             self.logger.error(f"Unexpected error reading CSV: {e}")
             raise
+        finally:
+            if current_limit is not None:
+                csv.field_size_limit(current_limit)
 
     def process(
         self,
@@ -412,6 +699,8 @@ class StreamingProcessor:
         """
         self.stats = ProcessingStats()
         self.stats.start_time = datetime.now()
+        wall_start = time.perf_counter()
+        factory = self._worker_factory() if self.workers > 1 else None
 
         input_path = Path(input_path)
         output_dir = Path(output_dir)
@@ -451,8 +740,13 @@ class StreamingProcessor:
         if self.max_body_length is not None:
             skipped_writer = SkippedEmailWriter(output_dir, input_fieldnames)
 
+        rows = (
+            self._parallel_rows(input_path, total_rows, factory)
+            if factory is not None
+            else self._serial_rows(input_path)
+        )
         try:
-            for idx, email_dict in enumerate(self._stream_emails(input_path)):
+            for idx, email_dict, task in rows:
                 try:
                     # Validate email before processing
                     validation_result = self.validator.validate(email_dict)
@@ -513,7 +807,9 @@ class StreamingProcessor:
                     normalized_row = self._normalize_row(email_dict)
 
                     # Classify email (use different call for hybrid classifier)
-                    if self.use_hybrid and isinstance(
+                    if task is not None:
+                        domain, details = self._consume_outcome(task)
+                    elif self.use_hybrid and isinstance(
                         self.classifier, HybridClassifier
                     ):
                         domain, details = self.classifier.classify_dict(
@@ -572,6 +868,28 @@ class StreamingProcessor:
                     self.stats.url_distributions[domain][has_url] += 1
                     self.stats.cross_tabulation[domain][original_label][has_url] += 1
 
+                    # Parallel UI updates describe committed wall-clock throughput,
+                    # not the sum of overlapping worker classification durations.
+                    if self.workers > 1 and isinstance(
+                        self.classifier, HybridClassifier
+                    ):
+                        if self.classifier.status_callback is not None:
+                            elapsed = time.perf_counter() - wall_start
+                            rate = (
+                                self.stats.total_processed / elapsed if elapsed else 0.0
+                            )
+                            try:
+                                self.classifier.status_callback(
+                                    f"Committed email {idx + 1}/{total_rows} | {rate:.1f} emails/s"
+                                )
+                            except Exception as exc:
+                                # Notification failure cannot undo a committed row.
+                                self.logger.warning(
+                                    "Status callback failed after committing email %s: %s",
+                                    idx + 1,
+                                    exc,
+                                )
+
                     # Log and progress callback based on chunk_size
                     if (idx + 1) % self.chunk_size == 0:
                         self.logger.info(
@@ -620,10 +938,13 @@ class StreamingProcessor:
                 progress_callback(total_rows, total_rows, "Processing complete")
 
         finally:
-            output_manager.close_all()
-            invalid_writer.close()
-            if skipped_writer is not None:
-                skipped_writer.close()
+            try:
+                rows.close()
+            finally:
+                output_manager.close_all()
+                invalid_writer.close()
+                if skipped_writer is not None:
+                    skipped_writer.close()
 
         self.stats.end_time = datetime.now()
 

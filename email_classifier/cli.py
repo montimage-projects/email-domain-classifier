@@ -148,16 +148,20 @@ def verify_prerequisites(
                 ui.print_info(f"        Model: {llm_config.model}")
 
             if llm_config.provider == LLMProvider.TYPESAFE:
-                # TypeSafe is not a LangChain provider: check its SDK instead.
-                # LLMConfig has already checked TYPESAFE_API_KEY is set.
-                available, _ = check_provider_available(LLMProvider.TYPESAFE)
-                if not available:
-                    errors.append(
-                        "Provider 'typesafe' requires package 'typesafe-sdk'. "
-                        f"Install with: {llm_config.get_install_command()}"
-                    )
-                elif not quiet:
-                    ui.print_success("  [3/4] LLM configuration: OK")
+                if llm_config.typesafe_base_url:
+                    # The custom System One transport uses only the standard library.
+                    if not quiet:
+                        ui.print_success("  [3/4] LLM configuration: OK")
+                else:
+                    # Hosted TypeSafe uses the optional SDK and requires its API key.
+                    available, _ = check_provider_available(LLMProvider.TYPESAFE)
+                    if not available:
+                        errors.append(
+                            "Provider 'typesafe' requires package 'typesafe-sdk'. "
+                            f"Install with: {llm_config.get_install_command()}"
+                        )
+                    elif not quiet:
+                        ui.print_success("  [3/4] LLM configuration: OK")
             else:
                 # Try to create the LLM instance to verify provider is installed
                 try:
@@ -384,6 +388,17 @@ def cmd_info(args: argparse.Namespace) -> int:
         return 1
 
 
+def _positive_int_arg(value: str) -> int:
+    """Parse a positive worker count for argparse."""
+    try:
+        parsed = int(value)
+        if parsed >= 1:
+            return parsed
+    except ValueError:
+        pass
+    raise argparse.ArgumentTypeError("must be an integer >= 1")
+
+
 def _confidence_cutoff_arg(value: str) -> float:
     """Parse --llm-confidence-cutoff for argparse."""
     from .llm.config import LLMConfigError, parse_confidence_cutoff
@@ -454,6 +469,7 @@ def cmd_classify(args: argparse.Namespace) -> int:
     logger.info(f"Input file: {input_path}")
     logger.info(f"Output directory: {output_dir}")
     logger.info(f"Chunk size: {args.chunk_size}")
+    logger.info(f"Workers: {getattr(args, 'workers', 1)}")
     logger.info(f"Include details: {args.include_details}")
     logger.info(f"Strict validation: {args.strict_validation}")
     logger.info(f"LLM enabled: {args.use_llm}")
@@ -469,6 +485,7 @@ def cmd_classify(args: argparse.Namespace) -> int:
     if not args.quiet:
         config_opts = {
             "Chunk Size": args.chunk_size,
+            "Workers": getattr(args, "workers", 1),
             "Include Details": args.include_details,
             "Strict Validation": args.strict_validation,
             "Log File": str(log_file),
@@ -523,6 +540,7 @@ def cmd_classify(args: argparse.Namespace) -> int:
         strict_validation=args.strict_validation,
         max_body_length=args.max_body_length,
         use_hybrid=use_hybrid,
+        workers=getattr(args, "workers", 1),
     )
 
     # Process emails with progress tracking
@@ -773,6 +791,14 @@ Output:
         type=int,
         default=1,
         help="Number of emails to process before updating progress (default: 1)",
+    )
+
+    classify_parser.add_argument(
+        "--workers",
+        type=_positive_int_arg,
+        default=1,
+        help="Concurrent classification workers (default: 1, serial). "
+        "Output remains in input order; provider concurrency limits apply.",
     )
 
     classify_parser.add_argument(
