@@ -339,6 +339,17 @@ class TestReport:
         assert report["per_row"][ids[2]]["typesafe_status"] == "error"
         assert report["cutoff_choice"] is not None
 
+    def test_agreement_rows_compare_classic_and_typesafe(self) -> None:
+        ids = [eid_of(i) for i in range(2)]
+        emails = {ids[0]: make_email(AGREEING), ids[1]: make_email(DISAGREEING)}
+        records = [make_record(ids[0], "none"), make_record(ids[1], "finance")]
+        labels = make_labels([ids[0]], domain="social_media") + make_labels([ids[1]])
+        agreement = ev.build_report(labels, emails, records, [], None)["agreement"]
+        assert agreement["n_rows"] == 1
+        assert agreement["agreed_answer_correct"] == 1
+        assert agreement["typesafe_scored"] == 1
+        assert agreement["typesafe_correct"] == 0
+
     def test_report_without_cache_degrades_to_classic_only(self) -> None:
         ids = [eid_of(i) for i in range(2)]
         emails = {eid: make_email(DISAGREEING) for eid in ids}
@@ -347,6 +358,40 @@ class TestReport:
         assert report["cutoff_sweep"] == [] and report["cutoff_choice"] is None
         assert report["typesafe_available"] is False
         assert "typesafe | missing" in ev.render_markdown(ev.round_floats(report))
+
+
+class TestRuntime:
+    RUNS = [
+        {"set": "labeled", "rps": 10.0, "workers": 4, "model": "jev-latest"}
+        | {"n_emails": 100, "n_calls_attempted": 100, "n_429": 0}
+        | {"attempts_per_second": 10.0, "wall_seconds": 10.0},
+        {"set": "sample", "rps": 20.0, "workers": 8, "model": "jev-latest"}
+        | {"n_emails": 100, "n_calls_attempted": 100, "n_429": 0}
+        | {"attempts_per_second": 20.0, "wall_seconds": 5.0},
+    ]
+
+    def test_concurrency_needed(self) -> None:
+        assert ev.concurrency_needed(40, 0.288) == 12
+        assert ev.concurrency_needed(40, 0.25) == 10
+        assert ev.concurrency_needed(40, None) is None
+
+    def test_extrapolation_is_per_run_not_pooled(self) -> None:
+        records = [make_record(eid_of(i)) for i in range(4)]
+        rt = ev.runtime_stats(records, self.RUNS, 0.5)
+        full = rt["extrapolation"]["full_typesafe"]["hours_per_run_rate"]
+        assert list(full.values()) == pytest.approx(
+            [35_000 / 10 / 3600, 35_000 / 20 / 3600]
+        )
+        hybrid = rt["extrapolation"]["hybrid_labeled_disagreement"]
+        assert hybrid["hours_at_cap"] == pytest.approx(17_500 / 40 / 3600)
+        assert rt["max_rps_exercised"] == 20.0 and rt["n_429_total"] == 0
+        assert rt["concurrency_needed_at_cap"]["p95"] == 5  # 120 ms latency
+
+    def test_collection_info(self) -> None:
+        info = ev.collection_info([make_record(eid_of(1))], self.RUNS)
+        assert info["requested_models"] == ["jev-latest"]
+        assert info["resolved_models"] == {"jev-test": 1}
+        assert info["collection_dates"] == ["2026-10-01"]
 
 
 class TestCache:

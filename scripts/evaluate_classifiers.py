@@ -1556,45 +1556,81 @@ def usage_stats(records: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
     }
 
 
+def concurrency_needed(rate: float, latency_seconds: Optional[float]) -> Optional[int]:
+    """Concurrent requests needed to sustain ``rate`` calls/s at a latency.
+
+    By Little's law, in-flight requests = arrival rate x time in the system.
+
+    Returns:
+        ceil(rate x latency), or None when the latency is unknown.
+    """
+    if latency_seconds is None:
+        return None
+    return math.ceil(rate * latency_seconds)
+
+
+def run_label(run: Mapping[str, Any]) -> str:
+    """Short name of a collect run: set, throttle and workers."""
+    rps = float(run.get("rps") or 0)
+    return f"{run.get('set')} @ {rps:g} rps, {run.get('workers')} workers"
+
+
 def runtime_stats(
     records: Sequence[Mapping[str, Any]],
     runs: Sequence[Mapping[str, Any]],
     disagreement_fraction: Optional[float],
 ) -> dict[str, Any]:
-    """Token and runtime statistics plus the 35,000-email extrapolation."""
+    """Token and runtime statistics plus the 35,000-email extrapolation.
+
+    Runs are not pooled: each run's attempts/s mostly reflects its ``--rps``
+    throttle, so the extrapolation gives one time per run plus the time at the
+    ``MAX_RPS`` ceiling.
+    """
     by_set = {
         name: usage_stats([r for r in records if r["set"] == name]) for name in SETS
     }
     overall = usage_stats(records)
-    wall = sum(float(r.get("wall_seconds") or 0) for r in runs)
     attempts = sum(int(r.get("n_calls_attempted") or 0) for r in runs)
     emails = sum(int(r.get("n_emails") or 0) for r in runs)
-    attempts_per_s = attempts / wall if wall else None
     attempts_per_email = attempts / emails if emails else overall["attempts_per_email"]
+    run_rates = {
+        run_label(r): float(r["attempts_per_second"])
+        for r in runs
+        if r.get("attempts_per_second")
+    }
     mean_in = overall["input_tokens"]["mean"]
     mean_out = overall["output_tokens_mean"]
+
+    def hours(n_attempts: Optional[float], rate: float) -> Optional[float]:
+        return n_attempts / rate / 3600 if n_attempts is not None else None
 
     def scenario(n_calls: float) -> dict[str, Any]:
         n_attempts = n_calls * attempts_per_email if attempts_per_email else None
         return {
             "n_llm_emails": n_calls,
-            "hours_at_measured_rate": (
-                n_attempts / attempts_per_s / 3600
-                if n_attempts is not None and attempts_per_s
-                else None
-            ),
-            "hours_at_cap": n_attempts / MAX_RPS / 3600 if n_attempts else None,
+            "hours_per_run_rate": {
+                label: hours(n_attempts, rate) for label, rate in run_rates.items()
+            },
+            "hours_at_cap": hours(n_attempts, MAX_RPS),
             "input_tokens_total": n_calls * mean_in if mean_in is not None else None,
             "output_tokens_total": n_calls * mean_out if mean_out is not None else None,
         }
 
+    p50 = overall["latency_ms_p50"]
+    p95 = overall["latency_ms_p95"]
+    max_rps_run = max((float(r.get("rps") or 0) for r in runs), default=None)
     return {
         "by_set": by_set,
         "overall": overall,
         "runs": [dict(r) for r in runs],
-        "aggregate_attempts_per_second": attempts_per_s,
-        "aggregate_emails_per_second": emails / wall if wall else None,
+        "run_attempts_per_second": run_rates,
         "attempts_per_email": attempts_per_email,
+        "n_429_total": sum(int(r.get("n_429") or 0) for r in runs),
+        "max_rps_exercised": max_rps_run,
+        "concurrency_needed_at_cap": {
+            "p50": concurrency_needed(MAX_RPS, p50 / 1000 if p50 is not None else None),
+            "p95": concurrency_needed(MAX_RPS, p95 / 1000 if p95 is not None else None),
+        },
         "extrapolation": {
             "n_emails": EXTRAPOLATION_EMAILS,
             "rps_cap": MAX_RPS,
@@ -1610,6 +1646,21 @@ def runtime_stats(
             ),
             "full_corpus_agreement_rate": FULL_CORPUS_AGREEMENT_RATE,
         },
+    }
+
+
+def collection_info(
+    records: Sequence[Mapping[str, Any]], runs: Sequence[Mapping[str, Any]]
+) -> dict[str, Any]:
+    """Requested and resolved model ids and the collection dates."""
+    resolved = Counter(str(r["model"]) for r in records)
+    stamps = sorted(str(r["timestamp"]) for r in records)
+    return {
+        "requested_models": sorted({str(r.get("model")) for r in runs}),
+        "resolved_models": dict(sorted(resolved.items())),
+        "collection_dates": sorted({t[:10] for t in stamps}),
+        "first_timestamp": stamps[0] if stamps else None,
+        "last_timestamp": stamps[-1] if stamps else None,
     }
 
 
@@ -1668,18 +1719,29 @@ def build_report(
             sum(1 for r in gate_rows if r.classic_fallback == r.truth), len(gate_rows)
         ),
     }
+    agree_rows = [r for r in rows if r.path == "classic_only"]
+    agreement: dict[str, Any] = {
+        "n_rows": len(agree_rows),
+        "agreed_answer_correct": sum(1 for r in agree_rows if r.method1 == r.truth),
+        "classic_combined_correct": sum(1 for r in agree_rows if r.classic == r.truth),
+    }
     sweep: list[dict[str, Any]] = []
     choice: Optional[dict[str, Any]] = None
     hybrid_predictions: dict[str, dict[str, str]] = {}
     notes: list[str] = []
     if have_typesafe:
-        answered_gate = [r for r in gate_rows if r.typesafe_status == STATUS_OK]
+        scored_agree = [r for r in agree_rows if r.typesafe_status == STATUS_OK]
+        agreement["typesafe_scored"] = len(scored_agree)
+        agreement["typesafe_correct"] = sum(
+            1 for r in scored_agree if r.typesafe == r.truth
+        )
+        scored_gate = [r for r in gate_rows if r.typesafe_status == STATUS_OK]
         disagreement["typesafe_accuracy"] = proportion(
-            sum(1 for r in answered_gate if r.typesafe == r.truth), len(answered_gate)
+            sum(1 for r in scored_gate if r.typesafe == r.truth), len(scored_gate)
         )
         disagreement["classic_fallback_accuracy_same_rows"] = proportion(
-            sum(1 for r in answered_gate if r.classic_fallback == r.truth),
-            len(answered_gate),
+            sum(1 for r in scored_gate if r.classic_fallback == r.truth),
+            len(scored_gate),
         )
         disagreement["n_typesafe_errors"] = sum(
             1 for r in gate_rows if r.typesafe_status == STATUS_ERROR
@@ -1745,7 +1807,9 @@ def build_report(
             if stratum_sizes is not None
             else None
         ),
+        "collection": collection_info(cache_records, runs),
         "systems": systems,
+        "agreement": agreement,
         "disagreement": disagreement,
         "cutoff_sweep": [
             {k: v for k, v in row.items() if k != "correct"} for row in sweep
@@ -1767,6 +1831,10 @@ def _fmt(value: Any, digits: int = 4) -> str:
     return str(value)
 
 
+def _fmt_count(value: Optional[float]) -> str:
+    return "—" if value is None else f"{value:,.0f}"
+
+
 def _fmt_prop(p: Mapping[str, Any]) -> str:
     if not p["n"]:
         return "— (n=0)"
@@ -1785,6 +1853,15 @@ def render_markdown(report: Mapping[str, Any]) -> str:
         "Intervals are Wilson 95%.",
         "",
     ]
+    col = report["collection"]
+    if col["resolved_models"]:
+        resolved = ", ".join(f"{m} ({n})" for m, n in col["resolved_models"].items())
+        lines += [
+            f"TypeSafe model requested: {', '.join(col['requested_models'])}; "
+            f"resolved (records): {resolved}; collected on "
+            f"{', '.join(col['collection_dates'])}.",
+            "",
+        ]
     for note in report["notes"]:
         lines.append(f"> {note}")
     if report["notes"]:
@@ -1852,12 +1929,28 @@ def render_markdown(report: Mapping[str, Any]) -> str:
     ]
     if "typesafe_accuracy" in d:
         lines += [
-            f"- TypeSafe accuracy (answered rows): {_fmt_prop(d['typesafe_accuracy'])}",
-            f"- Classic fallback on the same answered rows: "
+            f"- TypeSafe accuracy (scored, non-error rows): "
+            f"{_fmt_prop(d['typesafe_accuracy'])}",
+            f"- Classic fallback on the same scored (non-error) rows: "
             f"{_fmt_prop(d['classic_fallback_accuracy_same_rows'])}",
             f"- TypeSafe errors: {d['n_typesafe_errors']}; missing: "
             f"{d['n_typesafe_missing']}",
         ]
+    a = report["agreement"]
+    lines += [
+        "",
+        "## Agreement rows (Method 1 = Method 2; the hybrid skips the LLM)",
+        "",
+        f"Rows: {a['n_rows']}. The agreed answer (what the hybrid returns) is "
+        f"correct on {a['agreed_answer_correct']}/{a['n_rows']}; the classic "
+        f"combined classifier on {a['classic_combined_correct']}/{a['n_rows']}"
+        + (
+            f"; TypeSafe on {a['typesafe_correct']}/{a['typesafe_scored']} "
+            "scored rows."
+            if "typesafe_correct" in a
+            else "."
+        ),
+    ]
     if report["cutoff_sweep"]:
         lines += [
             "",
@@ -1923,15 +2016,36 @@ def render_markdown(report: Mapping[str, Any]) -> str:
                 f"| {_fmt(r.get('attempts_per_second'), 2)} |"
             )
     ex = rt["extrapolation"]
+    run_names = list(rt["run_attempts_per_second"])
+    rate_text = "; ".join(
+        f"{name}: {rate:.2f} attempts/s"
+        for name, rate in rt["run_attempts_per_second"].items()
+    )
+    conc = rt["concurrency_needed_at_cap"]
     lines += [
         "",
-        f"Extrapolation to {ex['n_emails']:,} emails (attempts per email "
-        f"{_fmt(rt['attempts_per_email'], 3)}, measured attempts/s "
-        f"{_fmt(rt['aggregate_attempts_per_second'], 2)}, cap {ex['rps_cap']:g}/s):",
+        f"Extrapolation to {ex['n_emails']:,} emails at "
+        f"{_fmt(rt['attempts_per_email'], 3)} attempts per email, at each run's "
+        f"measured rate ({rate_text or 'no runs'}) and at the {ex['rps_cap']:g} rps "
+        f"ceiling. Sustaining {ex['rps_cap']:g} rps"
+        f" needs about {_fmt(conc['p50'])} concurrent requests at the p50 latency and"
+        f" {_fmt(conc['p95'])} at the p95 latency.",
+    ]
+    if rt["max_rps_exercised"] is not None:
+        lines += [
+            "",
+            f"Measured throughput tracked the --rps throttle, with "
+            f"{rt['n_429_total']} HTTP 429 responses, up to "
+            f"{rt['max_rps_exercised']:g} rps. {ex['rps_cap']:g} rps itself was not "
+            "exercised, so the ceiling row is a bound, not a measurement.",
+        ]
+    lines += [
         "",
-        "| Scenario | LLM emails | Hours at measured rate | Hours at cap "
-        "| Input tokens | Output tokens |",
-        "|---|---|---|---|---|---|",
+        "| Scenario | LLM emails | "
+        + " | ".join(f"Hours at {name}" for name in run_names)
+        + (" | " if run_names else "")
+        + f"Hours at {ex['rps_cap']:g} rps | Input tokens | Output tokens |",
+        "|---|---|" + "---|" * (len(run_names) + 3),
     ]
     scenarios = [
         ("TypeSafe on every email", ex["full_typesafe"]),
@@ -1945,14 +2059,17 @@ def render_markdown(report: Mapping[str, Any]) -> str:
             ex["hybrid_full_corpus_agreement"],
         ),
     ]
-    for title, s in scenarios:
-        if s is None:
+    for title, sc in scenarios:
+        if sc is None:
             continue
+        per_run = "".join(
+            f" {_fmt(sc['hours_per_run_rate'][name], 2)} |" for name in run_names
+        )
         lines.append(
-            f"| {title} | {s['n_llm_emails']:,.0f} "
-            f"| {_fmt(s['hours_at_measured_rate'], 2)} | {_fmt(s['hours_at_cap'], 2)} "
-            f"| {_fmt(s['input_tokens_total'], 0)} "
-            f"| {_fmt(s['output_tokens_total'], 0)} |"
+            f"| {title} | {sc['n_llm_emails']:,.0f} |{per_run} "
+            f"{_fmt(sc['hours_at_cap'], 2)} "
+            f"| {_fmt_count(sc['input_tokens_total'])} "
+            f"| {_fmt_count(sc['output_tokens_total'])} |"
         )
     lines += [
         "",
