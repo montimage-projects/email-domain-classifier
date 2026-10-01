@@ -858,8 +858,9 @@ class HybridClassifier:
             workflow_logger: Optional logger for structured workflow logging.
             llm_confidence_cutoff: Minimum LLM confidence accepted when the
                 classic methods disagree, from 0.0 to 1.0. Defaults to
-                ``llm_config.llm_confidence_cutoff``, or to the provisional
-                ``DEFAULT_LLM_CONFIDENCE_CUTOFF`` without a config.
+                ``llm_config.llm_confidence_cutoff``, or to
+                ``DEFAULT_LLM_CONFIDENCE_CUTOFF`` (0.5, evaluated in #19) without
+                a config.
 
         Raises:
             LLMConfigError: If ``llm_confidence_cutoff`` is outside 0.0 to 1.0.

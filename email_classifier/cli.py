@@ -868,7 +868,8 @@ Output:
         help="Hybrid mode: minimum LLM confidence (0.0-1.0) accepted when the "
         "classic classifiers disagree; lower-confidence answers fall back to "
         "the classic weighted result. Overrides LLM_CONFIDENCE_CUTOFF "
-        "(provisional default 0.5, to be set by issue #19).",
+        "(default 0.5, evaluated for TypeSafe in issue #19; see "
+        "docs/evaluation/typesafe-evaluation.md).",
     )
 
     # =========================================================================

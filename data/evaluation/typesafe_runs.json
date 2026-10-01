@@ -1,0 +1,38 @@
+[
+  {
+    "set": "labeled",
+    "model": "jev-latest",
+    "status": "complete",
+    "started_utc": "2026-10-01T03:28:25+00:00",
+    "finished_utc": "2026-10-01T03:28:43+00:00",
+    "wall_seconds": 18.461,
+    "n_emails": 180,
+    "n_pending": 180,
+    "n_calls_attempted": 180,
+    "n_429": 0,
+    "n_errors": 0,
+    "rps": 10.0,
+    "workers": 4,
+    "max_calls": 260,
+    "emails_per_second": 9.7502,
+    "attempts_per_second": 9.7502
+  },
+  {
+    "set": "sample",
+    "model": "jev-latest",
+    "status": "complete",
+    "started_utc": "2026-10-01T03:28:48+00:00",
+    "finished_utc": "2026-10-01T03:28:59+00:00",
+    "wall_seconds": 10.463,
+    "n_emails": 200,
+    "n_pending": 200,
+    "n_calls_attempted": 200,
+    "n_429": 0,
+    "n_errors": 0,
+    "rps": 20.0,
+    "workers": 8,
+    "max_calls": 250,
+    "emails_per_second": 19.1157,
+    "attempts_per_second": 19.1157
+  }
+]

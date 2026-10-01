@@ -1194,8 +1194,8 @@ class TestHybridConfidenceGate:
         assert llm_steps[0].kwargs["result"] == "finance"
         assert llm_steps[0].kwargs["extra"]["llm_gate"]["accepted"] is False
 
-    def test_cutoff_defaults_to_provisional_value(self):
-        """Without a config or argument, the provisional default is used."""
+    def test_cutoff_defaults_to_evaluated_value(self):
+        """Without a config or argument, the default evaluated in #19 is used."""
         from email_classifier.classifier import HybridClassifier
         from email_classifier.llm.config import DEFAULT_LLM_CONFIDENCE_CUTOFF
 

@@ -290,8 +290,8 @@ class TestLLMConfig:
 class TestLLMConfidenceCutoff:
     """Configuration of the hybrid workflow's LLM confidence cutoff (#18)."""
 
-    def test_default_cutoff_is_provisional_default(self):
-        """The config uses the provisional default when no cutoff is given."""
+    def test_default_cutoff_is_evaluated_default(self):
+        """The config uses the default evaluated in #19 when no cutoff is given."""
         config = LLMConfig(provider=LLMProvider.OLLAMA, model="llama3.2")
         assert config.llm_confidence_cutoff == DEFAULT_LLM_CONFIDENCE_CUTOFF
 
