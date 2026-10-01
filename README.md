@@ -132,7 +132,7 @@ pip install -e ".[groq]"
 # For OpenRouter (access to multiple models)
 pip install -e ".[openrouter]"
 
-# For TypeSafe (one Choice question over the domains; no LangChain needed)
+# For hosted TypeSafe (one Choice question; its SDK is required)
 pip install -e ".[typesafe]"
 
 # Install all providers
@@ -156,9 +156,16 @@ pip install -e ".[all-llm]"
    LLM_PROVIDER=google
    GOOGLE_API_KEY=your-api-key
 
-   # For TypeSafe (model defaults to jev-latest)
+   # For the local System One endpoint (no SDK or API key required)
    LLM_PROVIDER=typesafe
-   TYPESAFE_API_KEY=your-api-key
+   LLM_MODEL=kev-latest
+   TYPESAFE_BASE_URL=http://100.117.100.54:8009/v1
+   LLM_TIMEOUT=30
+
+   # Or use hosted TypeSafe: omit TYPESAFE_BASE_URL and install .[typesafe]
+   # LLM_PROVIDER=typesafe
+   # LLM_MODEL=jev-latest
+   # TYPESAFE_API_KEY=your-api-key
 
    # For other providers, set the appropriate API key
    ```
@@ -168,8 +175,13 @@ TypeSafe one Choice question over the ten domains plus `none`, using the option
 text from the [domain definition](docs/design/domain-profiles.md#domain-definition).
 The chosen option becomes the domain (`none` gives no domain), the Choice
 probabilities of the ten domains become the scores, and TypeSafe's own
-confidence becomes the confidence. Every other provider keeps the LangChain
-`LLMClassifier`.
+confidence becomes the confidence. Set `TYPESAFE_BASE_URL` for a custom System
+One server; this path uses the standard-library HTTP transport and may omit
+`TYPESAFE_API_KEY` (a key, if provided, is sent as Bearer auth). The local
+endpoint is unauthenticated and reachable only on the LAN/Tailscale tailnet;
+transport failures use the existing classic fallback and never switch to cloud.
+Without a custom URL the hosted TypeSafe SDK and `TYPESAFE_API_KEY` are required.
+Every other provider keeps the LangChain `LLMClassifier`.
 
 ### Usage
 

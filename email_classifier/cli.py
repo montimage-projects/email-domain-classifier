@@ -148,16 +148,20 @@ def verify_prerequisites(
                 ui.print_info(f"        Model: {llm_config.model}")
 
             if llm_config.provider == LLMProvider.TYPESAFE:
-                # TypeSafe is not a LangChain provider: check its SDK instead.
-                # LLMConfig has already checked TYPESAFE_API_KEY is set.
-                available, _ = check_provider_available(LLMProvider.TYPESAFE)
-                if not available:
-                    errors.append(
-                        "Provider 'typesafe' requires package 'typesafe-sdk'. "
-                        f"Install with: {llm_config.get_install_command()}"
-                    )
-                elif not quiet:
-                    ui.print_success("  [3/4] LLM configuration: OK")
+                if llm_config.typesafe_base_url:
+                    # The custom System One transport uses only the standard library.
+                    if not quiet:
+                        ui.print_success("  [3/4] LLM configuration: OK")
+                else:
+                    # Hosted TypeSafe uses the optional SDK and requires its API key.
+                    available, _ = check_provider_available(LLMProvider.TYPESAFE)
+                    if not available:
+                        errors.append(
+                            "Provider 'typesafe' requires package 'typesafe-sdk'. "
+                            f"Install with: {llm_config.get_install_command()}"
+                        )
+                    elif not quiet:
+                        ui.print_success("  [3/4] LLM configuration: OK")
             else:
                 # Try to create the LLM instance to verify provider is installed
                 try:

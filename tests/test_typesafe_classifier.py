@@ -95,6 +95,50 @@ def make_client(response: Any) -> MagicMock:
     return client
 
 
+def custom_response_data(
+    choice: str = "finance",
+    probabilities: Optional[dict[str, Any]] = None,
+    confidence: Any = 0.8,
+    answer_type: str = "choice",
+) -> dict[str, Any]:
+    """Build the JSON shape returned by the custom System One transport."""
+    answer_probabilities: dict[str, Any] = (
+        dict(probabilities) if probabilities is not None else finance_probabilities()
+    )
+    return {
+        "model": "kev-latest",
+        "answers": {
+            QUESTION_ID: {
+                "type": answer_type,
+                "choice": choice,
+                "probabilities": answer_probabilities,
+                "confidence": confidence,
+            }
+        },
+        "usage": {"input_tokens": 12, "output_tokens": 3},
+    }
+
+
+class MockHTTPResponse:
+    """Context manager matching the urllib response interface."""
+
+    def __init__(self, body: bytes, status: int = 200) -> None:
+        self.body = body
+        self.status = status
+
+    def __enter__(self) -> "MockHTTPResponse":
+        return self
+
+    def __exit__(self, *args: Any) -> None:
+        return None
+
+    def getcode(self) -> int:
+        return self.status
+
+    def read(self) -> bytes:
+        return self.body
+
+
 def finance_probabilities() -> dict[str, float]:
     """Probabilities over all 11 options, mostly finance."""
     probabilities = {name: 0.0 for name in DOMAIN_OPTIONS}
@@ -266,8 +310,119 @@ class TestTypeSafeClassifier:
         assert not hasattr(TypeSafeClassifier, "_normalize_domain_name")
 
 
+class TestCustomHTTPTransport:
+    """Custom System One requests use urllib and preserve classifier behavior."""
+
+    def _config(self, **overrides: Any) -> LLMConfig:
+        values: dict[str, Any] = {
+            "provider": LLMProvider.TYPESAFE,
+            "model": "kev-latest",
+            "typesafe_base_url": "http://systemone.example/v1///",
+        }
+        values.update(overrides)
+        return LLMConfig(**values)
+
+    def test_keyless_request_has_exact_url_model_state_and_question(self):
+        email = make_email()
+        response = MockHTTPResponse(json.dumps(custom_response_data()).encode())
+        classifier = TypeSafeClassifier(self._config(timeout=17))
+
+        with (
+            patch(
+                "email_classifier.llm.typesafe_classifier.urlopen",
+                return_value=response,
+            ) as mock_urlopen,
+            patch.dict("sys.modules", {"typesafe_sdk": None}),
+        ):
+            result = classifier.classify(email)
+
+        request = mock_urlopen.call_args.args[0]
+        assert mock_urlopen.call_args.kwargs == {"timeout": 17}
+        assert request.full_url == "http://systemone.example/v1/systemone"
+        assert request.method == "POST"
+        assert request.get_header("Content-type") == "application/json"
+        assert request.get_header("Authorization") is None
+        body = json.loads(request.data.decode("utf-8"))
+        assert body == {
+            "model": "kev-latest",
+            "state": build_state(email),
+            "questions": {QUESTION_ID: build_domain_question()},
+        }
+        assert result.domain == "finance"
+        assert result.details is not None
+        assert result.details["model"] == "kev-latest"
+
+    def test_optional_api_key_is_sent_as_bearer(self):
+        response = MockHTTPResponse(json.dumps(custom_response_data()).encode())
+        classifier = TypeSafeClassifier(self._config(api_key=TEST_KEY))
+
+        with patch(
+            "email_classifier.llm.typesafe_classifier.urlopen",
+            return_value=response,
+        ) as mock_urlopen:
+            result = classifier.classify(make_email())
+
+        request = mock_urlopen.call_args.args[0]
+        assert request.get_header("Authorization") == f"Bearer {TEST_KEY}"
+        assert result.domain == "finance"
+
+    @pytest.mark.parametrize("failure", ["http", "timeout", "malformed_json"])
+    def test_transport_failures_return_fallback(self, failure: str):
+        if failure == "http":
+            transport = MockHTTPResponse(b"server failure", status=503)
+        elif failure == "timeout":
+            transport = TimeoutError("request timed out")
+        else:
+            transport = MockHTTPResponse(b"not json")
+
+        with patch(
+            "email_classifier.llm.typesafe_classifier.urlopen",
+            side_effect=transport if isinstance(transport, Exception) else None,
+            return_value=None if isinstance(transport, Exception) else transport,
+        ):
+            result = TypeSafeClassifier(self._config()).classify(make_email())
+
+        assert result.domain is None
+        assert result.confidence == 0.0
+        assert result.details is not None
+        assert result.details["fallback"] is True
+
+    @pytest.mark.parametrize(
+        "response",
+        [
+            custom_response_data(answer_type="score"),
+            custom_response_data(choice="unrecognized"),
+            custom_response_data(confidence=float("nan")),
+            custom_response_data(confidence=1.01),
+            custom_response_data(
+                probabilities={**finance_probabilities(), "finance": float("inf")}
+            ),
+            custom_response_data(
+                probabilities={**finance_probabilities(), "finance": -0.1}
+            ),
+        ],
+    )
+    def test_corrupt_custom_decisions_return_fallback(self, response: dict[str, Any]):
+        http_response = MockHTTPResponse(json.dumps(response).encode())
+        with patch(
+            "email_classifier.llm.typesafe_classifier.urlopen",
+            return_value=http_response,
+        ):
+            result = TypeSafeClassifier(self._config()).classify(make_email())
+
+        assert result.domain is None
+        assert result.confidence == 0.0
+        assert result.details is not None
+        assert result.details["fallback"] is True
+
+
 class TestTypeSafeConfig:
     """Selecting TypeSafe through LLMConfig."""
+
+    def test_positional_temperature_argument_keeps_legacy_position(self):
+        config = LLMConfig(LLMProvider.OLLAMA, "llama3.2", None, 0.7)
+        assert config.temperature == pytest.approx(0.7)
+        assert config.typesafe_base_url is None
 
     def test_provider_defaults(self):
         assert LLMProvider.TYPESAFE.value == "typesafe"
@@ -278,6 +433,28 @@ class TestTypeSafeConfig:
         with pytest.raises(LLMConfigError, match="TYPESAFE_API_KEY"):
             LLMConfig(provider=LLMProvider.TYPESAFE, model="jev-latest")
 
+    def test_custom_http_endpoint_allows_optional_api_key(self):
+        config = LLMConfig(
+            provider=LLMProvider.TYPESAFE,
+            model="kev-latest",
+            typesafe_base_url="http://systemone.example/v1",
+        )
+        assert config.api_key is None
+        assert config.typesafe_base_url == "http://systemone.example/v1"
+
+    @pytest.mark.parametrize(
+        "url",
+        ["ftp://systemone.example/v1", "http:///v1", "https://example.com:bad/v1"],
+    )
+    def test_custom_endpoint_requires_http_url(self, url: str):
+        with pytest.raises(LLMConfigError, match="TYPESAFE_BASE_URL"):
+            LLMConfig(
+                provider=LLMProvider.TYPESAFE,
+                model="kev-latest",
+                api_key=TEST_KEY,
+                typesafe_base_url=url,
+            )
+
     @patch("email_classifier.llm.config.load_dotenv")
     def test_from_env_reads_typesafe_key(self, _mock_load_dotenv):
         env = {"LLM_PROVIDER": "typesafe", "TYPESAFE_API_KEY": TEST_KEY}
@@ -287,6 +464,30 @@ class TestTypeSafeConfig:
         assert config.model == "jev-latest"
         assert config.api_key == TEST_KEY
         assert TEST_KEY not in repr(config)
+
+    @patch("email_classifier.llm.config.load_dotenv")
+    def test_from_env_reads_keyless_custom_endpoint(self, _mock_load_dotenv):
+        env = {
+            "LLM_PROVIDER": "typesafe",
+            "LLM_MODEL": "kev-latest",
+            "TYPESAFE_BASE_URL": "http://192.168.0.124:8009/v1",
+            "LLM_TIMEOUT": "30",
+        }
+        with patch.dict(os.environ, env, clear=True):
+            config = LLMConfig.from_env()
+        assert config.provider == LLMProvider.TYPESAFE
+        assert config.model == "kev-latest"
+        assert config.typesafe_base_url == "http://192.168.0.124:8009/v1"
+        assert config.timeout == 30
+        assert config.api_key is None
+
+    def test_hosted_path_still_requires_key_without_custom_url(self):
+        with pytest.raises(LLMConfigError, match="TYPESAFE_API_KEY"):
+            LLMConfig(
+                provider=LLMProvider.TYPESAFE,
+                model="jev-latest",
+                typesafe_base_url=None,
+            )
 
     def test_install_command(self):
         assert make_config().get_install_command() == (
@@ -359,7 +560,7 @@ class TestVerifyPrerequisitesTypeSafe:
 
     def _run(
         self, tmp_path: Path, available: bool, env: dict[str, str]
-    ) -> tuple[bool, list[str], Optional[LLMConfig], MagicMock]:
+    ) -> tuple[bool, list[str], Optional[LLMConfig], MagicMock, MagicMock]:
         from email_classifier.cli import verify_prerequisites
 
         input_path = tmp_path / "emails.csv"
@@ -372,34 +573,51 @@ class TestVerifyPrerequisitesTypeSafe:
             patch(
                 "email_classifier.llm.providers.check_provider_available",
                 return_value=(available, None if available else "missing"),
-            ),
+            ) as check_provider,
         ):
             success, errors, config = verify_prerequisites(
                 input_path, tmp_path / "out", use_llm=True, ui=ui
             )
-        return success, errors, config, ui
+        return success, errors, config, ui, check_provider
 
     def test_ok_when_key_and_sdk_present(self, tmp_path):
         env = {"LLM_PROVIDER": "typesafe", "TYPESAFE_API_KEY": TEST_KEY}
-        success, errors, config, ui = self._run(tmp_path, True, env)
+        success, errors, config, ui, check_provider = self._run(tmp_path, True, env)
         assert success is True
         assert errors == []
         assert config is not None
         assert config.provider == LLMProvider.TYPESAFE
         printed = json.dumps([str(c) for c in ui.mock_calls])
         assert TEST_KEY not in printed
+        check_provider.assert_called_once_with(LLMProvider.TYPESAFE)
+
+    def test_custom_endpoint_skips_sdk_prerequisite(self, tmp_path):
+        env = {
+            "LLM_PROVIDER": "typesafe",
+            "LLM_MODEL": "kev-latest",
+            "TYPESAFE_BASE_URL": "http://systemone.example/v1",
+        }
+        success, errors, config, _, check_provider = self._run(tmp_path, False, env)
+        assert success is True
+        assert errors == []
+        assert config is not None
+        assert config.api_key is None
+        check_provider.assert_not_called()
 
     def test_error_when_sdk_missing(self, tmp_path):
         env = {"LLM_PROVIDER": "typesafe", "TYPESAFE_API_KEY": TEST_KEY}
-        success, errors, _, _ = self._run(tmp_path, False, env)
+        success, errors, _, _, _ = self._run(tmp_path, False, env)
         assert success is False
         assert any("typesafe-sdk" in e for e in errors)
         assert any("email-domain-classifier[typesafe]" in e for e in errors)
 
     def test_error_when_key_missing(self, tmp_path):
-        success, errors, _, _ = self._run(tmp_path, True, {"LLM_PROVIDER": "typesafe"})
+        success, errors, _, _, check_provider = self._run(
+            tmp_path, True, {"LLM_PROVIDER": "typesafe"}
+        )
         assert success is False
         assert any("TYPESAFE_API_KEY" in e for e in errors)
+        check_provider.assert_not_called()
 
 
 class TestRealSdkContract:
