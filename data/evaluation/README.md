@@ -11,6 +11,9 @@ of record keys and value shapes.
 | `typesafe_runs.json` | `collect` | One summary per run: set, start and end times, wall time, emails, HTTP attempts (retries included), 429 responses, errors, `--rps`, `--workers`, achieved emails/s and attempts/s |
 | `typesafe_evaluation_results.json` | `report` | Every metric, the cutoff sweep, the cutoff choice, the token and runtime statistics, and per-row predictions keyed by `email_id` |
 
+The write-up of the results is
+[`docs/evaluation/typesafe-evaluation.md`](../../docs/evaluation/typesafe-evaluation.md).
+
 `email_id` is the id used in `data/ground-truth/ceas_08_domain_labels.csv`: the
 first 16 hex digits of SHA-256 over sender, date and subject.
 
@@ -28,6 +31,9 @@ python scripts/evaluate_classifiers.py collect --set sample --sample-size 100
 # Offline: no key, no network.
 python scripts/evaluate_classifiers.py report --md-out /tmp/evaluation.md
 ```
+
+`report` re-runs itself with `PYTHONHASHSEED=0`, because the classic methods break
+score ties in set order; with it pinned the results file is reproducible.
 
 `collect` resumes: it skips every email that already has a successful record in
 the cache. `--rps` (default 10, at most 40) limits HTTP attempts per second and
