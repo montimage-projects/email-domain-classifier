@@ -1,0 +1,5011 @@
+{
+  "n_labeled": 180,
+  "typesafe_available": true,
+  "incumbent_cutoff": 0.5,
+  "min_support": 5,
+  "scoring_rule": "None and 'unsure' count as a 'none' prediction; failed TypeSafe calls are errors and are not scored.",
+  "stratum_definition": "(source_file, CEAS_08 label)",
+  "stratum_sizes": {
+    "email_education.csv|0": 1081,
+    "email_education.csv|1": 1024,
+    "email_finance.csv|0": 489,
+    "email_finance.csv|1": 687,
+    "email_government.csv|0": 1732,
+    "email_government.csv|1": 809,
+    "email_healthcare.csv|0": 360,
+    "email_healthcare.csv|1": 2031,
+    "email_hr.csv|0": 321,
+    "email_hr.csv|1": 492,
+    "email_logistics.csv|0": 487,
+    "email_logistics.csv|1": 656,
+    "email_retail.csv|0": 762,
+    "email_retail.csv|1": 4022,
+    "email_social_media.csv|0": 4447,
+    "email_social_media.csv|1": 5577,
+    "email_technology.csv|0": 3288,
+    "email_technology.csv|1": 2084,
+    "email_telecommunications.csv|0": 1850,
+    "email_telecommunications.csv|1": 837,
+    "email_unsure.csv|0": 288,
+    "email_unsure.csv|1": 1534
+  },
+  "python_hash_seed": "0",
+  "classic_reproduces_source_file": 173,
+  "collection": {
+    "requested_models": [
+      "jev-latest"
+    ],
+    "resolved_models": {
+      "jev-1.13.0": 380
+    },
+    "collection_dates": [
+      "2026-10-01"
+    ],
+    "first_timestamp": "2026-10-01T03:28:25+00:00",
+    "last_timestamp": "2026-10-01T03:28:59+00:00"
+  },
+  "systems": {
+    "method1": {
+      "strict_accuracy": {
+        "k": 25,
+        "n": 180,
+        "rate": 0.1389,
+        "ci_low": 0.0959,
+        "ci_high": 0.197
+      },
+      "answer_rate": {
+        "k": 165,
+        "n": 180,
+        "rate": 0.9167,
+        "ci_low": 0.8671,
+        "ci_high": 0.9489
+      },
+      "answered_accuracy": {
+        "k": 19,
+        "n": 165,
+        "rate": 0.1152,
+        "ci_low": 0.075,
+        "ci_high": 0.1728
+      },
+      "none_precision": 0.4,
+      "none_recall": 0.125,
+      "macro_f1": 0.1872,
+      "macro_f1_classes": [
+        "education",
+        "healthcare",
+        "none",
+        "retail",
+        "technology"
+      ],
+      "per_class": {
+        "education": {
+          "precision": 0.2,
+          "recall": 0.3333,
+          "f1": 0.25,
+          "support": 6,
+          "predicted": 10,
+          "insufficient_support": false
+        },
+        "finance": {
+          "precision": 0.0455,
+          "recall": 1.0,
+          "f1": 0.087,
+          "support": 1,
+          "predicted": 22,
+          "insufficient_support": true
+        },
+        "government": {
+          "precision": 0.0,
+          "recall": null,
+          "f1": 0.0,
+          "support": 0,
+          "predicted": 19,
+          "insufficient_support": true
+        },
+        "healthcare": {
+          "precision": 0.3043,
+          "recall": 0.2,
+          "f1": 0.2414,
+          "support": 35,
+          "predicted": 23,
+          "insufficient_support": false
+        },
+        "hr": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 1,
+          "predicted": 16,
+          "insufficient_support": true
+        },
+        "logistics": {
+          "precision": 0.0,
+          "recall": null,
+          "f1": 0.0,
+          "support": 0,
+          "predicted": 20,
+          "insufficient_support": true
+        },
+        "none": {
+          "precision": 0.4,
+          "recall": 0.125,
+          "f1": 0.1905,
+          "support": 48,
+          "predicted": 15,
+          "insufficient_support": false
+        },
+        "retail": {
+          "precision": 0.1176,
+          "recall": 0.1053,
+          "f1": 0.1111,
+          "support": 19,
+          "predicted": 17,
+          "insufficient_support": false
+        },
+        "social_media": {
+          "precision": 0.0769,
+          "recall": 1.0,
+          "f1": 0.1429,
+          "support": 1,
+          "predicted": 13,
+          "insufficient_support": true
+        },
+        "technology": {
+          "precision": 0.4,
+          "recall": 0.087,
+          "f1": 0.1429,
+          "support": 69,
+          "predicted": 15,
+          "insufficient_support": false
+        },
+        "telecommunications": {
+          "precision": 0.0,
+          "recall": null,
+          "f1": 0.0,
+          "support": 0,
+          "predicted": 10,
+          "insufficient_support": true
+        }
+      },
+      "confusion": {
+        "education": {
+          "education": 2,
+          "healthcare": 2,
+          "technology": 1,
+          "telecommunications": 1
+        },
+        "finance": {
+          "finance": 1
+        },
+        "healthcare": {
+          "finance": 2,
+          "healthcare": 7,
+          "hr": 6,
+          "logistics": 6,
+          "none": 3,
+          "retail": 7,
+          "technology": 1,
+          "telecommunications": 3
+        },
+        "hr": {
+          "government": 1
+        },
+        "none": {
+          "finance": 12,
+          "government": 7,
+          "healthcare": 4,
+          "hr": 5,
+          "logistics": 3,
+          "none": 6,
+          "retail": 1,
+          "social_media": 5,
+          "technology": 4,
+          "telecommunications": 1
+        },
+        "retail": {
+          "education": 5,
+          "finance": 2,
+          "government": 2,
+          "healthcare": 1,
+          "logistics": 1,
+          "none": 3,
+          "retail": 2,
+          "technology": 3
+        },
+        "social_media": {
+          "social_media": 1
+        },
+        "technology": {
+          "education": 3,
+          "finance": 5,
+          "government": 9,
+          "healthcare": 9,
+          "hr": 5,
+          "logistics": 10,
+          "none": 3,
+          "retail": 7,
+          "social_media": 7,
+          "technology": 6,
+          "telecommunications": 5
+        }
+      },
+      "n_rows": 180,
+      "n_scored": 180,
+      "n_errors": 0,
+      "n_missing": 0,
+      "by_label": {
+        "spam_1": {
+          "k": 13,
+          "n": 90,
+          "rate": 0.1444,
+          "ci_low": 0.0864,
+          "ci_high": 0.2316
+        },
+        "legit_0": {
+          "k": 12,
+          "n": 90,
+          "rate": 0.1333,
+          "ci_low": 0.0779,
+          "ci_high": 0.2187
+        }
+      },
+      "by_ambiguous": {
+        "true": {
+          "k": 5,
+          "n": 32,
+          "rate": 0.1562,
+          "ci_low": 0.0686,
+          "ci_high": 0.3175
+        },
+        "false": {
+          "k": 20,
+          "n": 148,
+          "rate": 0.1351,
+          "ci_low": 0.0892,
+          "ci_high": 0.1995
+        }
+      },
+      "by_verified": {
+        "true": {
+          "k": 0,
+          "n": 0,
+          "rate": null,
+          "ci_low": null,
+          "ci_high": null
+        },
+        "false": {
+          "k": 25,
+          "n": 180,
+          "rate": 0.1389,
+          "ci_low": 0.0959,
+          "ci_high": 0.197
+        }
+      },
+      "stratum_weighted_accuracy": 0.1843
+    },
+    "method2": {
+      "strict_accuracy": {
+        "k": 38,
+        "n": 180,
+        "rate": 0.2111,
+        "ci_low": 0.1578,
+        "ci_high": 0.2764
+      },
+      "answer_rate": {
+        "k": 180,
+        "n": 180,
+        "rate": 1.0,
+        "ci_low": 0.9791,
+        "ci_high": 1.0
+      },
+      "answered_accuracy": {
+        "k": 38,
+        "n": 180,
+        "rate": 0.2111,
+        "ci_low": 0.1578,
+        "ci_high": 0.2764
+      },
+      "none_precision": null,
+      "none_recall": 0.0,
+      "macro_f1": 0.1051,
+      "macro_f1_classes": [
+        "education",
+        "healthcare",
+        "none",
+        "retail",
+        "technology"
+      ],
+      "per_class": {
+        "education": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 6,
+          "predicted": 3,
+          "insufficient_support": false
+        },
+        "finance": {
+          "precision": 0.3333,
+          "recall": 1.0,
+          "f1": 0.5,
+          "support": 1,
+          "predicted": 3,
+          "insufficient_support": true
+        },
+        "healthcare": {
+          "precision": null,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 35,
+          "predicted": 0,
+          "insufficient_support": false
+        },
+        "hr": {
+          "precision": null,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 1,
+          "predicted": 0,
+          "insufficient_support": true
+        },
+        "none": {
+          "precision": null,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 48,
+          "predicted": 0,
+          "insufficient_support": false
+        },
+        "retail": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 19,
+          "predicted": 26,
+          "insufficient_support": false
+        },
+        "social_media": {
+          "precision": 0.0125,
+          "recall": 1.0,
+          "f1": 0.0247,
+          "support": 1,
+          "predicted": 80,
+          "insufficient_support": true
+        },
+        "technology": {
+          "precision": 0.5294,
+          "recall": 0.5217,
+          "f1": 0.5255,
+          "support": 69,
+          "predicted": 68,
+          "insufficient_support": false
+        }
+      },
+      "confusion": {
+        "education": {
+          "retail": 4,
+          "technology": 2
+        },
+        "finance": {
+          "finance": 1
+        },
+        "healthcare": {
+          "retail": 1,
+          "social_media": 18,
+          "technology": 16
+        },
+        "hr": {
+          "technology": 1
+        },
+        "none": {
+          "retail": 11,
+          "social_media": 31,
+          "technology": 6
+        },
+        "retail": {
+          "social_media": 12,
+          "technology": 7
+        },
+        "social_media": {
+          "social_media": 1
+        },
+        "technology": {
+          "education": 3,
+          "finance": 2,
+          "retail": 10,
+          "social_media": 18,
+          "technology": 36
+        }
+      },
+      "n_rows": 180,
+      "n_scored": 180,
+      "n_errors": 0,
+      "n_missing": 0,
+      "by_label": {
+        "spam_1": {
+          "k": 1,
+          "n": 90,
+          "rate": 0.0111,
+          "ci_low": 0.002,
+          "ci_high": 0.0603
+        },
+        "legit_0": {
+          "k": 37,
+          "n": 90,
+          "rate": 0.4111,
+          "ci_low": 0.3151,
+          "ci_high": 0.5144
+        }
+      },
+      "by_ambiguous": {
+        "true": {
+          "k": 1,
+          "n": 32,
+          "rate": 0.0312,
+          "ci_low": 0.0055,
+          "ci_high": 0.1574
+        },
+        "false": {
+          "k": 37,
+          "n": 148,
+          "rate": 0.25,
+          "ci_low": 0.1872,
+          "ci_high": 0.3255
+        }
+      },
+      "by_verified": {
+        "true": {
+          "k": 0,
+          "n": 0,
+          "rate": null,
+          "ci_low": null,
+          "ci_high": null
+        },
+        "false": {
+          "k": 38,
+          "n": 180,
+          "rate": 0.2111,
+          "ci_low": 0.1578,
+          "ci_high": 0.2764
+        }
+      },
+      "stratum_weighted_accuracy": 0.2153
+    },
+    "classic": {
+      "strict_accuracy": {
+        "k": 29,
+        "n": 180,
+        "rate": 0.1611,
+        "ci_low": 0.1146,
+        "ci_high": 0.2218
+      },
+      "answer_rate": {
+        "k": 160,
+        "n": 180,
+        "rate": 0.8889,
+        "ci_low": 0.8346,
+        "ci_high": 0.9269
+      },
+      "answered_accuracy": {
+        "k": 20,
+        "n": 160,
+        "rate": 0.125,
+        "ci_low": 0.0824,
+        "ci_high": 0.1852
+      },
+      "none_precision": 0.45,
+      "none_recall": 0.1875,
+      "macro_f1": 0.1998,
+      "macro_f1_classes": [
+        "education",
+        "healthcare",
+        "none",
+        "retail",
+        "technology"
+      ],
+      "per_class": {
+        "education": {
+          "precision": 0.125,
+          "recall": 0.3333,
+          "f1": 0.1818,
+          "support": 6,
+          "predicted": 16,
+          "insufficient_support": false
+        },
+        "finance": {
+          "precision": 0.0588,
+          "recall": 1.0,
+          "f1": 0.1111,
+          "support": 1,
+          "predicted": 17,
+          "insufficient_support": true
+        },
+        "government": {
+          "precision": 0.0,
+          "recall": null,
+          "f1": 0.0,
+          "support": 0,
+          "predicted": 15,
+          "insufficient_support": true
+        },
+        "healthcare": {
+          "precision": 0.4375,
+          "recall": 0.2,
+          "f1": 0.2745,
+          "support": 35,
+          "predicted": 16,
+          "insufficient_support": false
+        },
+        "hr": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 1,
+          "predicted": 16,
+          "insufficient_support": true
+        },
+        "logistics": {
+          "precision": 0.0,
+          "recall": null,
+          "f1": 0.0,
+          "support": 0,
+          "predicted": 20,
+          "insufficient_support": true
+        },
+        "none": {
+          "precision": 0.45,
+          "recall": 0.1875,
+          "f1": 0.2647,
+          "support": 48,
+          "predicted": 20,
+          "insufficient_support": false
+        },
+        "retail": {
+          "precision": 0.1176,
+          "recall": 0.1053,
+          "f1": 0.1111,
+          "support": 19,
+          "predicted": 17,
+          "insufficient_support": false
+        },
+        "social_media": {
+          "precision": 0.0625,
+          "recall": 1.0,
+          "f1": 0.1176,
+          "support": 1,
+          "predicted": 16,
+          "insufficient_support": true
+        },
+        "technology": {
+          "precision": 0.4667,
+          "recall": 0.1014,
+          "f1": 0.1667,
+          "support": 69,
+          "predicted": 15,
+          "insufficient_support": false
+        },
+        "telecommunications": {
+          "precision": 0.0,
+          "recall": null,
+          "f1": 0.0,
+          "support": 0,
+          "predicted": 12,
+          "insufficient_support": true
+        }
+      },
+      "confusion": {
+        "education": {
+          "education": 2,
+          "healthcare": 2,
+          "technology": 1,
+          "telecommunications": 1
+        },
+        "finance": {
+          "finance": 1
+        },
+        "healthcare": {
+          "finance": 2,
+          "healthcare": 7,
+          "hr": 6,
+          "logistics": 6,
+          "none": 3,
+          "retail": 7,
+          "technology": 1,
+          "telecommunications": 3
+        },
+        "hr": {
+          "government": 1
+        },
+        "none": {
+          "education": 2,
+          "finance": 8,
+          "government": 5,
+          "healthcare": 2,
+          "hr": 4,
+          "logistics": 3,
+          "none": 9,
+          "retail": 1,
+          "social_media": 8,
+          "technology": 4,
+          "telecommunications": 2
+        },
+        "retail": {
+          "education": 6,
+          "finance": 1,
+          "government": 2,
+          "logistics": 1,
+          "none": 3,
+          "retail": 2,
+          "technology": 2,
+          "telecommunications": 2
+        },
+        "social_media": {
+          "social_media": 1
+        },
+        "technology": {
+          "education": 6,
+          "finance": 5,
+          "government": 7,
+          "healthcare": 5,
+          "hr": 6,
+          "logistics": 10,
+          "none": 5,
+          "retail": 7,
+          "social_media": 7,
+          "technology": 7,
+          "telecommunications": 4
+        }
+      },
+      "n_rows": 180,
+      "n_scored": 180,
+      "n_errors": 0,
+      "n_missing": 0,
+      "by_label": {
+        "spam_1": {
+          "k": 13,
+          "n": 90,
+          "rate": 0.1444,
+          "ci_low": 0.0864,
+          "ci_high": 0.2316
+        },
+        "legit_0": {
+          "k": 16,
+          "n": 90,
+          "rate": 0.1778,
+          "ci_low": 0.1125,
+          "ci_high": 0.2694
+        }
+      },
+      "by_ambiguous": {
+        "true": {
+          "k": 6,
+          "n": 32,
+          "rate": 0.1875,
+          "ci_low": 0.0889,
+          "ci_high": 0.3531
+        },
+        "false": {
+          "k": 23,
+          "n": 148,
+          "rate": 0.1554,
+          "ci_low": 0.1058,
+          "ci_high": 0.2224
+        }
+      },
+      "by_verified": {
+        "true": {
+          "k": 0,
+          "n": 0,
+          "rate": null,
+          "ci_low": null,
+          "ci_high": null
+        },
+        "false": {
+          "k": 29,
+          "n": 180,
+          "rate": 0.1611,
+          "ci_low": 0.1146,
+          "ci_high": 0.2218
+        }
+      },
+      "stratum_weighted_accuracy": 0.1986
+    },
+    "typesafe": {
+      "strict_accuracy": {
+        "k": 136,
+        "n": 180,
+        "rate": 0.7556,
+        "ci_low": 0.6879,
+        "ci_high": 0.8126
+      },
+      "answer_rate": {
+        "k": 111,
+        "n": 180,
+        "rate": 0.6167,
+        "ci_low": 0.5439,
+        "ci_high": 0.6846
+      },
+      "answered_accuracy": {
+        "k": 97,
+        "n": 111,
+        "rate": 0.8739,
+        "ci_low": 0.7994,
+        "ci_high": 0.9234
+      },
+      "none_precision": 0.5652,
+      "none_recall": 0.8125,
+      "macro_f1": 0.7931,
+      "macro_f1_classes": [
+        "education",
+        "healthcare",
+        "none",
+        "retail",
+        "technology"
+      ],
+      "per_class": {
+        "education": {
+          "precision": 0.8333,
+          "recall": 0.8333,
+          "f1": 0.8333,
+          "support": 6,
+          "predicted": 6,
+          "insufficient_support": false
+        },
+        "finance": {
+          "precision": 0.5,
+          "recall": 1.0,
+          "f1": 0.6667,
+          "support": 1,
+          "predicted": 2,
+          "insufficient_support": true
+        },
+        "healthcare": {
+          "precision": 0.7619,
+          "recall": 0.9143,
+          "f1": 0.8312,
+          "support": 35,
+          "predicted": 42,
+          "insufficient_support": false
+        },
+        "hr": {
+          "precision": 0.5,
+          "recall": 1.0,
+          "f1": 0.6667,
+          "support": 1,
+          "predicted": 2,
+          "insufficient_support": true
+        },
+        "none": {
+          "precision": 0.5652,
+          "recall": 0.8125,
+          "f1": 0.6667,
+          "support": 48,
+          "predicted": 69,
+          "insufficient_support": false
+        },
+        "retail": {
+          "precision": 0.9412,
+          "recall": 0.8421,
+          "f1": 0.8889,
+          "support": 19,
+          "predicted": 17,
+          "insufficient_support": false
+        },
+        "social_media": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 1,
+          "predicted": 1,
+          "insufficient_support": true
+        },
+        "technology": {
+          "precision": 1.0,
+          "recall": 0.5942,
+          "f1": 0.7455,
+          "support": 69,
+          "predicted": 41,
+          "insufficient_support": false
+        }
+      },
+      "confusion": {
+        "education": {
+          "education": 5,
+          "hr": 1
+        },
+        "finance": {
+          "finance": 1
+        },
+        "healthcare": {
+          "healthcare": 32,
+          "none": 3
+        },
+        "hr": {
+          "hr": 1
+        },
+        "none": {
+          "finance": 1,
+          "healthcare": 7,
+          "none": 39,
+          "retail": 1
+        },
+        "retail": {
+          "healthcare": 3,
+          "retail": 16
+        },
+        "social_media": {
+          "social_media": 1
+        },
+        "technology": {
+          "education": 1,
+          "none": 27,
+          "technology": 41
+        }
+      },
+      "n_rows": 180,
+      "n_scored": 180,
+      "n_errors": 0,
+      "n_missing": 0,
+      "by_label": {
+        "spam_1": {
+          "k": 76,
+          "n": 90,
+          "rate": 0.8444,
+          "ci_low": 0.7557,
+          "ci_high": 0.905
+        },
+        "legit_0": {
+          "k": 60,
+          "n": 90,
+          "rate": 0.6667,
+          "ci_low": 0.5642,
+          "ci_high": 0.7555
+        }
+      },
+      "by_ambiguous": {
+        "true": {
+          "k": 16,
+          "n": 32,
+          "rate": 0.5,
+          "ci_low": 0.3363,
+          "ci_high": 0.6637
+        },
+        "false": {
+          "k": 120,
+          "n": 148,
+          "rate": 0.8108,
+          "ci_low": 0.7402,
+          "ci_high": 0.8657
+        }
+      },
+      "by_verified": {
+        "true": {
+          "k": 0,
+          "n": 0,
+          "rate": null,
+          "ci_low": null,
+          "ci_high": null
+        },
+        "false": {
+          "k": 136,
+          "n": 180,
+          "rate": 0.7556,
+          "ci_low": 0.6879,
+          "ci_high": 0.8126
+        }
+      },
+      "stratum_weighted_accuracy": 0.775
+    },
+    "hybrid@0.50": {
+      "strict_accuracy": {
+        "k": 126,
+        "n": 180,
+        "rate": 0.7,
+        "ci_low": 0.6294,
+        "ci_high": 0.7622
+      },
+      "answer_rate": {
+        "k": 121,
+        "n": 180,
+        "rate": 0.6722,
+        "ci_low": 0.6007,
+        "ci_high": 0.7366
+      },
+      "answered_accuracy": {
+        "k": 91,
+        "n": 121,
+        "rate": 0.7521,
+        "ci_low": 0.6682,
+        "ci_high": 0.8205
+      },
+      "none_precision": 0.5932,
+      "none_recall": 0.7292,
+      "macro_f1": 0.7634,
+      "macro_f1_classes": [
+        "education",
+        "healthcare",
+        "none",
+        "retail",
+        "technology"
+      ],
+      "per_class": {
+        "education": {
+          "precision": 0.8333,
+          "recall": 0.8333,
+          "f1": 0.8333,
+          "support": 6,
+          "predicted": 6,
+          "insufficient_support": false
+        },
+        "finance": {
+          "precision": 0.3333,
+          "recall": 1.0,
+          "f1": 0.5,
+          "support": 1,
+          "predicted": 3,
+          "insufficient_support": true
+        },
+        "government": {
+          "precision": 0.0,
+          "recall": null,
+          "f1": 0.0,
+          "support": 0,
+          "predicted": 1,
+          "insufficient_support": true
+        },
+        "healthcare": {
+          "precision": 0.7442,
+          "recall": 0.9143,
+          "f1": 0.8205,
+          "support": 35,
+          "predicted": 43,
+          "insufficient_support": false
+        },
+        "hr": {
+          "precision": 0.25,
+          "recall": 1.0,
+          "f1": 0.4,
+          "support": 1,
+          "predicted": 4,
+          "insufficient_support": true
+        },
+        "logistics": {
+          "precision": 0.0,
+          "recall": null,
+          "f1": 0.0,
+          "support": 0,
+          "predicted": 2,
+          "insufficient_support": true
+        },
+        "none": {
+          "precision": 0.5932,
+          "recall": 0.7292,
+          "f1": 0.6542,
+          "support": 48,
+          "predicted": 59,
+          "insufficient_support": false
+        },
+        "retail": {
+          "precision": 0.8421,
+          "recall": 0.8421,
+          "f1": 0.8421,
+          "support": 19,
+          "predicted": 19,
+          "insufficient_support": false
+        },
+        "social_media": {
+          "precision": 0.1429,
+          "recall": 1.0,
+          "f1": 0.25,
+          "support": 1,
+          "predicted": 7,
+          "insufficient_support": true
+        },
+        "technology": {
+          "precision": 0.9722,
+          "recall": 0.5072,
+          "f1": 0.6667,
+          "support": 69,
+          "predicted": 36,
+          "insufficient_support": false
+        }
+      },
+      "confusion": {
+        "education": {
+          "education": 5,
+          "hr": 1
+        },
+        "finance": {
+          "finance": 1
+        },
+        "healthcare": {
+          "healthcare": 32,
+          "hr": 1,
+          "none": 1,
+          "technology": 1
+        },
+        "hr": {
+          "hr": 1
+        },
+        "none": {
+          "finance": 1,
+          "healthcare": 7,
+          "none": 35,
+          "social_media": 5
+        },
+        "retail": {
+          "healthcare": 3,
+          "retail": 16
+        },
+        "social_media": {
+          "social_media": 1
+        },
+        "technology": {
+          "education": 1,
+          "finance": 1,
+          "government": 1,
+          "healthcare": 1,
+          "hr": 1,
+          "logistics": 2,
+          "none": 23,
+          "retail": 3,
+          "social_media": 1,
+          "technology": 35
+        }
+      },
+      "n_rows": 180,
+      "n_scored": 180,
+      "n_errors": 0,
+      "n_missing": 0,
+      "by_label": {
+        "spam_1": {
+          "k": 72,
+          "n": 90,
+          "rate": 0.8,
+          "ci_low": 0.7059,
+          "ci_high": 0.8696
+        },
+        "legit_0": {
+          "k": 54,
+          "n": 90,
+          "rate": 0.6,
+          "ci_low": 0.4967,
+          "ci_high": 0.6951
+        }
+      },
+      "by_ambiguous": {
+        "true": {
+          "k": 16,
+          "n": 32,
+          "rate": 0.5,
+          "ci_low": 0.3363,
+          "ci_high": 0.6637
+        },
+        "false": {
+          "k": 110,
+          "n": 148,
+          "rate": 0.7432,
+          "ci_low": 0.6673,
+          "ci_high": 0.8068
+        }
+      },
+      "by_verified": {
+        "true": {
+          "k": 0,
+          "n": 0,
+          "rate": null,
+          "ci_low": null,
+          "ci_high": null
+        },
+        "false": {
+          "k": 126,
+          "n": 180,
+          "rate": 0.7,
+          "ci_low": 0.6294,
+          "ci_high": 0.7622
+        }
+      },
+      "stratum_weighted_accuracy": 0.6751
+    }
+  },
+  "agreement": {
+    "n_rows": 12,
+    "agreed_answer_correct": 4,
+    "classic_combined_correct": 4,
+    "typesafe_scored": 12,
+    "typesafe_correct": 9
+  },
+  "disagreement": {
+    "n_rows": 168,
+    "fraction": 0.9333,
+    "classic_fallback_accuracy": {
+      "k": 25,
+      "n": 168,
+      "rate": 0.1488,
+      "ci_low": 0.1029,
+      "ci_high": 0.2104
+    },
+    "typesafe_accuracy": {
+      "k": 127,
+      "n": 168,
+      "rate": 0.756,
+      "ci_low": 0.6858,
+      "ci_high": 0.8147
+    },
+    "classic_fallback_accuracy_same_rows": {
+      "k": 25,
+      "n": 168,
+      "rate": 0.1488,
+      "ci_low": 0.1029,
+      "ci_high": 0.2104
+    },
+    "n_typesafe_errors": 0,
+    "n_typesafe_missing": 0
+  },
+  "cutoff_sweep": [
+    {
+      "cutoff": 0.0,
+      "n_gate_rows": 168,
+      "n_accepted": 168,
+      "acceptance_rate": 1.0,
+      "n_gate_errors": 0,
+      "n_gate_missing": 0,
+      "accepted_llm_accuracy": {
+        "k": 127,
+        "n": 168,
+        "rate": 0.756,
+        "ci_low": 0.6858,
+        "ci_high": 0.8147
+      },
+      "rejected_fallback_accuracy": {
+        "k": 0,
+        "n": 0,
+        "rate": null,
+        "ci_low": null,
+        "ci_high": null
+      },
+      "rejected_llm_counterfactual_accuracy": {
+        "k": 0,
+        "n": 0,
+        "rate": null,
+        "ci_low": null,
+        "ci_high": null
+      },
+      "overall_accuracy": {
+        "k": 131,
+        "n": 180,
+        "rate": 0.7278,
+        "ci_low": 0.6585,
+        "ci_high": 0.7875
+      },
+      "accuracy_spam": {
+        "k": 72,
+        "n": 90,
+        "rate": 0.8,
+        "ci_low": 0.7059,
+        "ci_high": 0.8696
+      },
+      "accuracy_legit": {
+        "k": 59,
+        "n": 90,
+        "rate": 0.6556,
+        "ci_low": 0.5528,
+        "ci_high": 0.7455
+      }
+    },
+    {
+      "cutoff": 0.05,
+      "n_gate_rows": 168,
+      "n_accepted": 168,
+      "acceptance_rate": 1.0,
+      "n_gate_errors": 0,
+      "n_gate_missing": 0,
+      "accepted_llm_accuracy": {
+        "k": 127,
+        "n": 168,
+        "rate": 0.756,
+        "ci_low": 0.6858,
+        "ci_high": 0.8147
+      },
+      "rejected_fallback_accuracy": {
+        "k": 0,
+        "n": 0,
+        "rate": null,
+        "ci_low": null,
+        "ci_high": null
+      },
+      "rejected_llm_counterfactual_accuracy": {
+        "k": 0,
+        "n": 0,
+        "rate": null,
+        "ci_low": null,
+        "ci_high": null
+      },
+      "overall_accuracy": {
+        "k": 131,
+        "n": 180,
+        "rate": 0.7278,
+        "ci_low": 0.6585,
+        "ci_high": 0.7875
+      },
+      "accuracy_spam": {
+        "k": 72,
+        "n": 90,
+        "rate": 0.8,
+        "ci_low": 0.7059,
+        "ci_high": 0.8696
+      },
+      "accuracy_legit": {
+        "k": 59,
+        "n": 90,
+        "rate": 0.6556,
+        "ci_low": 0.5528,
+        "ci_high": 0.7455
+      }
+    },
+    {
+      "cutoff": 0.1,
+      "n_gate_rows": 168,
+      "n_accepted": 168,
+      "acceptance_rate": 1.0,
+      "n_gate_errors": 0,
+      "n_gate_missing": 0,
+      "accepted_llm_accuracy": {
+        "k": 127,
+        "n": 168,
+        "rate": 0.756,
+        "ci_low": 0.6858,
+        "ci_high": 0.8147
+      },
+      "rejected_fallback_accuracy": {
+        "k": 0,
+        "n": 0,
+        "rate": null,
+        "ci_low": null,
+        "ci_high": null
+      },
+      "rejected_llm_counterfactual_accuracy": {
+        "k": 0,
+        "n": 0,
+        "rate": null,
+        "ci_low": null,
+        "ci_high": null
+      },
+      "overall_accuracy": {
+        "k": 131,
+        "n": 180,
+        "rate": 0.7278,
+        "ci_low": 0.6585,
+        "ci_high": 0.7875
+      },
+      "accuracy_spam": {
+        "k": 72,
+        "n": 90,
+        "rate": 0.8,
+        "ci_low": 0.7059,
+        "ci_high": 0.8696
+      },
+      "accuracy_legit": {
+        "k": 59,
+        "n": 90,
+        "rate": 0.6556,
+        "ci_low": 0.5528,
+        "ci_high": 0.7455
+      }
+    },
+    {
+      "cutoff": 0.15,
+      "n_gate_rows": 168,
+      "n_accepted": 168,
+      "acceptance_rate": 1.0,
+      "n_gate_errors": 0,
+      "n_gate_missing": 0,
+      "accepted_llm_accuracy": {
+        "k": 127,
+        "n": 168,
+        "rate": 0.756,
+        "ci_low": 0.6858,
+        "ci_high": 0.8147
+      },
+      "rejected_fallback_accuracy": {
+        "k": 0,
+        "n": 0,
+        "rate": null,
+        "ci_low": null,
+        "ci_high": null
+      },
+      "rejected_llm_counterfactual_accuracy": {
+        "k": 0,
+        "n": 0,
+        "rate": null,
+        "ci_low": null,
+        "ci_high": null
+      },
+      "overall_accuracy": {
+        "k": 131,
+        "n": 180,
+        "rate": 0.7278,
+        "ci_low": 0.6585,
+        "ci_high": 0.7875
+      },
+      "accuracy_spam": {
+        "k": 72,
+        "n": 90,
+        "rate": 0.8,
+        "ci_low": 0.7059,
+        "ci_high": 0.8696
+      },
+      "accuracy_legit": {
+        "k": 59,
+        "n": 90,
+        "rate": 0.6556,
+        "ci_low": 0.5528,
+        "ci_high": 0.7455
+      }
+    },
+    {
+      "cutoff": 0.2,
+      "n_gate_rows": 168,
+      "n_accepted": 168,
+      "acceptance_rate": 1.0,
+      "n_gate_errors": 0,
+      "n_gate_missing": 0,
+      "accepted_llm_accuracy": {
+        "k": 127,
+        "n": 168,
+        "rate": 0.756,
+        "ci_low": 0.6858,
+        "ci_high": 0.8147
+      },
+      "rejected_fallback_accuracy": {
+        "k": 0,
+        "n": 0,
+        "rate": null,
+        "ci_low": null,
+        "ci_high": null
+      },
+      "rejected_llm_counterfactual_accuracy": {
+        "k": 0,
+        "n": 0,
+        "rate": null,
+        "ci_low": null,
+        "ci_high": null
+      },
+      "overall_accuracy": {
+        "k": 131,
+        "n": 180,
+        "rate": 0.7278,
+        "ci_low": 0.6585,
+        "ci_high": 0.7875
+      },
+      "accuracy_spam": {
+        "k": 72,
+        "n": 90,
+        "rate": 0.8,
+        "ci_low": 0.7059,
+        "ci_high": 0.8696
+      },
+      "accuracy_legit": {
+        "k": 59,
+        "n": 90,
+        "rate": 0.6556,
+        "ci_low": 0.5528,
+        "ci_high": 0.7455
+      }
+    },
+    {
+      "cutoff": 0.25,
+      "n_gate_rows": 168,
+      "n_accepted": 168,
+      "acceptance_rate": 1.0,
+      "n_gate_errors": 0,
+      "n_gate_missing": 0,
+      "accepted_llm_accuracy": {
+        "k": 127,
+        "n": 168,
+        "rate": 0.756,
+        "ci_low": 0.6858,
+        "ci_high": 0.8147
+      },
+      "rejected_fallback_accuracy": {
+        "k": 0,
+        "n": 0,
+        "rate": null,
+        "ci_low": null,
+        "ci_high": null
+      },
+      "rejected_llm_counterfactual_accuracy": {
+        "k": 0,
+        "n": 0,
+        "rate": null,
+        "ci_low": null,
+        "ci_high": null
+      },
+      "overall_accuracy": {
+        "k": 131,
+        "n": 180,
+        "rate": 0.7278,
+        "ci_low": 0.6585,
+        "ci_high": 0.7875
+      },
+      "accuracy_spam": {
+        "k": 72,
+        "n": 90,
+        "rate": 0.8,
+        "ci_low": 0.7059,
+        "ci_high": 0.8696
+      },
+      "accuracy_legit": {
+        "k": 59,
+        "n": 90,
+        "rate": 0.6556,
+        "ci_low": 0.5528,
+        "ci_high": 0.7455
+      }
+    },
+    {
+      "cutoff": 0.3,
+      "n_gate_rows": 168,
+      "n_accepted": 168,
+      "acceptance_rate": 1.0,
+      "n_gate_errors": 0,
+      "n_gate_missing": 0,
+      "accepted_llm_accuracy": {
+        "k": 127,
+        "n": 168,
+        "rate": 0.756,
+        "ci_low": 0.6858,
+        "ci_high": 0.8147
+      },
+      "rejected_fallback_accuracy": {
+        "k": 0,
+        "n": 0,
+        "rate": null,
+        "ci_low": null,
+        "ci_high": null
+      },
+      "rejected_llm_counterfactual_accuracy": {
+        "k": 0,
+        "n": 0,
+        "rate": null,
+        "ci_low": null,
+        "ci_high": null
+      },
+      "overall_accuracy": {
+        "k": 131,
+        "n": 180,
+        "rate": 0.7278,
+        "ci_low": 0.6585,
+        "ci_high": 0.7875
+      },
+      "accuracy_spam": {
+        "k": 72,
+        "n": 90,
+        "rate": 0.8,
+        "ci_low": 0.7059,
+        "ci_high": 0.8696
+      },
+      "accuracy_legit": {
+        "k": 59,
+        "n": 90,
+        "rate": 0.6556,
+        "ci_low": 0.5528,
+        "ci_high": 0.7455
+      }
+    },
+    {
+      "cutoff": 0.35,
+      "n_gate_rows": 168,
+      "n_accepted": 167,
+      "acceptance_rate": 0.994,
+      "n_gate_errors": 0,
+      "n_gate_missing": 0,
+      "accepted_llm_accuracy": {
+        "k": 126,
+        "n": 167,
+        "rate": 0.7545,
+        "ci_low": 0.684,
+        "ci_high": 0.8136
+      },
+      "rejected_fallback_accuracy": {
+        "k": 0,
+        "n": 1,
+        "rate": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.7935
+      },
+      "rejected_llm_counterfactual_accuracy": {
+        "k": 1,
+        "n": 1,
+        "rate": 1.0,
+        "ci_low": 0.2065,
+        "ci_high": 1.0
+      },
+      "overall_accuracy": {
+        "k": 130,
+        "n": 180,
+        "rate": 0.7222,
+        "ci_low": 0.6527,
+        "ci_high": 0.7825
+      },
+      "accuracy_spam": {
+        "k": 71,
+        "n": 90,
+        "rate": 0.7889,
+        "ci_low": 0.6937,
+        "ci_high": 0.8605
+      },
+      "accuracy_legit": {
+        "k": 59,
+        "n": 90,
+        "rate": 0.6556,
+        "ci_low": 0.5528,
+        "ci_high": 0.7455
+      }
+    },
+    {
+      "cutoff": 0.4,
+      "n_gate_rows": 168,
+      "n_accepted": 165,
+      "acceptance_rate": 0.9821,
+      "n_gate_errors": 0,
+      "n_gate_missing": 0,
+      "accepted_llm_accuracy": {
+        "k": 125,
+        "n": 165,
+        "rate": 0.7576,
+        "ci_low": 0.6868,
+        "ci_high": 0.8166
+      },
+      "rejected_fallback_accuracy": {
+        "k": 0,
+        "n": 3,
+        "rate": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.5615
+      },
+      "rejected_llm_counterfactual_accuracy": {
+        "k": 2,
+        "n": 3,
+        "rate": 0.6667,
+        "ci_low": 0.2077,
+        "ci_high": 0.9385
+      },
+      "overall_accuracy": {
+        "k": 129,
+        "n": 180,
+        "rate": 0.7167,
+        "ci_low": 0.6468,
+        "ci_high": 0.7774
+      },
+      "accuracy_spam": {
+        "k": 71,
+        "n": 90,
+        "rate": 0.7889,
+        "ci_low": 0.6937,
+        "ci_high": 0.8605
+      },
+      "accuracy_legit": {
+        "k": 58,
+        "n": 90,
+        "rate": 0.6444,
+        "ci_low": 0.5415,
+        "ci_high": 0.7356
+      }
+    },
+    {
+      "cutoff": 0.45,
+      "n_gate_rows": 168,
+      "n_accepted": 163,
+      "acceptance_rate": 0.9702,
+      "n_gate_errors": 0,
+      "n_gate_missing": 0,
+      "accepted_llm_accuracy": {
+        "k": 124,
+        "n": 163,
+        "rate": 0.7607,
+        "ci_low": 0.6897,
+        "ci_high": 0.8197
+      },
+      "rejected_fallback_accuracy": {
+        "k": 1,
+        "n": 5,
+        "rate": 0.2,
+        "ci_low": 0.0362,
+        "ci_high": 0.6245
+      },
+      "rejected_llm_counterfactual_accuracy": {
+        "k": 3,
+        "n": 5,
+        "rate": 0.6,
+        "ci_low": 0.2307,
+        "ci_high": 0.8824
+      },
+      "overall_accuracy": {
+        "k": 129,
+        "n": 180,
+        "rate": 0.7167,
+        "ci_low": 0.6468,
+        "ci_high": 0.7774
+      },
+      "accuracy_spam": {
+        "k": 72,
+        "n": 90,
+        "rate": 0.8,
+        "ci_low": 0.7059,
+        "ci_high": 0.8696
+      },
+      "accuracy_legit": {
+        "k": 57,
+        "n": 90,
+        "rate": 0.6333,
+        "ci_low": 0.5302,
+        "ci_high": 0.7255
+      }
+    },
+    {
+      "cutoff": 0.5,
+      "n_gate_rows": 168,
+      "n_accepted": 158,
+      "acceptance_rate": 0.9405,
+      "n_gate_errors": 0,
+      "n_gate_missing": 0,
+      "accepted_llm_accuracy": {
+        "k": 121,
+        "n": 158,
+        "rate": 0.7658,
+        "ci_low": 0.694,
+        "ci_high": 0.8251
+      },
+      "rejected_fallback_accuracy": {
+        "k": 1,
+        "n": 10,
+        "rate": 0.1,
+        "ci_low": 0.0179,
+        "ci_high": 0.4042
+      },
+      "rejected_llm_counterfactual_accuracy": {
+        "k": 6,
+        "n": 10,
+        "rate": 0.6,
+        "ci_low": 0.3127,
+        "ci_high": 0.8318
+      },
+      "overall_accuracy": {
+        "k": 126,
+        "n": 180,
+        "rate": 0.7,
+        "ci_low": 0.6294,
+        "ci_high": 0.7622
+      },
+      "accuracy_spam": {
+        "k": 72,
+        "n": 90,
+        "rate": 0.8,
+        "ci_low": 0.7059,
+        "ci_high": 0.8696
+      },
+      "accuracy_legit": {
+        "k": 54,
+        "n": 90,
+        "rate": 0.6,
+        "ci_low": 0.4967,
+        "ci_high": 0.6951
+      }
+    },
+    {
+      "cutoff": 0.55,
+      "n_gate_rows": 168,
+      "n_accepted": 147,
+      "acceptance_rate": 0.875,
+      "n_gate_errors": 0,
+      "n_gate_missing": 0,
+      "accepted_llm_accuracy": {
+        "k": 115,
+        "n": 147,
+        "rate": 0.7823,
+        "ci_low": 0.7089,
+        "ci_high": 0.8414
+      },
+      "rejected_fallback_accuracy": {
+        "k": 2,
+        "n": 21,
+        "rate": 0.0952,
+        "ci_low": 0.0265,
+        "ci_high": 0.2891
+      },
+      "rejected_llm_counterfactual_accuracy": {
+        "k": 12,
+        "n": 21,
+        "rate": 0.5714,
+        "ci_low": 0.3655,
+        "ci_high": 0.7553
+      },
+      "overall_accuracy": {
+        "k": 121,
+        "n": 180,
+        "rate": 0.6722,
+        "ci_low": 0.6007,
+        "ci_high": 0.7366
+      },
+      "accuracy_spam": {
+        "k": 71,
+        "n": 90,
+        "rate": 0.7889,
+        "ci_low": 0.6937,
+        "ci_high": 0.8605
+      },
+      "accuracy_legit": {
+        "k": 50,
+        "n": 90,
+        "rate": 0.5556,
+        "ci_low": 0.4527,
+        "ci_high": 0.6538
+      }
+    },
+    {
+      "cutoff": 0.6,
+      "n_gate_rows": 168,
+      "n_accepted": 141,
+      "acceptance_rate": 0.8393,
+      "n_gate_errors": 0,
+      "n_gate_missing": 0,
+      "accepted_llm_accuracy": {
+        "k": 112,
+        "n": 141,
+        "rate": 0.7943,
+        "ci_low": 0.7202,
+        "ci_high": 0.8528
+      },
+      "rejected_fallback_accuracy": {
+        "k": 3,
+        "n": 27,
+        "rate": 0.1111,
+        "ci_low": 0.0385,
+        "ci_high": 0.2806
+      },
+      "rejected_llm_counterfactual_accuracy": {
+        "k": 15,
+        "n": 27,
+        "rate": 0.5556,
+        "ci_low": 0.3731,
+        "ci_high": 0.7241
+      },
+      "overall_accuracy": {
+        "k": 119,
+        "n": 180,
+        "rate": 0.6611,
+        "ci_low": 0.5892,
+        "ci_high": 0.7262
+      },
+      "accuracy_spam": {
+        "k": 71,
+        "n": 90,
+        "rate": 0.7889,
+        "ci_low": 0.6937,
+        "ci_high": 0.8605
+      },
+      "accuracy_legit": {
+        "k": 48,
+        "n": 90,
+        "rate": 0.5333,
+        "ci_low": 0.431,
+        "ci_high": 0.6329
+      }
+    },
+    {
+      "cutoff": 0.65,
+      "n_gate_rows": 168,
+      "n_accepted": 127,
+      "acceptance_rate": 0.756,
+      "n_gate_errors": 0,
+      "n_gate_missing": 0,
+      "accepted_llm_accuracy": {
+        "k": 103,
+        "n": 127,
+        "rate": 0.811,
+        "ci_low": 0.7342,
+        "ci_high": 0.8696
+      },
+      "rejected_fallback_accuracy": {
+        "k": 4,
+        "n": 41,
+        "rate": 0.0976,
+        "ci_low": 0.0386,
+        "ci_high": 0.2255
+      },
+      "rejected_llm_counterfactual_accuracy": {
+        "k": 24,
+        "n": 41,
+        "rate": 0.5854,
+        "ci_low": 0.4337,
+        "ci_high": 0.7224
+      },
+      "overall_accuracy": {
+        "k": 111,
+        "n": 180,
+        "rate": 0.6167,
+        "ci_low": 0.5439,
+        "ci_high": 0.6846
+      },
+      "accuracy_spam": {
+        "k": 67,
+        "n": 90,
+        "rate": 0.7444,
+        "ci_low": 0.6456,
+        "ci_high": 0.8233
+      },
+      "accuracy_legit": {
+        "k": 44,
+        "n": 90,
+        "rate": 0.4889,
+        "ci_low": 0.3882,
+        "ci_high": 0.5905
+      }
+    },
+    {
+      "cutoff": 0.7,
+      "n_gate_rows": 168,
+      "n_accepted": 114,
+      "acceptance_rate": 0.6786,
+      "n_gate_errors": 0,
+      "n_gate_missing": 0,
+      "accepted_llm_accuracy": {
+        "k": 95,
+        "n": 114,
+        "rate": 0.8333,
+        "ci_low": 0.7543,
+        "ci_high": 0.8906
+      },
+      "rejected_fallback_accuracy": {
+        "k": 6,
+        "n": 54,
+        "rate": 0.1111,
+        "ci_low": 0.0519,
+        "ci_high": 0.2219
+      },
+      "rejected_llm_counterfactual_accuracy": {
+        "k": 32,
+        "n": 54,
+        "rate": 0.5926,
+        "ci_low": 0.4597,
+        "ci_high": 0.7132
+      },
+      "overall_accuracy": {
+        "k": 105,
+        "n": 180,
+        "rate": 0.5833,
+        "ci_low": 0.5103,
+        "ci_high": 0.6529
+      },
+      "accuracy_spam": {
+        "k": 64,
+        "n": 90,
+        "rate": 0.7111,
+        "ci_low": 0.6104,
+        "ci_high": 0.7946
+      },
+      "accuracy_legit": {
+        "k": 41,
+        "n": 90,
+        "rate": 0.4556,
+        "ci_low": 0.3566,
+        "ci_high": 0.5582
+      }
+    },
+    {
+      "cutoff": 0.75,
+      "n_gate_rows": 168,
+      "n_accepted": 100,
+      "acceptance_rate": 0.5952,
+      "n_gate_errors": 0,
+      "n_gate_missing": 0,
+      "accepted_llm_accuracy": {
+        "k": 88,
+        "n": 100,
+        "rate": 0.88,
+        "ci_low": 0.8019,
+        "ci_high": 0.93
+      },
+      "rejected_fallback_accuracy": {
+        "k": 6,
+        "n": 68,
+        "rate": 0.0882,
+        "ci_low": 0.0411,
+        "ci_high": 0.1794
+      },
+      "rejected_llm_counterfactual_accuracy": {
+        "k": 39,
+        "n": 68,
+        "rate": 0.5735,
+        "ci_low": 0.4552,
+        "ci_high": 0.684
+      },
+      "overall_accuracy": {
+        "k": 98,
+        "n": 180,
+        "rate": 0.5444,
+        "ci_low": 0.4715,
+        "ci_high": 0.6155
+      },
+      "accuracy_spam": {
+        "k": 62,
+        "n": 90,
+        "rate": 0.6889,
+        "ci_low": 0.5872,
+        "ci_high": 0.7751
+      },
+      "accuracy_legit": {
+        "k": 36,
+        "n": 90,
+        "rate": 0.4,
+        "ci_low": 0.3049,
+        "ci_high": 0.5033
+      }
+    },
+    {
+      "cutoff": 0.8,
+      "n_gate_rows": 168,
+      "n_accepted": 94,
+      "acceptance_rate": 0.5595,
+      "n_gate_errors": 0,
+      "n_gate_missing": 0,
+      "accepted_llm_accuracy": {
+        "k": 84,
+        "n": 94,
+        "rate": 0.8936,
+        "ci_low": 0.8151,
+        "ci_high": 0.9412
+      },
+      "rejected_fallback_accuracy": {
+        "k": 8,
+        "n": 74,
+        "rate": 0.1081,
+        "ci_low": 0.0558,
+        "ci_high": 0.1991
+      },
+      "rejected_llm_counterfactual_accuracy": {
+        "k": 43,
+        "n": 74,
+        "rate": 0.5811,
+        "ci_low": 0.4674,
+        "ci_high": 0.6868
+      },
+      "overall_accuracy": {
+        "k": 96,
+        "n": 180,
+        "rate": 0.5333,
+        "ci_low": 0.4605,
+        "ci_high": 0.6048
+      },
+      "accuracy_spam": {
+        "k": 61,
+        "n": 90,
+        "rate": 0.6778,
+        "ci_low": 0.5757,
+        "ci_high": 0.7653
+      },
+      "accuracy_legit": {
+        "k": 35,
+        "n": 90,
+        "rate": 0.3889,
+        "ci_low": 0.2947,
+        "ci_high": 0.4922
+      }
+    },
+    {
+      "cutoff": 0.85,
+      "n_gate_rows": 168,
+      "n_accepted": 89,
+      "acceptance_rate": 0.5298,
+      "n_gate_errors": 0,
+      "n_gate_missing": 0,
+      "accepted_llm_accuracy": {
+        "k": 80,
+        "n": 89,
+        "rate": 0.8989,
+        "ci_low": 0.8189,
+        "ci_high": 0.9459
+      },
+      "rejected_fallback_accuracy": {
+        "k": 8,
+        "n": 79,
+        "rate": 0.1013,
+        "ci_low": 0.0522,
+        "ci_high": 0.1873
+      },
+      "rejected_llm_counterfactual_accuracy": {
+        "k": 47,
+        "n": 79,
+        "rate": 0.5949,
+        "ci_low": 0.4847,
+        "ci_high": 0.6963
+      },
+      "overall_accuracy": {
+        "k": 92,
+        "n": 180,
+        "rate": 0.5111,
+        "ci_low": 0.4386,
+        "ci_high": 0.5831
+      },
+      "accuracy_spam": {
+        "k": 61,
+        "n": 90,
+        "rate": 0.6778,
+        "ci_low": 0.5757,
+        "ci_high": 0.7653
+      },
+      "accuracy_legit": {
+        "k": 31,
+        "n": 90,
+        "rate": 0.3444,
+        "ci_low": 0.2545,
+        "ci_high": 0.4472
+      }
+    },
+    {
+      "cutoff": 0.9,
+      "n_gate_rows": 168,
+      "n_accepted": 79,
+      "acceptance_rate": 0.4702,
+      "n_gate_errors": 0,
+      "n_gate_missing": 0,
+      "accepted_llm_accuracy": {
+        "k": 72,
+        "n": 79,
+        "rate": 0.9114,
+        "ci_low": 0.8282,
+        "ci_high": 0.9564
+      },
+      "rejected_fallback_accuracy": {
+        "k": 8,
+        "n": 89,
+        "rate": 0.0899,
+        "ci_low": 0.0463,
+        "ci_high": 0.1675
+      },
+      "rejected_llm_counterfactual_accuracy": {
+        "k": 55,
+        "n": 89,
+        "rate": 0.618,
+        "ci_low": 0.5141,
+        "ci_high": 0.7121
+      },
+      "overall_accuracy": {
+        "k": 84,
+        "n": 180,
+        "rate": 0.4667,
+        "ci_low": 0.3952,
+        "ci_high": 0.5395
+      },
+      "accuracy_spam": {
+        "k": 57,
+        "n": 90,
+        "rate": 0.6333,
+        "ci_low": 0.5302,
+        "ci_high": 0.7255
+      },
+      "accuracy_legit": {
+        "k": 27,
+        "n": 90,
+        "rate": 0.3,
+        "ci_low": 0.2151,
+        "ci_high": 0.4013
+      }
+    },
+    {
+      "cutoff": 0.95,
+      "n_gate_rows": 168,
+      "n_accepted": 70,
+      "acceptance_rate": 0.4167,
+      "n_gate_errors": 0,
+      "n_gate_missing": 0,
+      "accepted_llm_accuracy": {
+        "k": 63,
+        "n": 70,
+        "rate": 0.9,
+        "ci_low": 0.8077,
+        "ci_high": 0.9507
+      },
+      "rejected_fallback_accuracy": {
+        "k": 9,
+        "n": 98,
+        "rate": 0.0918,
+        "ci_low": 0.0491,
+        "ci_high": 0.1654
+      },
+      "rejected_llm_counterfactual_accuracy": {
+        "k": 64,
+        "n": 98,
+        "rate": 0.6531,
+        "ci_low": 0.5547,
+        "ci_high": 0.7399
+      },
+      "overall_accuracy": {
+        "k": 76,
+        "n": 180,
+        "rate": 0.4222,
+        "ci_low": 0.3524,
+        "ci_high": 0.4953
+      },
+      "accuracy_spam": {
+        "k": 55,
+        "n": 90,
+        "rate": 0.6111,
+        "ci_low": 0.5078,
+        "ci_high": 0.7053
+      },
+      "accuracy_legit": {
+        "k": 21,
+        "n": 90,
+        "rate": 0.2333,
+        "ci_low": 0.158,
+        "ci_high": 0.3305
+      }
+    }
+  ],
+  "cutoff_choice": {
+    "candidate": 0.3,
+    "chosen": 0.5,
+    "incumbent": 0.5,
+    "tied_best_cutoffs": [
+      0.0,
+      0.05,
+      0.1,
+      0.15,
+      0.2,
+      0.25,
+      0.3
+    ],
+    "candidate_correct": 131,
+    "incumbent_correct": 126,
+    "n": 180,
+    "b_candidate_only": 6,
+    "c_incumbent_only": 1,
+    "p_value": 0.125,
+    "rationale": "Cutoff 0.30 has the most correct rows (131/180) versus 126/180 at the incumbent 0.50, but exact McNemar b=6, c=1, p=0.1250 >= 0.05: the data cannot distinguish them, so the incumbent is kept."
+  },
+  "runtime": {
+    "by_set": {
+      "labeled": {
+        "n_records": 180,
+        "n_success": 180,
+        "n_errors": 0,
+        "input_tokens": {
+          "mean": 1523.7833,
+          "median": 1435.0,
+          "p95": 2043.6,
+          "min": 1300.0,
+          "max": 2924.0
+        },
+        "output_tokens_mean": 103.5667,
+        "latency_ms_p50": 226.05,
+        "latency_ms_p95": 284.075,
+        "attempts_per_email": 1.0,
+        "http_429": 0
+      },
+      "sample": {
+        "n_records": 200,
+        "n_success": 200,
+        "n_errors": 0,
+        "input_tokens": {
+          "mean": 1543.665,
+          "median": 1423.5,
+          "p95": 2062.05,
+          "min": 1295.0,
+          "max": 2077.0
+        },
+        "output_tokens_mean": 103.58,
+        "latency_ms_p50": 228.6,
+        "latency_ms_p95": 289.06,
+        "attempts_per_email": 1.0,
+        "http_429": 0
+      }
+    },
+    "overall": {
+      "n_records": 380,
+      "n_success": 380,
+      "n_errors": 0,
+      "input_tokens": {
+        "mean": 1534.2474,
+        "median": 1430.0,
+        "p95": 2061.05,
+        "min": 1295.0,
+        "max": 2924.0
+      },
+      "output_tokens_mean": 103.5737,
+      "latency_ms_p50": 227.0,
+      "latency_ms_p95": 287.63,
+      "attempts_per_email": 1.0,
+      "http_429": 0
+    },
+    "runs": [
+      {
+        "set": "labeled",
+        "model": "jev-latest",
+        "status": "complete",
+        "started_utc": "2026-10-01T03:28:25+00:00",
+        "finished_utc": "2026-10-01T03:28:43+00:00",
+        "wall_seconds": 18.461,
+        "n_emails": 180,
+        "n_pending": 180,
+        "n_calls_attempted": 180,
+        "n_429": 0,
+        "n_errors": 0,
+        "rps": 10.0,
+        "workers": 4,
+        "max_calls": 260,
+        "emails_per_second": 9.7502,
+        "attempts_per_second": 9.7502
+      },
+      {
+        "set": "sample",
+        "model": "jev-latest",
+        "status": "complete",
+        "started_utc": "2026-10-01T03:28:48+00:00",
+        "finished_utc": "2026-10-01T03:28:59+00:00",
+        "wall_seconds": 10.463,
+        "n_emails": 200,
+        "n_pending": 200,
+        "n_calls_attempted": 200,
+        "n_429": 0,
+        "n_errors": 0,
+        "rps": 20.0,
+        "workers": 8,
+        "max_calls": 250,
+        "emails_per_second": 19.1157,
+        "attempts_per_second": 19.1157
+      }
+    ],
+    "run_attempts_per_second": {
+      "labeled @ 10 rps, 4 workers": 9.7502,
+      "sample @ 20 rps, 8 workers": 19.1157
+    },
+    "attempts_per_email": 1.0,
+    "n_429_total": 0,
+    "max_rps_exercised": 20.0,
+    "concurrency_needed_at_cap": {
+      "p50": 10,
+      "p95": 12
+    },
+    "extrapolation": {
+      "n_emails": 35000,
+      "rps_cap": 40.0,
+      "full_typesafe": {
+        "n_llm_emails": 35000,
+        "hours_per_run_rate": {
+          "labeled @ 10 rps, 4 workers": 0.9971,
+          "sample @ 20 rps, 8 workers": 0.5086
+        },
+        "hours_at_cap": 0.2431,
+        "input_tokens_total": 53698657.8947,
+        "output_tokens_total": 3625078.9474
+      },
+      "hybrid_labeled_disagreement": {
+        "n_llm_emails": 32666.6667,
+        "hours_per_run_rate": {
+          "labeled @ 10 rps, 4 workers": 0.9307,
+          "sample @ 20 rps, 8 workers": 0.4747
+        },
+        "hours_at_cap": 0.2269,
+        "input_tokens_total": 50118747.3684,
+        "output_tokens_total": 3383407.0175
+      },
+      "labeled_disagreement_fraction": 0.9333,
+      "hybrid_full_corpus_agreement": {
+        "n_llm_emails": 27433.0,
+        "hours_per_run_rate": {
+          "labeled @ 10 rps, 4 workers": 0.7816,
+          "sample @ 20 rps, 8 workers": 0.3986
+        },
+        "hours_at_cap": 0.1905,
+        "input_tokens_total": 42089008.0579,
+        "output_tokens_total": 2841336.8789
+      },
+      "full_corpus_agreement_rate": 0.2162
+    }
+  },
+  "notes": [],
+  "per_row": {
+    "00fa27c880fe8d1e": {
+      "truth": "retail",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_education.csv|1",
+      "path": "llm_assisted",
+      "method1": "education",
+      "method2": "technology",
+      "classic": "education",
+      "classic_fallback": "education",
+      "typesafe_status": "ok",
+      "typesafe": "retail",
+      "typesafe_confidence": 1.0,
+      "hybrid@0.50": "retail"
+    },
+    "0151be47a07e9574": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_finance.csv|0",
+      "path": "llm_assisted",
+      "method1": "finance",
+      "method2": "technology",
+      "classic": "finance",
+      "classic_fallback": "finance",
+      "typesafe_status": "ok",
+      "typesafe": "technology",
+      "typesafe_confidence": 0.7,
+      "hybrid@0.50": "technology"
+    },
+    "022cd1f155803719": {
+      "truth": "retail",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_retail.csv|1",
+      "path": "llm_assisted",
+      "method1": "retail",
+      "method2": "technology",
+      "classic": "retail",
+      "classic_fallback": "retail",
+      "typesafe_status": "ok",
+      "typesafe": "retail",
+      "typesafe_confidence": 1.0,
+      "hybrid@0.50": "retail"
+    },
+    "03a4c295136e1e23": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_government.csv|0",
+      "path": "llm_assisted",
+      "method1": "government",
+      "method2": "education",
+      "classic": "government",
+      "classic_fallback": "government",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.52,
+      "hybrid@0.50": "none"
+    },
+    "04076000518146ec": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_healthcare.csv|0",
+      "path": "llm_assisted",
+      "method1": "healthcare",
+      "method2": "technology",
+      "classic": "healthcare",
+      "classic_fallback": "healthcare",
+      "typesafe_status": "ok",
+      "typesafe": "technology",
+      "typesafe_confidence": 0.62,
+      "hybrid@0.50": "technology"
+    },
+    "04558daa7aa7f197": {
+      "truth": "none",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_healthcare.csv|1",
+      "path": "llm_assisted",
+      "method1": "healthcare",
+      "method2": "technology",
+      "classic": "healthcare",
+      "classic_fallback": "healthcare",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.99,
+      "hybrid@0.50": "none"
+    },
+    "073f2e2b29e9aac1": {
+      "truth": "healthcare",
+      "label": "1",
+      "ambiguous": true,
+      "stratum": "email_hr.csv|1",
+      "path": "llm_assisted",
+      "method1": "hr",
+      "method2": "technology",
+      "classic": "hr",
+      "classic_fallback": "hr",
+      "typesafe_status": "ok",
+      "typesafe": "healthcare",
+      "typesafe_confidence": 0.32,
+      "hybrid@0.50": "hr"
+    },
+    "085f034c828bf724": {
+      "truth": "retail",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_unsure.csv|1",
+      "path": "llm_assisted",
+      "method1": "none",
+      "method2": "social_media",
+      "classic": "none",
+      "classic_fallback": "none",
+      "typesafe_status": "ok",
+      "typesafe": "retail",
+      "typesafe_confidence": 1.0,
+      "hybrid@0.50": "retail"
+    },
+    "09f8153b93490176": {
+      "truth": "none",
+      "label": "1",
+      "ambiguous": true,
+      "stratum": "email_technology.csv|1",
+      "path": "llm_assisted",
+      "method1": "technology",
+      "method2": "social_media",
+      "classic": "technology",
+      "classic_fallback": "technology",
+      "typesafe_status": "ok",
+      "typesafe": "healthcare",
+      "typesafe_confidence": 0.98,
+      "hybrid@0.50": "healthcare"
+    },
+    "0b99356207a99b6d": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_telecommunications.csv|0",
+      "path": "llm_assisted",
+      "method1": "telecommunications",
+      "method2": "technology",
+      "classic": "telecommunications",
+      "classic_fallback": "telecommunications",
+      "typesafe_status": "ok",
+      "typesafe": "technology",
+      "typesafe_confidence": 0.82,
+      "hybrid@0.50": "technology"
+    },
+    "0f05aa8b621ff569": {
+      "truth": "healthcare",
+      "label": "1",
+      "ambiguous": true,
+      "stratum": "email_healthcare.csv|1",
+      "path": "llm_assisted",
+      "method1": "healthcare",
+      "method2": "technology",
+      "classic": "healthcare",
+      "classic_fallback": "healthcare",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.53,
+      "hybrid@0.50": "none"
+    },
+    "10512753d371d56d": {
+      "truth": "healthcare",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_telecommunications.csv|1",
+      "path": "llm_assisted",
+      "method1": "telecommunications",
+      "method2": "social_media",
+      "classic": "telecommunications",
+      "classic_fallback": "telecommunications",
+      "typesafe_status": "ok",
+      "typesafe": "healthcare",
+      "typesafe_confidence": 1.0,
+      "hybrid@0.50": "healthcare"
+    },
+    "133f9cafdf0dbd2c": {
+      "truth": "healthcare",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_healthcare.csv|1",
+      "path": "llm_assisted",
+      "method1": "healthcare",
+      "method2": "social_media",
+      "classic": "healthcare",
+      "classic_fallback": "healthcare",
+      "typesafe_status": "ok",
+      "typesafe": "healthcare",
+      "typesafe_confidence": 0.99,
+      "hybrid@0.50": "healthcare"
+    },
+    "138f36b626af0f54": {
+      "truth": "none",
+      "label": "1",
+      "ambiguous": true,
+      "stratum": "email_retail.csv|1",
+      "path": "llm_assisted",
+      "method1": "retail",
+      "method2": "social_media",
+      "classic": "retail",
+      "classic_fallback": "retail",
+      "typesafe_status": "ok",
+      "typesafe": "healthcare",
+      "typesafe_confidence": 0.95,
+      "hybrid@0.50": "healthcare"
+    },
+    "147af7272d2ab914": {
+      "truth": "none",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_unsure.csv|1",
+      "path": "llm_assisted",
+      "method1": "none",
+      "method2": "social_media",
+      "classic": "none",
+      "classic_fallback": "none",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 1.0,
+      "hybrid@0.50": "none"
+    },
+    "16f2304759fd2bdb": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": true,
+      "stratum": "email_technology.csv|0",
+      "path": "llm_assisted",
+      "method1": "technology",
+      "method2": "retail",
+      "classic": "technology",
+      "classic_fallback": "technology",
+      "typesafe_status": "ok",
+      "typesafe": "technology",
+      "typesafe_confidence": 0.75,
+      "hybrid@0.50": "technology"
+    },
+    "17089597052371d1": {
+      "truth": "healthcare",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_telecommunications.csv|1",
+      "path": "llm_assisted",
+      "method1": "retail",
+      "method2": "technology",
+      "classic": "retail",
+      "classic_fallback": "retail",
+      "typesafe_status": "ok",
+      "typesafe": "healthcare",
+      "typesafe_confidence": 0.52,
+      "hybrid@0.50": "healthcare"
+    },
+    "1749304537025d6f": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_technology.csv|0",
+      "path": "llm_assisted",
+      "method1": "government",
+      "method2": "technology",
+      "classic": "technology",
+      "classic_fallback": "technology",
+      "typesafe_status": "ok",
+      "typesafe": "technology",
+      "typesafe_confidence": 0.55,
+      "hybrid@0.50": "technology"
+    },
+    "18858d377d5a4f46": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_retail.csv|0",
+      "path": "llm_assisted",
+      "method1": "retail",
+      "method2": "technology",
+      "classic": "retail",
+      "classic_fallback": "retail",
+      "typesafe_status": "ok",
+      "typesafe": "technology",
+      "typesafe_confidence": 0.74,
+      "hybrid@0.50": "technology"
+    },
+    "1b16c25a642cbaea": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_education.csv|0",
+      "path": "llm_assisted",
+      "method1": "healthcare",
+      "method2": "retail",
+      "classic": "education",
+      "classic_fallback": "education",
+      "typesafe_status": "ok",
+      "typesafe": "technology",
+      "typesafe_confidence": 0.55,
+      "hybrid@0.50": "technology"
+    },
+    "1ca004df6526ba40": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_telecommunications.csv|0",
+      "path": "llm_assisted",
+      "method1": "logistics",
+      "method2": "education",
+      "classic": "logistics",
+      "classic_fallback": "logistics",
+      "typesafe_status": "ok",
+      "typesafe": "technology",
+      "typesafe_confidence": 0.7,
+      "hybrid@0.50": "technology"
+    },
+    "1eea5b0bb53a197c": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": true,
+      "stratum": "email_technology.csv|0",
+      "path": "llm_assisted",
+      "method1": "technology",
+      "method2": "social_media",
+      "classic": "technology",
+      "classic_fallback": "technology",
+      "typesafe_status": "ok",
+      "typesafe": "technology",
+      "typesafe_confidence": 0.65,
+      "hybrid@0.50": "technology"
+    },
+    "1fdfc3551072cca7": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_finance.csv|0",
+      "path": "llm_assisted",
+      "method1": "finance",
+      "method2": "social_media",
+      "classic": "finance",
+      "classic_fallback": "finance",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.53,
+      "hybrid@0.50": "none"
+    },
+    "262dd2c242917fb1": {
+      "truth": "none",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_unsure.csv|0",
+      "path": "llm_assisted",
+      "method1": "none",
+      "method2": "social_media",
+      "classic": "none",
+      "classic_fallback": "none",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.96,
+      "hybrid@0.50": "none"
+    },
+    "26544655c4ea5705": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_logistics.csv|0",
+      "path": "llm_assisted",
+      "method1": "logistics",
+      "method2": "technology",
+      "classic": "logistics",
+      "classic_fallback": "logistics",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.71,
+      "hybrid@0.50": "none"
+    },
+    "2670e47895e47dff": {
+      "truth": "healthcare",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_logistics.csv|1",
+      "path": "llm_assisted",
+      "method1": "logistics",
+      "method2": "technology",
+      "classic": "logistics",
+      "classic_fallback": "logistics",
+      "typesafe_status": "ok",
+      "typesafe": "healthcare",
+      "typesafe_confidence": 1.0,
+      "hybrid@0.50": "healthcare"
+    },
+    "267821749e495adf": {
+      "truth": "none",
+      "label": "0",
+      "ambiguous": true,
+      "stratum": "email_unsure.csv|0",
+      "path": "llm_assisted",
+      "method1": "hr",
+      "method2": "social_media",
+      "classic": "none",
+      "classic_fallback": "none",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.93,
+      "hybrid@0.50": "none"
+    },
+    "2693d1b8dc6496fa": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_social_media.csv|0",
+      "path": "llm_assisted",
+      "method1": "social_media",
+      "method2": "retail",
+      "classic": "social_media",
+      "classic_fallback": "social_media",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.69,
+      "hybrid@0.50": "none"
+    },
+    "276527327a8439cb": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_logistics.csv|0",
+      "path": "llm_assisted",
+      "method1": "logistics",
+      "method2": "retail",
+      "classic": "logistics",
+      "classic_fallback": "logistics",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.73,
+      "hybrid@0.50": "none"
+    },
+    "277807d5d5c12deb": {
+      "truth": "education",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_telecommunications.csv|0",
+      "path": "llm_assisted",
+      "method1": "telecommunications",
+      "method2": "retail",
+      "classic": "telecommunications",
+      "classic_fallback": "telecommunications",
+      "typesafe_status": "ok",
+      "typesafe": "education",
+      "typesafe_confidence": 1.0,
+      "hybrid@0.50": "education"
+    },
+    "281691a17a7099ae": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_unsure.csv|0",
+      "path": "llm_assisted",
+      "method1": "none",
+      "method2": "technology",
+      "classic": "none",
+      "classic_fallback": "none",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.6,
+      "hybrid@0.50": "none"
+    },
+    "284a86be37e4b70c": {
+      "truth": "education",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_technology.csv|0",
+      "path": "llm_assisted",
+      "method1": "technology",
+      "method2": "retail",
+      "classic": "technology",
+      "classic_fallback": "technology",
+      "typesafe_status": "ok",
+      "typesafe": "education",
+      "typesafe_confidence": 1.0,
+      "hybrid@0.50": "education"
+    },
+    "291b030c9d2e7d06": {
+      "truth": "none",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_unsure.csv|0",
+      "path": "llm_assisted",
+      "method1": "none",
+      "method2": "technology",
+      "classic": "none",
+      "classic_fallback": "none",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 1.0,
+      "hybrid@0.50": "none"
+    },
+    "2b91c166b1e36b40": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_hr.csv|0",
+      "path": "llm_assisted",
+      "method1": "government",
+      "method2": "social_media",
+      "classic": "hr",
+      "classic_fallback": "hr",
+      "typesafe_status": "ok",
+      "typesafe": "technology",
+      "typesafe_confidence": 0.61,
+      "hybrid@0.50": "technology"
+    },
+    "2cc91478dbcbc48c": {
+      "truth": "none",
+      "label": "0",
+      "ambiguous": true,
+      "stratum": "email_telecommunications.csv|0",
+      "path": "llm_assisted",
+      "method1": "telecommunications",
+      "method2": "social_media",
+      "classic": "telecommunications",
+      "classic_fallback": "telecommunications",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.93,
+      "hybrid@0.50": "none"
+    },
+    "2eaf6d2cc7c43bef": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_education.csv|0",
+      "path": "llm_assisted",
+      "method1": "education",
+      "method2": "technology",
+      "classic": "education",
+      "classic_fallback": "education",
+      "typesafe_status": "ok",
+      "typesafe": "education",
+      "typesafe_confidence": 0.7,
+      "hybrid@0.50": "education"
+    },
+    "2eb2c33b7105b19d": {
+      "truth": "none",
+      "label": "1",
+      "ambiguous": true,
+      "stratum": "email_logistics.csv|1",
+      "path": "llm_assisted",
+      "method1": "logistics",
+      "method2": "social_media",
+      "classic": "logistics",
+      "classic_fallback": "logistics",
+      "typesafe_status": "ok",
+      "typesafe": "healthcare",
+      "typesafe_confidence": 0.88,
+      "hybrid@0.50": "healthcare"
+    },
+    "30419d9fb7c18d97": {
+      "truth": "retail",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_unsure.csv|1",
+      "path": "llm_assisted",
+      "method1": "none",
+      "method2": "social_media",
+      "classic": "none",
+      "classic_fallback": "none",
+      "typesafe_status": "ok",
+      "typesafe": "retail",
+      "typesafe_confidence": 1.0,
+      "hybrid@0.50": "retail"
+    },
+    "306838473c10a444": {
+      "truth": "none",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_unsure.csv|1",
+      "path": "llm_assisted",
+      "method1": "none",
+      "method2": "social_media",
+      "classic": "none",
+      "classic_fallback": "none",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.98,
+      "hybrid@0.50": "none"
+    },
+    "306b638a2213f94d": {
+      "truth": "none",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_government.csv|1",
+      "path": "llm_assisted",
+      "method1": "government",
+      "method2": "retail",
+      "classic": "government",
+      "classic_fallback": "government",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.93,
+      "hybrid@0.50": "none"
+    },
+    "30a45a8da9dc87be": {
+      "truth": "retail",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_technology.csv|1",
+      "path": "llm_assisted",
+      "method1": "technology",
+      "method2": "social_media",
+      "classic": "technology",
+      "classic_fallback": "technology",
+      "typesafe_status": "ok",
+      "typesafe": "retail",
+      "typesafe_confidence": 1.0,
+      "hybrid@0.50": "retail"
+    },
+    "314dad9a6d3a8559": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_healthcare.csv|0",
+      "path": "llm_assisted",
+      "method1": "healthcare",
+      "method2": "technology",
+      "classic": "healthcare",
+      "classic_fallback": "healthcare",
+      "typesafe_status": "ok",
+      "typesafe": "technology",
+      "typesafe_confidence": 0.7,
+      "hybrid@0.50": "technology"
+    },
+    "31588d4e5459e5e2": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_telecommunications.csv|0",
+      "path": "llm_assisted",
+      "method1": "telecommunications",
+      "method2": "social_media",
+      "classic": "telecommunications",
+      "classic_fallback": "telecommunications",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.63,
+      "hybrid@0.50": "none"
+    },
+    "329c10f6affb1446": {
+      "truth": "none",
+      "label": "1",
+      "ambiguous": true,
+      "stratum": "email_finance.csv|1",
+      "path": "llm_assisted",
+      "method1": "finance",
+      "method2": "social_media",
+      "classic": "finance",
+      "classic_fallback": "finance",
+      "typesafe_status": "ok",
+      "typesafe": "healthcare",
+      "typesafe_confidence": 0.75,
+      "hybrid@0.50": "healthcare"
+    },
+    "32a03e258d63eb63": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_retail.csv|0",
+      "path": "llm_assisted",
+      "method1": "retail",
+      "method2": "social_media",
+      "classic": "retail",
+      "classic_fallback": "retail",
+      "typesafe_status": "ok",
+      "typesafe": "technology",
+      "typesafe_confidence": 0.38,
+      "hybrid@0.50": "retail"
+    },
+    "33ee8d7e9492432e": {
+      "truth": "none",
+      "label": "1",
+      "ambiguous": true,
+      "stratum": "email_telecommunications.csv|1",
+      "path": "llm_assisted",
+      "method1": "logistics",
+      "method2": "social_media",
+      "classic": "logistics",
+      "classic_fallback": "logistics",
+      "typesafe_status": "ok",
+      "typesafe": "healthcare",
+      "typesafe_confidence": 0.73,
+      "hybrid@0.50": "healthcare"
+    },
+    "3643c5f62be939aa": {
+      "truth": "retail",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_education.csv|1",
+      "path": "llm_assisted",
+      "method1": "education",
+      "method2": "technology",
+      "classic": "education",
+      "classic_fallback": "education",
+      "typesafe_status": "ok",
+      "typesafe": "retail",
+      "typesafe_confidence": 1.0,
+      "hybrid@0.50": "retail"
+    },
+    "36df8bfe6898b02e": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_government.csv|0",
+      "path": "llm_assisted",
+      "method1": "government",
+      "method2": "social_media",
+      "classic": "government",
+      "classic_fallback": "government",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.71,
+      "hybrid@0.50": "none"
+    },
+    "39d1dae831af4260": {
+      "truth": "retail",
+      "label": "1",
+      "ambiguous": true,
+      "stratum": "email_technology.csv|1",
+      "path": "llm_assisted",
+      "method1": "technology",
+      "method2": "social_media",
+      "classic": "telecommunications",
+      "classic_fallback": "telecommunications",
+      "typesafe_status": "ok",
+      "typesafe": "healthcare",
+      "typesafe_confidence": 0.97,
+      "hybrid@0.50": "healthcare"
+    },
+    "3ce544061ebc62a9": {
+      "truth": "finance",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_finance.csv|1",
+      "path": "classic_only",
+      "method1": "finance",
+      "method2": "finance",
+      "classic": "finance",
+      "classic_fallback": "finance",
+      "typesafe_status": "ok",
+      "typesafe": "finance",
+      "typesafe_confidence": 1.0,
+      "hybrid@0.50": "finance"
+    },
+    "3cfb1e6ac56a8293": {
+      "truth": "none",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_unsure.csv|0",
+      "path": "llm_assisted",
+      "method1": "finance",
+      "method2": "retail",
+      "classic": "none",
+      "classic_fallback": "none",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.97,
+      "hybrid@0.50": "none"
+    },
+    "3d873f8b3d6fd6e6": {
+      "truth": "healthcare",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_unsure.csv|1",
+      "path": "llm_assisted",
+      "method1": "none",
+      "method2": "social_media",
+      "classic": "none",
+      "classic_fallback": "none",
+      "typesafe_status": "ok",
+      "typesafe": "healthcare",
+      "typesafe_confidence": 0.99,
+      "hybrid@0.50": "healthcare"
+    },
+    "3eddb5f924816c4b": {
+      "truth": "none",
+      "label": "0",
+      "ambiguous": true,
+      "stratum": "email_hr.csv|0",
+      "path": "llm_assisted",
+      "method1": "hr",
+      "method2": "social_media",
+      "classic": "hr",
+      "classic_fallback": "hr",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.91,
+      "hybrid@0.50": "none"
+    },
+    "3f87fb946a1762f5": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_education.csv|0",
+      "path": "llm_assisted",
+      "method1": "education",
+      "method2": "technology",
+      "classic": "education",
+      "classic_fallback": "education",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.57,
+      "hybrid@0.50": "none"
+    },
+    "45dc1c3e902d998a": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_healthcare.csv|0",
+      "path": "llm_assisted",
+      "method1": "healthcare",
+      "method2": "technology",
+      "classic": "healthcare",
+      "classic_fallback": "healthcare",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.47,
+      "hybrid@0.50": "healthcare"
+    },
+    "4aa77b833bb40628": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_retail.csv|0",
+      "path": "llm_assisted",
+      "method1": "retail",
+      "method2": "social_media",
+      "classic": "retail",
+      "classic_fallback": "retail",
+      "typesafe_status": "ok",
+      "typesafe": "technology",
+      "typesafe_confidence": 0.52,
+      "hybrid@0.50": "technology"
+    },
+    "4c1fd3e4b387f3e7": {
+      "truth": "healthcare",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_logistics.csv|1",
+      "path": "llm_assisted",
+      "method1": "logistics",
+      "method2": "social_media",
+      "classic": "logistics",
+      "classic_fallback": "logistics",
+      "typesafe_status": "ok",
+      "typesafe": "healthcare",
+      "typesafe_confidence": 0.99,
+      "hybrid@0.50": "healthcare"
+    },
+    "4c5725c6c0ab95c3": {
+      "truth": "none",
+      "label": "1",
+      "ambiguous": true,
+      "stratum": "email_government.csv|1",
+      "path": "llm_assisted",
+      "method1": "government",
+      "method2": "social_media",
+      "classic": "government",
+      "classic_fallback": "government",
+      "typesafe_status": "ok",
+      "typesafe": "healthcare",
+      "typesafe_confidence": 0.95,
+      "hybrid@0.50": "healthcare"
+    },
+    "4e61a8e3f558a3fa": {
+      "truth": "education",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_healthcare.csv|0",
+      "path": "llm_assisted",
+      "method1": "healthcare",
+      "method2": "technology",
+      "classic": "healthcare",
+      "classic_fallback": "healthcare",
+      "typesafe_status": "ok",
+      "typesafe": "education",
+      "typesafe_confidence": 0.88,
+      "hybrid@0.50": "education"
+    },
+    "50a34f896fc3fbdb": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_social_media.csv|0",
+      "path": "llm_assisted",
+      "method1": "social_media",
+      "method2": "technology",
+      "classic": "social_media",
+      "classic_fallback": "social_media",
+      "typesafe_status": "ok",
+      "typesafe": "technology",
+      "typesafe_confidence": 0.91,
+      "hybrid@0.50": "technology"
+    },
+    "50f471af607495bf": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_unsure.csv|0",
+      "path": "llm_assisted",
+      "method1": "none",
+      "method2": "social_media",
+      "classic": "none",
+      "classic_fallback": "none",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.64,
+      "hybrid@0.50": "none"
+    },
+    "5136b48457159907": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_unsure.csv|0",
+      "path": "llm_assisted",
+      "method1": "none",
+      "method2": "social_media",
+      "classic": "none",
+      "classic_fallback": "none",
+      "typesafe_status": "ok",
+      "typesafe": "technology",
+      "typesafe_confidence": 0.62,
+      "hybrid@0.50": "technology"
+    },
+    "54ed65ab84f39ae4": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_retail.csv|0",
+      "path": "classic_only",
+      "method1": "retail",
+      "method2": "retail",
+      "classic": "retail",
+      "classic_fallback": "retail",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.61,
+      "hybrid@0.50": "retail"
+    },
+    "55032456568e9b4a": {
+      "truth": "none",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_social_media.csv|1",
+      "path": "classic_only",
+      "method1": "social_media",
+      "method2": "social_media",
+      "classic": "social_media",
+      "classic_fallback": "social_media",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 1.0,
+      "hybrid@0.50": "social_media"
+    },
+    "55a9d8b5f4138b39": {
+      "truth": "none",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_unsure.csv|0",
+      "path": "llm_assisted",
+      "method1": "government",
+      "method2": "technology",
+      "classic": "none",
+      "classic_fallback": "none",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 1.0,
+      "hybrid@0.50": "none"
+    },
+    "5623065d5e8ee2d6": {
+      "truth": "healthcare",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_healthcare.csv|1",
+      "path": "llm_assisted",
+      "method1": "healthcare",
+      "method2": "social_media",
+      "classic": "healthcare",
+      "classic_fallback": "healthcare",
+      "typesafe_status": "ok",
+      "typesafe": "healthcare",
+      "typesafe_confidence": 0.98,
+      "hybrid@0.50": "healthcare"
+    },
+    "563c07e5dd5319b9": {
+      "truth": "healthcare",
+      "label": "1",
+      "ambiguous": true,
+      "stratum": "email_hr.csv|1",
+      "path": "llm_assisted",
+      "method1": "hr",
+      "method2": "technology",
+      "classic": "hr",
+      "classic_fallback": "hr",
+      "typesafe_status": "ok",
+      "typesafe": "healthcare",
+      "typesafe_confidence": 0.96,
+      "hybrid@0.50": "healthcare"
+    },
+    "576d82aa88af122e": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_social_media.csv|0",
+      "path": "llm_assisted",
+      "method1": "social_media",
+      "method2": "technology",
+      "classic": "social_media",
+      "classic_fallback": "social_media",
+      "typesafe_status": "ok",
+      "typesafe": "technology",
+      "typesafe_confidence": 0.62,
+      "hybrid@0.50": "technology"
+    },
+    "5799b55bf6edd7ef": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_telecommunications.csv|0",
+      "path": "llm_assisted",
+      "method1": "telecommunications",
+      "method2": "technology",
+      "classic": "telecommunications",
+      "classic_fallback": "telecommunications",
+      "typesafe_status": "ok",
+      "typesafe": "technology",
+      "typesafe_confidence": 0.88,
+      "hybrid@0.50": "technology"
+    },
+    "588b5414b4420dbf": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_logistics.csv|0",
+      "path": "llm_assisted",
+      "method1": "logistics",
+      "method2": "technology",
+      "classic": "logistics",
+      "classic_fallback": "logistics",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.48,
+      "hybrid@0.50": "logistics"
+    },
+    "58a80a20b38330fe": {
+      "truth": "retail",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_education.csv|1",
+      "path": "llm_assisted",
+      "method1": "education",
+      "method2": "technology",
+      "classic": "education",
+      "classic_fallback": "education",
+      "typesafe_status": "ok",
+      "typesafe": "retail",
+      "typesafe_confidence": 1.0,
+      "hybrid@0.50": "retail"
+    },
+    "598ac89865b41e2c": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_government.csv|0",
+      "path": "llm_assisted",
+      "method1": "government",
+      "method2": "retail",
+      "classic": "government",
+      "classic_fallback": "government",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.61,
+      "hybrid@0.50": "none"
+    },
+    "5bdf2f8f896aeafc": {
+      "truth": "retail",
+      "label": "1",
+      "ambiguous": true,
+      "stratum": "email_unsure.csv|1",
+      "path": "llm_assisted",
+      "method1": "none",
+      "method2": "social_media",
+      "classic": "none",
+      "classic_fallback": "none",
+      "typesafe_status": "ok",
+      "typesafe": "retail",
+      "typesafe_confidence": 0.68,
+      "hybrid@0.50": "retail"
+    },
+    "5c7feb98ef648483": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_technology.csv|0",
+      "path": "classic_only",
+      "method1": "technology",
+      "method2": "technology",
+      "classic": "technology",
+      "classic_fallback": "technology",
+      "typesafe_status": "ok",
+      "typesafe": "technology",
+      "typesafe_confidence": 0.5,
+      "hybrid@0.50": "technology"
+    },
+    "5d2b9f089b4c8545": {
+      "truth": "retail",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_education.csv|1",
+      "path": "llm_assisted",
+      "method1": "education",
+      "method2": "technology",
+      "classic": "education",
+      "classic_fallback": "education",
+      "typesafe_status": "ok",
+      "typesafe": "retail",
+      "typesafe_confidence": 1.0,
+      "hybrid@0.50": "retail"
+    },
+    "5d3d3375b8975603": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_education.csv|0",
+      "path": "llm_assisted",
+      "method1": "healthcare",
+      "method2": "social_media",
+      "classic": "education",
+      "classic_fallback": "education",
+      "typesafe_status": "ok",
+      "typesafe": "technology",
+      "typesafe_confidence": 0.75,
+      "hybrid@0.50": "technology"
+    },
+    "603419544a9c4b1a": {
+      "truth": "healthcare",
+      "label": "1",
+      "ambiguous": true,
+      "stratum": "email_logistics.csv|1",
+      "path": "llm_assisted",
+      "method1": "logistics",
+      "method2": "social_media",
+      "classic": "logistics",
+      "classic_fallback": "logistics",
+      "typesafe_status": "ok",
+      "typesafe": "healthcare",
+      "typesafe_confidence": 0.63,
+      "hybrid@0.50": "healthcare"
+    },
+    "614941d330ee10b3": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_hr.csv|0",
+      "path": "llm_assisted",
+      "method1": "hr",
+      "method2": "finance",
+      "classic": "hr",
+      "classic_fallback": "hr",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.65,
+      "hybrid@0.50": "none"
+    },
+    "61cd6fce3c0ff33c": {
+      "truth": "healthcare",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_telecommunications.csv|1",
+      "path": "llm_assisted",
+      "method1": "telecommunications",
+      "method2": "social_media",
+      "classic": "telecommunications",
+      "classic_fallback": "telecommunications",
+      "typesafe_status": "ok",
+      "typesafe": "healthcare",
+      "typesafe_confidence": 1.0,
+      "hybrid@0.50": "healthcare"
+    },
+    "624928a6fc1282ad": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_unsure.csv|0",
+      "path": "llm_assisted",
+      "method1": "telecommunications",
+      "method2": "technology",
+      "classic": "none",
+      "classic_fallback": "none",
+      "typesafe_status": "ok",
+      "typesafe": "technology",
+      "typesafe_confidence": 0.81,
+      "hybrid@0.50": "technology"
+    },
+    "662f6b8e06b3b513": {
+      "truth": "none",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_government.csv|1",
+      "path": "llm_assisted",
+      "method1": "finance",
+      "method2": "social_media",
+      "classic": "finance",
+      "classic_fallback": "finance",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 1.0,
+      "hybrid@0.50": "none"
+    },
+    "6975642121aada15": {
+      "truth": "retail",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_education.csv|1",
+      "path": "llm_assisted",
+      "method1": "education",
+      "method2": "social_media",
+      "classic": "education",
+      "classic_fallback": "education",
+      "typesafe_status": "ok",
+      "typesafe": "retail",
+      "typesafe_confidence": 1.0,
+      "hybrid@0.50": "retail"
+    },
+    "6e8d9aee7cb8fd67": {
+      "truth": "none",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_finance.csv|1",
+      "path": "llm_assisted",
+      "method1": "finance",
+      "method2": "retail",
+      "classic": "finance",
+      "classic_fallback": "finance",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 1.0,
+      "hybrid@0.50": "none"
+    },
+    "72c366e5f4ea50e5": {
+      "truth": "healthcare",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_hr.csv|1",
+      "path": "llm_assisted",
+      "method1": "hr",
+      "method2": "social_media",
+      "classic": "hr",
+      "classic_fallback": "hr",
+      "typesafe_status": "ok",
+      "typesafe": "healthcare",
+      "typesafe_confidence": 0.78,
+      "hybrid@0.50": "healthcare"
+    },
+    "7672d85d0cf099f4": {
+      "truth": "healthcare",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_healthcare.csv|1",
+      "path": "llm_assisted",
+      "method1": "healthcare",
+      "method2": "retail",
+      "classic": "healthcare",
+      "classic_fallback": "healthcare",
+      "typesafe_status": "ok",
+      "typesafe": "healthcare",
+      "typesafe_confidence": 1.0,
+      "hybrid@0.50": "healthcare"
+    },
+    "7a74493ad40a0f23": {
+      "truth": "none",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_social_media.csv|1",
+      "path": "classic_only",
+      "method1": "social_media",
+      "method2": "social_media",
+      "classic": "social_media",
+      "classic_fallback": "social_media",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 1.0,
+      "hybrid@0.50": "social_media"
+    },
+    "7bd300740826f319": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_finance.csv|0",
+      "path": "llm_assisted",
+      "method1": "finance",
+      "method2": "social_media",
+      "classic": "finance",
+      "classic_fallback": "finance",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.56,
+      "hybrid@0.50": "none"
+    },
+    "7bf0fdbf5c1e3c1f": {
+      "truth": "retail",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_government.csv|1",
+      "path": "llm_assisted",
+      "method1": "government",
+      "method2": "social_media",
+      "classic": "government",
+      "classic_fallback": "government",
+      "typesafe_status": "ok",
+      "typesafe": "retail",
+      "typesafe_confidence": 1.0,
+      "hybrid@0.50": "retail"
+    },
+    "7ca282019ec691c7": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_telecommunications.csv|0",
+      "path": "llm_assisted",
+      "method1": "telecommunications",
+      "method2": "technology",
+      "classic": "telecommunications",
+      "classic_fallback": "telecommunications",
+      "typesafe_status": "ok",
+      "typesafe": "technology",
+      "typesafe_confidence": 0.51,
+      "hybrid@0.50": "technology"
+    },
+    "7f9498987334df85": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_government.csv|0",
+      "path": "llm_assisted",
+      "method1": "government",
+      "method2": "technology",
+      "classic": "government",
+      "classic_fallback": "government",
+      "typesafe_status": "ok",
+      "typesafe": "technology",
+      "typesafe_confidence": 0.55,
+      "hybrid@0.50": "technology"
+    },
+    "8247c3844cdd6887": {
+      "truth": "healthcare",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_hr.csv|1",
+      "path": "llm_assisted",
+      "method1": "hr",
+      "method2": "social_media",
+      "classic": "hr",
+      "classic_fallback": "hr",
+      "typesafe_status": "ok",
+      "typesafe": "healthcare",
+      "typesafe_confidence": 1.0,
+      "hybrid@0.50": "healthcare"
+    },
+    "849743a3c3a7215e": {
+      "truth": "none",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_finance.csv|1",
+      "path": "llm_assisted",
+      "method1": "finance",
+      "method2": "retail",
+      "classic": "finance",
+      "classic_fallback": "finance",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 1.0,
+      "hybrid@0.50": "none"
+    },
+    "8820eab20846a186": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_technology.csv|0",
+      "path": "llm_assisted",
+      "method1": "technology",
+      "method2": "retail",
+      "classic": "technology",
+      "classic_fallback": "technology",
+      "typesafe_status": "ok",
+      "typesafe": "technology",
+      "typesafe_confidence": 0.64,
+      "hybrid@0.50": "technology"
+    },
+    "883ce2db389da71d": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_logistics.csv|0",
+      "path": "llm_assisted",
+      "method1": "logistics",
+      "method2": "technology",
+      "classic": "logistics",
+      "classic_fallback": "logistics",
+      "typesafe_status": "ok",
+      "typesafe": "technology",
+      "typesafe_confidence": 0.86,
+      "hybrid@0.50": "technology"
+    },
+    "89eda227862a2e0c": {
+      "truth": "retail",
+      "label": "1",
+      "ambiguous": true,
+      "stratum": "email_technology.csv|1",
+      "path": "llm_assisted",
+      "method1": "technology",
+      "method2": "social_media",
+      "classic": "technology",
+      "classic_fallback": "technology",
+      "typesafe_status": "ok",
+      "typesafe": "healthcare",
+      "typesafe_confidence": 1.0,
+      "hybrid@0.50": "healthcare"
+    },
+    "8afdfd922758d563": {
+      "truth": "healthcare",
+      "label": "1",
+      "ambiguous": true,
+      "stratum": "email_finance.csv|1",
+      "path": "llm_assisted",
+      "method1": "finance",
+      "method2": "technology",
+      "classic": "finance",
+      "classic_fallback": "finance",
+      "typesafe_status": "ok",
+      "typesafe": "healthcare",
+      "typesafe_confidence": 0.73,
+      "hybrid@0.50": "healthcare"
+    },
+    "8c188714a1bd5d1f": {
+      "truth": "none",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_social_media.csv|1",
+      "path": "classic_only",
+      "method1": "social_media",
+      "method2": "social_media",
+      "classic": "social_media",
+      "classic_fallback": "social_media",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 1.0,
+      "hybrid@0.50": "social_media"
+    },
+    "8ce25143684c9c48": {
+      "truth": "retail",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_logistics.csv|1",
+      "path": "llm_assisted",
+      "method1": "logistics",
+      "method2": "technology",
+      "classic": "logistics",
+      "classic_fallback": "logistics",
+      "typesafe_status": "ok",
+      "typesafe": "retail",
+      "typesafe_confidence": 1.0,
+      "hybrid@0.50": "retail"
+    },
+    "8cea8b683b51b3a2": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_logistics.csv|0",
+      "path": "llm_assisted",
+      "method1": "logistics",
+      "method2": "technology",
+      "classic": "logistics",
+      "classic_fallback": "logistics",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.78,
+      "hybrid@0.50": "none"
+    },
+    "8d1e73b6941fb3ee": {
+      "truth": "none",
+      "label": "1",
+      "ambiguous": true,
+      "stratum": "email_education.csv|1",
+      "path": "llm_assisted",
+      "method1": "healthcare",
+      "method2": "social_media",
+      "classic": "education",
+      "classic_fallback": "education",
+      "typesafe_status": "ok",
+      "typesafe": "healthcare",
+      "typesafe_confidence": 0.82,
+      "hybrid@0.50": "healthcare"
+    },
+    "8d397c5bc35b9c9a": {
+      "truth": "none",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_technology.csv|1",
+      "path": "llm_assisted",
+      "method1": "technology",
+      "method2": "social_media",
+      "classic": "technology",
+      "classic_fallback": "technology",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.99,
+      "hybrid@0.50": "none"
+    },
+    "90c67166bb60fba7": {
+      "truth": "none",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_social_media.csv|1",
+      "path": "llm_assisted",
+      "method1": "finance",
+      "method2": "retail",
+      "classic": "social_media",
+      "classic_fallback": "social_media",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 1.0,
+      "hybrid@0.50": "none"
+    },
+    "9131df8b0a86df13": {
+      "truth": "education",
+      "label": "0",
+      "ambiguous": true,
+      "stratum": "email_education.csv|0",
+      "path": "llm_assisted",
+      "method1": "education",
+      "method2": "retail",
+      "classic": "education",
+      "classic_fallback": "education",
+      "typesafe_status": "ok",
+      "typesafe": "hr",
+      "typesafe_confidence": 0.69,
+      "hybrid@0.50": "hr"
+    },
+    "9496de065d560b66": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_social_media.csv|0",
+      "path": "classic_only",
+      "method1": "social_media",
+      "method2": "social_media",
+      "classic": "social_media",
+      "classic_fallback": "social_media",
+      "typesafe_status": "ok",
+      "typesafe": "technology",
+      "typesafe_confidence": 0.83,
+      "hybrid@0.50": "social_media"
+    },
+    "98e5981646bae90a": {
+      "truth": "none",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_telecommunications.csv|1",
+      "path": "llm_assisted",
+      "method1": "logistics",
+      "method2": "social_media",
+      "classic": "logistics",
+      "classic_fallback": "logistics",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.99,
+      "hybrid@0.50": "none"
+    },
+    "9a946499f7071926": {
+      "truth": "healthcare",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_telecommunications.csv|1",
+      "path": "llm_assisted",
+      "method1": "telecommunications",
+      "method2": "technology",
+      "classic": "telecommunications",
+      "classic_fallback": "telecommunications",
+      "typesafe_status": "ok",
+      "typesafe": "healthcare",
+      "typesafe_confidence": 1.0,
+      "hybrid@0.50": "healthcare"
+    },
+    "9bdacbac12052678": {
+      "truth": "healthcare",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_retail.csv|1",
+      "path": "llm_assisted",
+      "method1": "retail",
+      "method2": "technology",
+      "classic": "retail",
+      "classic_fallback": "retail",
+      "typesafe_status": "ok",
+      "typesafe": "healthcare",
+      "typesafe_confidence": 0.97,
+      "hybrid@0.50": "healthcare"
+    },
+    "9c67ed026c0ff85d": {
+      "truth": "healthcare",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_technology.csv|1",
+      "path": "llm_assisted",
+      "method1": "technology",
+      "method2": "social_media",
+      "classic": "technology",
+      "classic_fallback": "technology",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.36,
+      "hybrid@0.50": "technology"
+    },
+    "9d94740f1f8987d0": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_government.csv|0",
+      "path": "llm_assisted",
+      "method1": "government",
+      "method2": "retail",
+      "classic": "government",
+      "classic_fallback": "government",
+      "typesafe_status": "ok",
+      "typesafe": "technology",
+      "typesafe_confidence": 0.82,
+      "hybrid@0.50": "technology"
+    },
+    "a05288ab0e207d9d": {
+      "truth": "none",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_finance.csv|0",
+      "path": "llm_assisted",
+      "method1": "finance",
+      "method2": "social_media",
+      "classic": "finance",
+      "classic_fallback": "finance",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.99,
+      "hybrid@0.50": "none"
+    },
+    "a10d6eeac91b8469": {
+      "truth": "retail",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_telecommunications.csv|1",
+      "path": "llm_assisted",
+      "method1": "healthcare",
+      "method2": "social_media",
+      "classic": "telecommunications",
+      "classic_fallback": "telecommunications",
+      "typesafe_status": "ok",
+      "typesafe": "retail",
+      "typesafe_confidence": 1.0,
+      "hybrid@0.50": "retail"
+    },
+    "a19b0736b64141fc": {
+      "truth": "healthcare",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_retail.csv|1",
+      "path": "llm_assisted",
+      "method1": "retail",
+      "method2": "technology",
+      "classic": "retail",
+      "classic_fallback": "retail",
+      "typesafe_status": "ok",
+      "typesafe": "healthcare",
+      "typesafe_confidence": 0.98,
+      "hybrid@0.50": "healthcare"
+    },
+    "a1b45ab896facc9d": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_healthcare.csv|0",
+      "path": "llm_assisted",
+      "method1": "healthcare",
+      "method2": "social_media",
+      "classic": "healthcare",
+      "classic_fallback": "healthcare",
+      "typesafe_status": "ok",
+      "typesafe": "technology",
+      "typesafe_confidence": 0.68,
+      "hybrid@0.50": "technology"
+    },
+    "a219985bb0c221b1": {
+      "truth": "none",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_finance.csv|0",
+      "path": "llm_assisted",
+      "method1": "finance",
+      "method2": "technology",
+      "classic": "finance",
+      "classic_fallback": "finance",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.9,
+      "hybrid@0.50": "none"
+    },
+    "a2cd04b2be7e9d01": {
+      "truth": "social_media",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_social_media.csv|0",
+      "path": "classic_only",
+      "method1": "social_media",
+      "method2": "social_media",
+      "classic": "social_media",
+      "classic_fallback": "social_media",
+      "typesafe_status": "ok",
+      "typesafe": "social_media",
+      "typesafe_confidence": 0.96,
+      "hybrid@0.50": "social_media"
+    },
+    "a3b5815162fb2ff6": {
+      "truth": "healthcare",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_logistics.csv|1",
+      "path": "llm_assisted",
+      "method1": "logistics",
+      "method2": "technology",
+      "classic": "logistics",
+      "classic_fallback": "logistics",
+      "typesafe_status": "ok",
+      "typesafe": "healthcare",
+      "typesafe_confidence": 1.0,
+      "hybrid@0.50": "healthcare"
+    },
+    "a4ae330d49109815": {
+      "truth": "none",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_government.csv|0",
+      "path": "llm_assisted",
+      "method1": "government",
+      "method2": "social_media",
+      "classic": "government",
+      "classic_fallback": "government",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 1.0,
+      "hybrid@0.50": "none"
+    },
+    "a57ad99acf7aedfd": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_hr.csv|0",
+      "path": "llm_assisted",
+      "method1": "hr",
+      "method2": "social_media",
+      "classic": "hr",
+      "classic_fallback": "hr",
+      "typesafe_status": "ok",
+      "typesafe": "technology",
+      "typesafe_confidence": 0.47,
+      "hybrid@0.50": "hr"
+    },
+    "a5b171a81ae45034": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_retail.csv|0",
+      "path": "llm_assisted",
+      "method1": "retail",
+      "method2": "social_media",
+      "classic": "retail",
+      "classic_fallback": "retail",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.56,
+      "hybrid@0.50": "none"
+    },
+    "a63a40e9e60d35e6": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_logistics.csv|0",
+      "path": "llm_assisted",
+      "method1": "logistics",
+      "method2": "technology",
+      "classic": "logistics",
+      "classic_fallback": "logistics",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.7,
+      "hybrid@0.50": "none"
+    },
+    "a80cf591adc14f30": {
+      "truth": "none",
+      "label": "1",
+      "ambiguous": true,
+      "stratum": "email_telecommunications.csv|1",
+      "path": "llm_assisted",
+      "method1": "healthcare",
+      "method2": "social_media",
+      "classic": "telecommunications",
+      "classic_fallback": "telecommunications",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.68,
+      "hybrid@0.50": "none"
+    },
+    "a9ba12583f2cad49": {
+      "truth": "none",
+      "label": "0",
+      "ambiguous": true,
+      "stratum": "email_finance.csv|0",
+      "path": "llm_assisted",
+      "method1": "finance",
+      "method2": "technology",
+      "classic": "finance",
+      "classic_fallback": "finance",
+      "typesafe_status": "ok",
+      "typesafe": "finance",
+      "typesafe_confidence": 0.96,
+      "hybrid@0.50": "finance"
+    },
+    "a9c6d774a233fb1c": {
+      "truth": "none",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_education.csv|1",
+      "path": "llm_assisted",
+      "method1": "government",
+      "method2": "retail",
+      "classic": "education",
+      "classic_fallback": "education",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.89,
+      "hybrid@0.50": "none"
+    },
+    "aadf2ce16e4c40c1": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_government.csv|0",
+      "path": "llm_assisted",
+      "method1": "government",
+      "method2": "social_media",
+      "classic": "government",
+      "classic_fallback": "government",
+      "typesafe_status": "ok",
+      "typesafe": "technology",
+      "typesafe_confidence": 0.67,
+      "hybrid@0.50": "technology"
+    },
+    "ad99a7fa6ecbd348": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_government.csv|0",
+      "path": "llm_assisted",
+      "method1": "government",
+      "method2": "technology",
+      "classic": "government",
+      "classic_fallback": "government",
+      "typesafe_status": "ok",
+      "typesafe": "technology",
+      "typesafe_confidence": 0.49,
+      "hybrid@0.50": "government"
+    },
+    "aee45f55d8938ab1": {
+      "truth": "retail",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_government.csv|1",
+      "path": "llm_assisted",
+      "method1": "government",
+      "method2": "social_media",
+      "classic": "government",
+      "classic_fallback": "government",
+      "typesafe_status": "ok",
+      "typesafe": "retail",
+      "typesafe_confidence": 1.0,
+      "hybrid@0.50": "retail"
+    },
+    "b07546ddba57a953": {
+      "truth": "none",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_technology.csv|1",
+      "path": "llm_assisted",
+      "method1": "technology",
+      "method2": "retail",
+      "classic": "technology",
+      "classic_fallback": "technology",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.66,
+      "hybrid@0.50": "none"
+    },
+    "b1efb2afb99d9207": {
+      "truth": "healthcare",
+      "label": "1",
+      "ambiguous": true,
+      "stratum": "email_healthcare.csv|1",
+      "path": "llm_assisted",
+      "method1": "healthcare",
+      "method2": "technology",
+      "classic": "healthcare",
+      "classic_fallback": "healthcare",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.41,
+      "hybrid@0.50": "healthcare"
+    },
+    "b2b80888c8e100ef": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_technology.csv|0",
+      "path": "classic_only",
+      "method1": "technology",
+      "method2": "technology",
+      "classic": "technology",
+      "classic_fallback": "technology",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.59,
+      "hybrid@0.50": "technology"
+    },
+    "b36edeb14729060b": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_finance.csv|0",
+      "path": "classic_only",
+      "method1": "finance",
+      "method2": "finance",
+      "classic": "finance",
+      "classic_fallback": "finance",
+      "typesafe_status": "ok",
+      "typesafe": "technology",
+      "typesafe_confidence": 0.54,
+      "hybrid@0.50": "finance"
+    },
+    "b43dceabf856f634": {
+      "truth": "healthcare",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_finance.csv|1",
+      "path": "llm_assisted",
+      "method1": "finance",
+      "method2": "social_media",
+      "classic": "finance",
+      "classic_fallback": "finance",
+      "typesafe_status": "ok",
+      "typesafe": "healthcare",
+      "typesafe_confidence": 0.5,
+      "hybrid@0.50": "healthcare"
+    },
+    "b52078f805b7f552": {
+      "truth": "none",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_social_media.csv|1",
+      "path": "classic_only",
+      "method1": "social_media",
+      "method2": "social_media",
+      "classic": "social_media",
+      "classic_fallback": "social_media",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 1.0,
+      "hybrid@0.50": "social_media"
+    },
+    "b68ee06c0e28925b": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_education.csv|0",
+      "path": "llm_assisted",
+      "method1": "education",
+      "method2": "technology",
+      "classic": "education",
+      "classic_fallback": "education",
+      "typesafe_status": "ok",
+      "typesafe": "technology",
+      "typesafe_confidence": 0.52,
+      "hybrid@0.50": "technology"
+    },
+    "b716a37ba84d9d81": {
+      "truth": "retail",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_retail.csv|0",
+      "path": "llm_assisted",
+      "method1": "retail",
+      "method2": "social_media",
+      "classic": "retail",
+      "classic_fallback": "retail",
+      "typesafe_status": "ok",
+      "typesafe": "retail",
+      "typesafe_confidence": 1.0,
+      "hybrid@0.50": "retail"
+    },
+    "b98f16b1a8f55991": {
+      "truth": "education",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_healthcare.csv|0",
+      "path": "llm_assisted",
+      "method1": "healthcare",
+      "method2": "retail",
+      "classic": "healthcare",
+      "classic_fallback": "healthcare",
+      "typesafe_status": "ok",
+      "typesafe": "education",
+      "typesafe_confidence": 0.91,
+      "hybrid@0.50": "education"
+    },
+    "bb0da4a3afbe0df2": {
+      "truth": "none",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_social_media.csv|1",
+      "path": "llm_assisted",
+      "method1": "finance",
+      "method2": "retail",
+      "classic": "social_media",
+      "classic_fallback": "social_media",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.89,
+      "hybrid@0.50": "none"
+    },
+    "bdef6c1ebd249c01": {
+      "truth": "healthcare",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_healthcare.csv|1",
+      "path": "llm_assisted",
+      "method1": "healthcare",
+      "method2": "social_media",
+      "classic": "healthcare",
+      "classic_fallback": "healthcare",
+      "typesafe_status": "ok",
+      "typesafe": "healthcare",
+      "typesafe_confidence": 0.98,
+      "hybrid@0.50": "healthcare"
+    },
+    "be32dd12dcb7901c": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_finance.csv|0",
+      "path": "llm_assisted",
+      "method1": "finance",
+      "method2": "technology",
+      "classic": "finance",
+      "classic_fallback": "finance",
+      "typesafe_status": "ok",
+      "typesafe": "technology",
+      "typesafe_confidence": 0.74,
+      "hybrid@0.50": "technology"
+    },
+    "bfbf2d865e8d4823": {
+      "truth": "healthcare",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_unsure.csv|1",
+      "path": "llm_assisted",
+      "method1": "none",
+      "method2": "social_media",
+      "classic": "none",
+      "classic_fallback": "none",
+      "typesafe_status": "ok",
+      "typesafe": "healthcare",
+      "typesafe_confidence": 0.61,
+      "hybrid@0.50": "healthcare"
+    },
+    "c0292f6b4f9188f8": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_telecommunications.csv|0",
+      "path": "llm_assisted",
+      "method1": "logistics",
+      "method2": "technology",
+      "classic": "logistics",
+      "classic_fallback": "logistics",
+      "typesafe_status": "ok",
+      "typesafe": "technology",
+      "typesafe_confidence": 0.4,
+      "hybrid@0.50": "logistics"
+    },
+    "c0b0eb42abbbf802": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_unsure.csv|0",
+      "path": "llm_assisted",
+      "method1": "healthcare",
+      "method2": "retail",
+      "classic": "none",
+      "classic_fallback": "none",
+      "typesafe_status": "ok",
+      "typesafe": "technology",
+      "typesafe_confidence": 0.86,
+      "hybrid@0.50": "technology"
+    },
+    "c2476d631cd5071b": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_retail.csv|0",
+      "path": "llm_assisted",
+      "method1": "retail",
+      "method2": "technology",
+      "classic": "retail",
+      "classic_fallback": "retail",
+      "typesafe_status": "ok",
+      "typesafe": "technology",
+      "typesafe_confidence": 0.93,
+      "hybrid@0.50": "technology"
+    },
+    "c25314da97e70444": {
+      "truth": "healthcare",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_unsure.csv|1",
+      "path": "llm_assisted",
+      "method1": "none",
+      "method2": "technology",
+      "classic": "none",
+      "classic_fallback": "none",
+      "typesafe_status": "ok",
+      "typesafe": "healthcare",
+      "typesafe_confidence": 0.99,
+      "hybrid@0.50": "healthcare"
+    },
+    "c2fadf870f598794": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_logistics.csv|0",
+      "path": "llm_assisted",
+      "method1": "logistics",
+      "method2": "social_media",
+      "classic": "logistics",
+      "classic_fallback": "logistics",
+      "typesafe_status": "ok",
+      "typesafe": "technology",
+      "typesafe_confidence": 0.84,
+      "hybrid@0.50": "technology"
+    },
+    "c31a8f816b011b56": {
+      "truth": "none",
+      "label": "1",
+      "ambiguous": true,
+      "stratum": "email_government.csv|1",
+      "path": "llm_assisted",
+      "method1": "government",
+      "method2": "social_media",
+      "classic": "government",
+      "classic_fallback": "government",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.62,
+      "hybrid@0.50": "none"
+    },
+    "c44c2352855816fe": {
+      "truth": "none",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_hr.csv|1",
+      "path": "llm_assisted",
+      "method1": "hr",
+      "method2": "social_media",
+      "classic": "hr",
+      "classic_fallback": "hr",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.96,
+      "hybrid@0.50": "none"
+    },
+    "c5ae53ee1b06f6ab": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_logistics.csv|0",
+      "path": "llm_assisted",
+      "method1": "logistics",
+      "method2": "technology",
+      "classic": "logistics",
+      "classic_fallback": "logistics",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.53,
+      "hybrid@0.50": "none"
+    },
+    "c602009ef3d8b25e": {
+      "truth": "healthcare",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_logistics.csv|1",
+      "path": "llm_assisted",
+      "method1": "logistics",
+      "method2": "social_media",
+      "classic": "logistics",
+      "classic_fallback": "logistics",
+      "typesafe_status": "ok",
+      "typesafe": "healthcare",
+      "typesafe_confidence": 0.71,
+      "hybrid@0.50": "healthcare"
+    },
+    "c9a61a44120442c3": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_social_media.csv|0",
+      "path": "llm_assisted",
+      "method1": "social_media",
+      "method2": "technology",
+      "classic": "social_media",
+      "classic_fallback": "social_media",
+      "typesafe_status": "ok",
+      "typesafe": "technology",
+      "typesafe_confidence": 0.51,
+      "hybrid@0.50": "technology"
+    },
+    "c9bb00aadf0647e0": {
+      "truth": "healthcare",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_retail.csv|1",
+      "path": "llm_assisted",
+      "method1": "retail",
+      "method2": "social_media",
+      "classic": "retail",
+      "classic_fallback": "retail",
+      "typesafe_status": "ok",
+      "typesafe": "healthcare",
+      "typesafe_confidence": 1.0,
+      "hybrid@0.50": "healthcare"
+    },
+    "cd87951b3acc85e5": {
+      "truth": "education",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_education.csv|0",
+      "path": "llm_assisted",
+      "method1": "education",
+      "method2": "technology",
+      "classic": "education",
+      "classic_fallback": "education",
+      "typesafe_status": "ok",
+      "typesafe": "education",
+      "typesafe_confidence": 1.0,
+      "hybrid@0.50": "education"
+    },
+    "cefe906188603fd7": {
+      "truth": "healthcare",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_retail.csv|1",
+      "path": "llm_assisted",
+      "method1": "retail",
+      "method2": "technology",
+      "classic": "retail",
+      "classic_fallback": "retail",
+      "typesafe_status": "ok",
+      "typesafe": "healthcare",
+      "typesafe_confidence": 0.98,
+      "hybrid@0.50": "healthcare"
+    },
+    "cfac0f0584c6f71e": {
+      "truth": "none",
+      "label": "1",
+      "ambiguous": true,
+      "stratum": "email_social_media.csv|1",
+      "path": "classic_only",
+      "method1": "social_media",
+      "method2": "social_media",
+      "classic": "social_media",
+      "classic_fallback": "social_media",
+      "typesafe_status": "ok",
+      "typesafe": "retail",
+      "typesafe_confidence": 0.67,
+      "hybrid@0.50": "social_media"
+    },
+    "cfeae596d3a7b217": {
+      "truth": "none",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_unsure.csv|1",
+      "path": "llm_assisted",
+      "method1": "none",
+      "method2": "social_media",
+      "classic": "none",
+      "classic_fallback": "none",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.99,
+      "hybrid@0.50": "none"
+    },
+    "d073f463d56f79ac": {
+      "truth": "retail",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_education.csv|1",
+      "path": "llm_assisted",
+      "method1": "finance",
+      "method2": "technology",
+      "classic": "education",
+      "classic_fallback": "education",
+      "typesafe_status": "ok",
+      "typesafe": "retail",
+      "typesafe_confidence": 1.0,
+      "hybrid@0.50": "retail"
+    },
+    "d6e165fc611fe181": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_technology.csv|0",
+      "path": "llm_assisted",
+      "method1": "technology",
+      "method2": "education",
+      "classic": "technology",
+      "classic_fallback": "technology",
+      "typesafe_status": "ok",
+      "typesafe": "technology",
+      "typesafe_confidence": 0.77,
+      "hybrid@0.50": "technology"
+    },
+    "d6f2655d51bf421a": {
+      "truth": "healthcare",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_logistics.csv|1",
+      "path": "llm_assisted",
+      "method1": "logistics",
+      "method2": "technology",
+      "classic": "logistics",
+      "classic_fallback": "logistics",
+      "typesafe_status": "ok",
+      "typesafe": "healthcare",
+      "typesafe_confidence": 1.0,
+      "hybrid@0.50": "healthcare"
+    },
+    "d71fde7ba5c0b234": {
+      "truth": "healthcare",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_healthcare.csv|1",
+      "path": "llm_assisted",
+      "method1": "healthcare",
+      "method2": "technology",
+      "classic": "healthcare",
+      "classic_fallback": "healthcare",
+      "typesafe_status": "ok",
+      "typesafe": "healthcare",
+      "typesafe_confidence": 0.95,
+      "hybrid@0.50": "healthcare"
+    },
+    "d97f1155716c10f9": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_hr.csv|0",
+      "path": "llm_assisted",
+      "method1": "hr",
+      "method2": "technology",
+      "classic": "hr",
+      "classic_fallback": "hr",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.61,
+      "hybrid@0.50": "none"
+    },
+    "da7ec5be28f9ffe2": {
+      "truth": "retail",
+      "label": "1",
+      "ambiguous": true,
+      "stratum": "email_finance.csv|1",
+      "path": "llm_assisted",
+      "method1": "finance",
+      "method2": "social_media",
+      "classic": "finance",
+      "classic_fallback": "finance",
+      "typesafe_status": "ok",
+      "typesafe": "healthcare",
+      "typesafe_confidence": 1.0,
+      "hybrid@0.50": "healthcare"
+    },
+    "dc4c36def025fd49": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_healthcare.csv|0",
+      "path": "llm_assisted",
+      "method1": "healthcare",
+      "method2": "social_media",
+      "classic": "healthcare",
+      "classic_fallback": "healthcare",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.65,
+      "hybrid@0.50": "none"
+    },
+    "e2807509b4da2358": {
+      "truth": "none",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_government.csv|1",
+      "path": "llm_assisted",
+      "method1": "government",
+      "method2": "social_media",
+      "classic": "government",
+      "classic_fallback": "government",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.97,
+      "hybrid@0.50": "none"
+    },
+    "e7748e08da84f849": {
+      "truth": "none",
+      "label": "0",
+      "ambiguous": true,
+      "stratum": "email_healthcare.csv|0",
+      "path": "llm_assisted",
+      "method1": "healthcare",
+      "method2": "retail",
+      "classic": "healthcare",
+      "classic_fallback": "healthcare",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.69,
+      "hybrid@0.50": "none"
+    },
+    "eace26c2e1942167": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_social_media.csv|0",
+      "path": "llm_assisted",
+      "method1": "social_media",
+      "method2": "technology",
+      "classic": "social_media",
+      "classic_fallback": "social_media",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.54,
+      "hybrid@0.50": "none"
+    },
+    "eb4b45e1065556ee": {
+      "truth": "none",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_unsure.csv|1",
+      "path": "llm_assisted",
+      "method1": "none",
+      "method2": "social_media",
+      "classic": "none",
+      "classic_fallback": "none",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.99,
+      "hybrid@0.50": "none"
+    },
+    "ecab6ee11eb24dc4": {
+      "truth": "healthcare",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_hr.csv|1",
+      "path": "llm_assisted",
+      "method1": "hr",
+      "method2": "social_media",
+      "classic": "hr",
+      "classic_fallback": "hr",
+      "typesafe_status": "ok",
+      "typesafe": "healthcare",
+      "typesafe_confidence": 1.0,
+      "hybrid@0.50": "healthcare"
+    },
+    "ed57e0be11fcac68": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_education.csv|0",
+      "path": "llm_assisted",
+      "method1": "healthcare",
+      "method2": "retail",
+      "classic": "education",
+      "classic_fallback": "education",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.68,
+      "hybrid@0.50": "none"
+    },
+    "ef10a696d475a25e": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_retail.csv|0",
+      "path": "llm_assisted",
+      "method1": "retail",
+      "method2": "technology",
+      "classic": "retail",
+      "classic_fallback": "retail",
+      "typesafe_status": "ok",
+      "typesafe": "technology",
+      "typesafe_confidence": 0.46,
+      "hybrid@0.50": "retail"
+    },
+    "f1e14d23f22d7e5b": {
+      "truth": "hr",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_government.csv|1",
+      "path": "llm_assisted",
+      "method1": "government",
+      "method2": "technology",
+      "classic": "government",
+      "classic_fallback": "government",
+      "typesafe_status": "ok",
+      "typesafe": "hr",
+      "typesafe_confidence": 1.0,
+      "hybrid@0.50": "hr"
+    },
+    "f330d8e7aac4e786": {
+      "truth": "none",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_technology.csv|1",
+      "path": "llm_assisted",
+      "method1": "technology",
+      "method2": "social_media",
+      "classic": "technology",
+      "classic_fallback": "technology",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.94,
+      "hybrid@0.50": "none"
+    },
+    "f415fe915a5c17ba": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_hr.csv|0",
+      "path": "llm_assisted",
+      "method1": "hr",
+      "method2": "technology",
+      "classic": "hr",
+      "classic_fallback": "hr",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.72,
+      "hybrid@0.50": "none"
+    },
+    "f46c925cbd703832": {
+      "truth": "none",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_hr.csv|1",
+      "path": "llm_assisted",
+      "method1": "hr",
+      "method2": "retail",
+      "classic": "hr",
+      "classic_fallback": "hr",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.97,
+      "hybrid@0.50": "none"
+    },
+    "f732b294b560165c": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": true,
+      "stratum": "email_social_media.csv|0",
+      "path": "llm_assisted",
+      "method1": "social_media",
+      "method2": "technology",
+      "classic": "social_media",
+      "classic_fallback": "social_media",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.85,
+      "hybrid@0.50": "none"
+    },
+    "f7e6b7d3797ef204": {
+      "truth": "technology",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_hr.csv|0",
+      "path": "llm_assisted",
+      "method1": "hr",
+      "method2": "technology",
+      "classic": "hr",
+      "classic_fallback": "hr",
+      "typesafe_status": "ok",
+      "typesafe": "technology",
+      "typesafe_confidence": 0.67,
+      "hybrid@0.50": "technology"
+    },
+    "f965b382e7d8338c": {
+      "truth": "none",
+      "label": "1",
+      "ambiguous": true,
+      "stratum": "email_finance.csv|1",
+      "path": "llm_assisted",
+      "method1": "finance",
+      "method2": "social_media",
+      "classic": "finance",
+      "classic_fallback": "finance",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.62,
+      "hybrid@0.50": "none"
+    },
+    "fab86c48256689e7": {
+      "truth": "healthcare",
+      "label": "1",
+      "ambiguous": true,
+      "stratum": "email_retail.csv|1",
+      "path": "llm_assisted",
+      "method1": "retail",
+      "method2": "social_media",
+      "classic": "retail",
+      "classic_fallback": "retail",
+      "typesafe_status": "ok",
+      "typesafe": "healthcare",
+      "typesafe_confidence": 0.99,
+      "hybrid@0.50": "healthcare"
+    },
+    "fac1df941d16f20d": {
+      "truth": "healthcare",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_hr.csv|1",
+      "path": "llm_assisted",
+      "method1": "hr",
+      "method2": "technology",
+      "classic": "hr",
+      "classic_fallback": "hr",
+      "typesafe_status": "ok",
+      "typesafe": "healthcare",
+      "typesafe_confidence": 0.88,
+      "hybrid@0.50": "healthcare"
+    },
+    "fb17a2dca93b6650": {
+      "truth": "none",
+      "label": "1",
+      "ambiguous": false,
+      "stratum": "email_social_media.csv|1",
+      "path": "llm_assisted",
+      "method1": "finance",
+      "method2": "retail",
+      "classic": "social_media",
+      "classic_fallback": "social_media",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 1.0,
+      "hybrid@0.50": "none"
+    },
+    "fbda7f252518b3ee": {
+      "truth": "none",
+      "label": "0",
+      "ambiguous": false,
+      "stratum": "email_hr.csv|0",
+      "path": "llm_assisted",
+      "method1": "hr",
+      "method2": "technology",
+      "classic": "hr",
+      "classic_fallback": "hr",
+      "typesafe_status": "ok",
+      "typesafe": "none",
+      "typesafe_confidence": 0.97,
+      "hybrid@0.50": "none"
+    },
+    "fe2dc2ddb83cd9db": {
+      "truth": "healthcare",
+      "label": "1",
+      "ambiguous": true,
+      "stratum": "email_retail.csv|1",
+      "path": "llm_assisted",
+      "method1": "retail",
+      "method2": "social_media",
+      "classic": "retail",
+      "classic_fallback": "retail",
+      "typesafe_status": "ok",
+      "typesafe": "healthcare",
+      "typesafe_confidence": 0.87,
+      "hybrid@0.50": "healthcare"
+    }
+  }
+}
