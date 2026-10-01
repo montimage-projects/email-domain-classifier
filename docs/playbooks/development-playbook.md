@@ -190,7 +190,7 @@ STRUCTURAL_WEIGHT=0.25       # Method 2: Structural Template
 LLM_WEIGHT=0.40              # Method 3: LLM Classification
 
 # Hybrid mode: minimum LLM confidence accepted on disagreement (0.0-1.0).
-# Provisional default; issue #19 sets the final value.
+# Default evaluated for TypeSafe in #19 (docs/evaluation/typesafe-evaluation.md).
 LLM_CONFIDENCE_CUTOFF=0.5
 ```
 

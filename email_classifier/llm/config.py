@@ -55,10 +55,13 @@ PROVIDER_PACKAGES: dict[LLMProvider, str] = {
 # methods disagree (issue #18). An answer below it is not used: the email goes
 # to the classic weighted fallback instead.
 #
-# PROVISIONAL: this value was not measured. Issue #19 chooses the final cutoff
-# from an evaluation on labelled data. Until then, override it with the
-# LLM_CONFIDENCE_CUTOFF environment variable. 0.0 accepts every answer that is
-# not a failed call.
+# Evaluated in issue #19 (docs/evaluation/typesafe-evaluation.md) and kept at
+# 0.5: on the 180-email labelled set no swept cutoff was significantly better
+# (exact McNemar p=0.125 for the best one, 0.30). Re-evaluate it once humans
+# have verified the labels. Only TypeSafe's confidence was evaluated; the same
+# default also gates the self-reported confidence of the LangChain providers,
+# which was not evaluated. Override it with the LLM_CONFIDENCE_CUTOFF
+# environment variable. 0.0 accepts every answer that is not a failed call.
 DEFAULT_LLM_CONFIDENCE_CUTOFF = 0.5
 
 # Environment variable that sets LLMConfig.llm_confidence_cutoff.
@@ -97,7 +100,7 @@ class LLMConfig:
     structural_weight: float = 0.25
 
     # Hybrid workflow gate: minimum Method 3 confidence accepted (0.0 to 1.0).
-    # Provisional default, see DEFAULT_LLM_CONFIDENCE_CUTOFF.
+    # Default evaluated in #19, see DEFAULT_LLM_CONFIDENCE_CUTOFF.
     llm_confidence_cutoff: float = DEFAULT_LLM_CONFIDENCE_CUTOFF
 
     def __post_init__(self) -> None:

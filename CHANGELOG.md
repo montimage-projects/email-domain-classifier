@@ -21,6 +21,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   TypeSafe confidence). Select it with `LLM_PROVIDER=typesafe` and
   `TYPESAFE_API_KEY`; install with `pip install email-domain-classifier[typesafe]`.
   The LangChain `LLMClassifier` stays the default for every other provider (#17)
+- Evaluation of `TypeSafeClassifier` and the hybrid confidence cutoff on the
+  ground-truth set: `scripts/evaluate_classifiers.py` (`collect` live, `report`
+  offline), the cached TypeSafe answers, run log and results in
+  `data/evaluation/`, and the write-up in docs/evaluation/typesafe-evaluation.md.
+  TypeSafe alone scored 136/180 (0.756) against 29/180 for the classic
+  classifier; the hybrid at cutoff 0.5 scored 126/180. The labels are
+  agent-generated and unverified, so these numbers may be inflated (#19)
 - Standard Python project structure for GitHub publication
 - Comprehensive documentation and development workflow
 - GitHub Actions CI/CD pipelines
@@ -40,8 +47,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   confidence. When the classic methods disagree, an LLM answer below the
   confidence cutoff, or a failed LLM call, now falls back to the classic
   weighted result (or `unsure`). The cutoff is set with `LLM_CONFIDENCE_CUTOFF`
-  or `--llm-confidence-cutoff`; its default, 0.5, is provisional until #19
-  measures one. The gate applies to every provider. Each decision is recorded
+  or `--llm-confidence-cutoff`. Its default, 0.5, was evaluated in #19 and
+  kept, because no swept cutoff was significantly better (McNemar p=0.125);
+  only TypeSafe's confidence was evaluated. The gate applies to every provider. Each decision is recorded
   under `llm_gate` in the details and the workflow log, and rejected answers
   are counted in `llm_rejected_count` (#18)
 
