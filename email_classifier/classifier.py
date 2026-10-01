@@ -15,6 +15,7 @@ from datetime import datetime
 from typing import IO, TYPE_CHECKING, Any, Dict, List, Optional, Protocol, Tuple
 
 from .domains import DOMAINS, DomainProfile, get_domain_names
+from .parsing import parse_url_flag
 
 if TYPE_CHECKING:
     from .llm import LLMConfig, Method3Classifier
@@ -33,14 +34,14 @@ class StatusCallback(Protocol):
 class HybridWorkflowLogger:
     """Structured JSON logger for hybrid workflow steps."""
 
-    def __init__(self, log_file: Optional[str] = None) -> None:
+    def __init__(self, log_file: str | None = None) -> None:
         """Initialize the hybrid workflow logger.
 
         Args:
             log_file: Optional path to log file. If None, uses Python logging.
         """
         self.log_file = log_file
-        self._file_handle: Optional[IO[str]] = None
+        self._file_handle: IO[str] | None = None
         if log_file:
             self._file_handle = open(log_file, "a", encoding="utf-8")
 
@@ -48,10 +49,10 @@ class HybridWorkflowLogger:
         self,
         email_idx: int,
         step: str,
-        result: Optional[str] = None,
-        path: Optional[str] = None,
-        llm_time_ms: Optional[float] = None,
-        extra: Optional[dict[str, Any]] = None,
+        result: str | None = None,
+        path: str | None = None,
+        llm_time_ms: float | None = None,
+        extra: dict[str, Any] | None = None,
     ) -> None:
         """Log a workflow step as JSON.
 
@@ -117,8 +118,13 @@ class EmailData:
 
     @property
     def has_url(self) -> bool:
-        """Compatibility property for classification logic."""
-        return bool(self.urls and self.urls.strip())
+        """Compatibility property for classification logic.
+
+        Interprets flag spellings through :func:`parse_url_flag`, so raw
+        ``'0'``/``'1'`` values (as in the CEAS_08 ``urls`` column) and
+        ``'false'``/``'no'``/``'off'``/blank all read as false.
+        """
+        return parse_url_flag(self.urls)
 
     @classmethod
     def from_dict(cls, data: dict) -> "EmailData":
@@ -126,8 +132,8 @@ class EmailData:
         # Handle both 'urls' and 'has_url' fields
         urls_value = data.get("urls", "")
         if not urls_value and "has_url" in data:
-            # Convert has_url boolean to string representation
-            urls_value = "true" if data.get("has_url") else ""
+            # Convert has_url flag to the urls field's true-spelling
+            urls_value = "true" if parse_url_flag(data.get("has_url")) else ""
 
         return cls(
             sender=str(data.get("sender", "")).lower().strip(),
@@ -703,7 +709,7 @@ class EmailClassifier:
         }
 
         # Run LLM classification if enabled
-        result3: Optional[ClassificationResult] = None
+        result3: ClassificationResult | None = None
         if self.method3 is not None:
             try:
                 result3 = self.method3.classify(email)
@@ -721,13 +727,16 @@ class EmailClassifier:
                     "fallback": True,
                 }
 
-        # Calculate combined scores
+        # Calculate combined scores. Iterate domains in sorted order so the
+        # result does not depend on the process's string-hash seed: on a tie,
+        # max() returns the alphabetically first domain, and combined_scores
+        # is serialized in that same deterministic order.
         combined_scores: dict[str, float] = {}
         all_domains = set(result1.scores.keys()) | set(result2.scores.keys())
         if result3 is not None:
             all_domains |= set(result3.scores.keys())
 
-        for domain in all_domains:
+        for domain in sorted(all_domains):
             score1 = result1.scores.get(domain, 0.0)
             score2 = result2.scores.get(domain, 0.0)
 
@@ -845,9 +854,9 @@ class HybridClassifier:
         self,
         llm_config: Optional["LLMConfig"] = None,
         domains: dict[str, DomainProfile] | None = None,
-        status_callback: Optional[Callable[[str], None]] = None,
-        workflow_logger: Optional[HybridWorkflowLogger] = None,
-        llm_confidence_cutoff: Optional[float] = None,
+        status_callback: Callable[[str], None] | None = None,
+        workflow_logger: HybridWorkflowLogger | None = None,
+        llm_confidence_cutoff: float | None = None,
     ) -> None:
         """Initialize the hybrid classifier.
 
@@ -1190,11 +1199,14 @@ class HybridClassifier:
         Used when no LLM is available, the LLM call raised, or the confidence
         gate rejected the LLM answer.
         """
-        # Use 60/40 weighting like dual-method
+        # Use 60/40 weighting like dual-method. Iterate domains in sorted
+        # order so the result does not depend on the process's string-hash
+        # seed: on a tie, max() returns the alphabetically first domain, and
+        # combined_scores is serialized in that same deterministic order.
         combined_scores: dict[str, float] = {}
         all_domains = set(result1.scores.keys()) | set(result2.scores.keys())
 
-        for domain in all_domains:
+        for domain in sorted(all_domains):
             score1 = result1.scores.get(domain, 0.0)
             score2 = result2.scores.get(domain, 0.0)
             combined_scores[domain] = (score1 * 0.6) + (score2 * 0.4)

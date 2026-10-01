@@ -39,6 +39,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved README structure for better discoverability
 
 ### Fixed
+- `EmailData.has_url` no longer treats the raw CEAS `urls` value `'0'` as
+  true: `'0'`/`'false'`/`'no'`/`'off'`/blank spellings now parse as false
+  through the new shared `email_classifier.parsing.parse_url_flag`, used by
+  the classifier, analyzer and processor so the paths cannot drift (#26)
+- Classic combined scores are deterministic across `PYTHONHASHSEED` values:
+  score ties now break on alphabetical domain order in
+  `EmailClassifier.classify` and `HybridClassifier._fallback_classification`,
+  and the `combined_scores` dict in the details is emitted in that same order.
+  `scripts/evaluate_classifiers.py` no longer re-execs itself to pin
+  `PYTHONHASHSEED=0` (#27)
 - `method_agreement_rate` in the report now measures how often the keyword
   and structural methods chose the same domain, over classified emails. It
   previously reported the classification rate (94.77% on CEAS_08; the real

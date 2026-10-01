@@ -17,6 +17,7 @@ from typing import IO, Any, Dict, List, Optional
 
 from .classifier import EmailClassifier, EmailData, HybridClassifier
 from .domains import get_domain_names
+from .parsing import parse_url_flag
 from .validator import (
     EmailValidator,
     InvalidEmailWriter,
@@ -294,9 +295,7 @@ class StreamingProcessor:
 
             # Special handling for has_url -> urls conversion
             if input_col == "has_url":
-                value = (
-                    "true" if str(value).lower() in ("true", "1", "yes", "on") else ""
-                )
+                value = "true" if parse_url_flag(value) else ""
 
             normalized[standard_col] = value
 
@@ -343,7 +342,9 @@ class StreamingProcessor:
             if self.allow_large_fields:
                 # Temporarily increase field size limit for this file
                 current_limit = csv.field_size_limit()
-                csv.field_size_limit(2**31 - 1)  # Set to a very large limit (about 2GB)
+                csv.field_size_limit(
+                    2**31 - 1
+                )  # Set to a very large limit (about 2GB)
                 self.logger.info(f"Field size limit set to: {current_limit}")
             else:
                 current_limit = None
@@ -535,12 +536,12 @@ class StreamingProcessor:
                     )
 
                     if include_details:
-                        output_row["method1_confidence"] = (
-                            f"{details['method1']['confidence']:.4f}"
-                        )
-                        output_row["method2_confidence"] = (
-                            f"{details['method2']['confidence']:.4f}"
-                        )
+                        output_row[
+                            "method1_confidence"
+                        ] = f"{details['method1']['confidence']:.4f}"
+                        output_row[
+                            "method2_confidence"
+                        ] = f"{details['method2']['confidence']:.4f}"
                         output_row["agreement"] = details.get("agreement", False)
 
                     # Write to appropriate file
@@ -566,13 +567,9 @@ class StreamingProcessor:
                     self.stats.label_distributions[domain][original_label] += 1
 
                     # Parse has_url value (handle various formats)
-                    has_url_value = email_dict.get(
-                        "has_url", email_dict.get("urls", "false")
+                    has_url = parse_url_flag(
+                        email_dict.get("has_url", email_dict.get("urls", "false"))
                     )
-                    if isinstance(has_url_value, str):
-                        has_url = has_url_value.lower() in ("true", "1", "yes", "on")
-                    else:
-                        has_url = bool(has_url_value)
 
                     self.stats.url_distributions[domain][has_url] += 1
                     self.stats.cross_tabulation[domain][original_label][has_url] += 1
