@@ -151,7 +151,6 @@ output/
 temp/
 *.csv.bak
 
-openspec/
 .claude
 .gemini
 .opencode

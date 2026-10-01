@@ -20,8 +20,6 @@ If you're using an AI coding assistant (Claude Code, Cursor, etc.), you can requ
 
 Simply ask: *"Set up this project from scratch"* or *"Install and configure email-classifier"*
 
-See [openspec/specs/automated-setup/spec.md](../../openspec/specs/automated-setup/spec.md) for the full AI-Agent setup specification.
-
 ---
 
 ## Prerequisites
