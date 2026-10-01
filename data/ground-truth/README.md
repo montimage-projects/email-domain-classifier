@@ -133,11 +133,20 @@ deciding each label before it saw this file's label. These were 20 random rows
 with `ambiguous=false` and all 32 rows with `ambiguous=true`.
 
 - **Unambiguous rows:** it agreed on all 20.
-- **Ambiguous rows:** it picked a different domain for 3. In each case it chose
-  the alternative already named in the rationale:
-  - `da7ec5be28f9ffe2`: retail vs healthcare
-  - `cfac0f0584c6f71e`: none vs retail
-  - `5bdf2f8f896aeafc`: retail vs none
+- **Ambiguous rows:** it picked a different domain for 3 (this file's label vs
+  the second agent's pick):
+  - `da7ec5be28f9ffe2`: retail vs healthcare. The rationale already named
+    healthcare as the alternative.
+  - `5bdf2f8f896aeafc`: retail vs none. The rationale already named none as the
+    alternative.
+  - `cfac0f0584c6f71e`: none vs retail. The original rationale named no
+    alternative (it said only "no clear listed sector"). It was amended during
+    review to name retail.
+
+Review also found that 5 of the 32 ambiguous rationales named no alternative
+domain: `8afdfd922758d563`, `e7748e08da84f849`, `603419544a9c4b1a`,
+`cfac0f0584c6f71e` and `33ee8d7e9492432e`. Each was amended to name one. Only the
+rationale text changed; the domain and every other field are as first labeled.
 
 This check measures how consistent two agents are with each other, not how
 accurate the labels are. It does not replace human verification.

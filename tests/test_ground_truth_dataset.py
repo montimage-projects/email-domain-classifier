@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import csv
 import importlib.util
+import re
 import sys
 from collections import Counter
 from collections.abc import Iterable
@@ -99,6 +100,17 @@ def _provenance_violations(rows: Iterable[dict[str, str]]) -> list[str]:
     ]
 
 
+def _domains_mentioned(text: str) -> set[str]:
+    """Return the domain names (or `none`) that appear as words in `text`."""
+    lowered = text.lower()
+    found: set[str] = set()
+    for name in [*get_domain_names(), "none"]:
+        spellings = {name, name.replace("_", " ")}
+        if any(re.search(rf"\b{re.escape(s)}\b", lowered) for s in spellings):
+            found.add(name)
+    return found
+
+
 class TestDatasetFile:
     """Shape and content checks that need only the committed CSV."""
 
@@ -170,6 +182,16 @@ class TestDatasetFile:
     def test_ambiguous_rows_have_a_rationale(self) -> None:
         """Every ambiguous row explains the alternative reading."""
         assert all(r["rationale"].strip() for r in _rows() if r["ambiguous"] == "true")
+
+    def test_ambiguous_rationales_name_an_alternative_domain(self) -> None:
+        """Each ambiguous rationale names a domain other than the row's own."""
+        missing = [
+            r["email_id"]
+            for r in _rows()
+            if r["ambiguous"] == "true"
+            and not (_domains_mentioned(r["rationale"]) - {r["domain"]})
+        ]
+        assert missing == []
 
 
 def _write_csv(path: Path, rows: list[dict[str, str]], fields: list[str]) -> None:
