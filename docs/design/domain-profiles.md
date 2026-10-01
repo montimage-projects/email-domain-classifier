@@ -6,8 +6,9 @@ labeler and evaluation in this project uses.
 
 ## Domain definition
 
-**Status:** Proposed — pending owner sign-off (issue #15). Merging the pull request
-that adds this section is the sign-off; overrides belong in its review.
+**Status:** Proposed — pending owner sign-off (issue #15). It is merged as a
+proposal: merging is not the sign-off, and the owner will confirm or override it in
+a follow-up.
 
 The CEAS_08 `label` column says only whether an email is phishing/spam (`1`) or
 legitimate (`0`). Nothing in the data records which domain is correct, so this
