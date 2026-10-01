@@ -342,9 +342,7 @@ class StreamingProcessor:
             if self.allow_large_fields:
                 # Temporarily increase field size limit for this file
                 current_limit = csv.field_size_limit()
-                csv.field_size_limit(
-                    2**31 - 1
-                )  # Set to a very large limit (about 2GB)
+                csv.field_size_limit(2**31 - 1)  # Set to a very large limit (about 2GB)
                 self.logger.info(f"Field size limit set to: {current_limit}")
             else:
                 current_limit = None
@@ -536,12 +534,12 @@ class StreamingProcessor:
                     )
 
                     if include_details:
-                        output_row[
-                            "method1_confidence"
-                        ] = f"{details['method1']['confidence']:.4f}"
-                        output_row[
-                            "method2_confidence"
-                        ] = f"{details['method2']['confidence']:.4f}"
+                        output_row["method1_confidence"] = (
+                            f"{details['method1']['confidence']:.4f}"
+                        )
+                        output_row["method2_confidence"] = (
+                            f"{details['method2']['confidence']:.4f}"
+                        )
                         output_row["agreement"] = details.get("agreement", False)
 
                     # Write to appropriate file
