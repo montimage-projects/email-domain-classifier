@@ -132,6 +132,9 @@ pip install -e ".[groq]"
 # For OpenRouter (access to multiple models)
 pip install -e ".[openrouter]"
 
+# For TypeSafe (one Choice question over the domains; no LangChain needed)
+pip install -e ".[typesafe]"
+
 # Install all providers
 pip install -e ".[all-llm]"
 ```
@@ -153,8 +156,20 @@ pip install -e ".[all-llm]"
    LLM_PROVIDER=google
    GOOGLE_API_KEY=your-api-key
 
+   # For TypeSafe (model defaults to jev-latest)
+   LLM_PROVIDER=typesafe
+   TYPESAFE_API_KEY=your-api-key
+
    # For other providers, set the appropriate API key
    ```
+
+With `LLM_PROVIDER=typesafe`, Method 3 is the `TypeSafeClassifier`: it asks
+TypeSafe one Choice question over the ten domains plus `none`, using the option
+text from the [domain definition](docs/design/domain-profiles.md#domain-definition).
+The chosen option becomes the domain (`none` gives no domain), the Choice
+probabilities of the ten domains become the scores, and TypeSafe's own
+confidence becomes the confidence. Every other provider keeps the LangChain
+`LLMClassifier`.
 
 ### Usage
 

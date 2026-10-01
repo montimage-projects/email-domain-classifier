@@ -133,8 +133,12 @@ def verify_prerequisites(
 
         try:
             from .llm import LLMConfig
-            from .llm.config import LLMConfigError
-            from .llm.providers import ProviderNotInstalledError, create_llm
+            from .llm.config import LLMConfigError, LLMProvider
+            from .llm.providers import (
+                ProviderNotInstalledError,
+                check_provider_available,
+                create_llm,
+            )
 
             # Load and validate configuration
             llm_config = LLMConfig.from_env()
@@ -143,59 +147,73 @@ def verify_prerequisites(
                 ui.print_info(f"        Provider: {llm_config.provider.value}")
                 ui.print_info(f"        Model: {llm_config.model}")
 
-            # Try to create the LLM instance to verify provider is installed
-            try:
-                llm_instance = create_llm(llm_config)
+            if llm_config.provider == LLMProvider.TYPESAFE:
+                # TypeSafe is not a LangChain provider: check its SDK instead.
+                # LLMConfig has already checked TYPESAFE_API_KEY is set.
+                available, _ = check_provider_available(LLMProvider.TYPESAFE)
+                if not available:
+                    errors.append(
+                        "Provider 'typesafe' requires package 'typesafe-sdk'. "
+                        f"Install with: {llm_config.get_install_command()}"
+                    )
+                elif not quiet:
+                    ui.print_success("  [3/4] LLM configuration: OK")
+            else:
+                # Try to create the LLM instance to verify provider is installed
+                try:
+                    llm_instance = create_llm(llm_config)
 
-                # For Ollama, verify the model is available
-                if llm_config.provider.value == "ollama":
-                    if not quiet:
-                        ui.print_info("        Verifying Ollama connection...")
-                    try:
-                        import httpx
+                    # For Ollama, verify the model is available
+                    if llm_config.provider.value == "ollama":
+                        if not quiet:
+                            ui.print_info("        Verifying Ollama connection...")
+                        try:
+                            import httpx
 
-                        # Check if Ollama is running
-                        response = httpx.get(
-                            f"{llm_config.ollama_base_url}/api/tags",
-                            timeout=5.0,
-                        )
-                        if response.status_code != 200:
-                            errors.append(
-                                f"Ollama server not responding at {llm_config.ollama_base_url}. "
-                                "Is Ollama running? Start with: ollama serve"
+                            # Check if Ollama is running
+                            response = httpx.get(
+                                f"{llm_config.ollama_base_url}/api/tags",
+                                timeout=5.0,
                             )
-                        else:
-                            # Check if the model is available
-                            models_data = response.json()
-                            available_models = [
-                                m.get("name", "").split(":")[0]
-                                for m in models_data.get("models", [])
-                            ]
-                            model_name = llm_config.model.split(":")[0]
-                            if model_name not in available_models:
+                            if response.status_code != 200:
                                 errors.append(
-                                    f"Ollama model '{llm_config.model}' not found. "
-                                    f"Available models: {', '.join(available_models) or 'none'}. "
-                                    f"Pull with: ollama pull {llm_config.model}"
+                                    f"Ollama server not responding at {llm_config.ollama_base_url}. "
+                                    "Is Ollama running? Start with: ollama serve"
                                 )
                             else:
-                                if not quiet:
-                                    ui.print_success("  [3/4] LLM configuration: OK")
-                    except httpx.ConnectError:
-                        errors.append(
-                            f"Cannot connect to Ollama at {llm_config.ollama_base_url}. "
-                            "Is Ollama running? Start with: ollama serve"
-                        )
-                    except Exception as e:
-                        errors.append(f"Error connecting to Ollama: {e}")
-                else:
-                    # For cloud providers, we trust the config is valid
-                    # (actual API validation happens on first request)
-                    if not quiet:
-                        ui.print_success("  [3/4] LLM configuration: OK")
+                                # Check if the model is available
+                                models_data = response.json()
+                                available_models = [
+                                    m.get("name", "").split(":")[0]
+                                    for m in models_data.get("models", [])
+                                ]
+                                model_name = llm_config.model.split(":")[0]
+                                if model_name not in available_models:
+                                    errors.append(
+                                        f"Ollama model '{llm_config.model}' not found. "
+                                        f"Available models: {', '.join(available_models) or 'none'}. "
+                                        f"Pull with: ollama pull {llm_config.model}"
+                                    )
+                                else:
+                                    if not quiet:
+                                        ui.print_success(
+                                            "  [3/4] LLM configuration: OK"
+                                        )
+                        except httpx.ConnectError:
+                            errors.append(
+                                f"Cannot connect to Ollama at {llm_config.ollama_base_url}. "
+                                "Is Ollama running? Start with: ollama serve"
+                            )
+                        except Exception as e:
+                            errors.append(f"Error connecting to Ollama: {e}")
+                    else:
+                        # For cloud providers, we trust the config is valid
+                        # (actual API validation happens on first request)
+                        if not quiet:
+                            ui.print_success("  [3/4] LLM configuration: OK")
 
-            except ProviderNotInstalledError as e:
-                errors.append(str(e))
+                except ProviderNotInstalledError as e:
+                    errors.append(str(e))
 
         except ImportError as e:
             errors.append(

@@ -17,6 +17,7 @@ class LLMProvider(str, Enum):
     OLLAMA = "ollama"
     GROQ = "groq"
     OPENROUTER = "openrouter"
+    TYPESAFE = "typesafe"
 
 
 # Default models per provider
@@ -26,6 +27,7 @@ DEFAULT_MODELS: dict[LLMProvider, str] = {
     LLMProvider.OLLAMA: "llama3.2",
     LLMProvider.GROQ: "llama-3.3-70b-versatile",
     LLMProvider.OPENROUTER: "",  # Must be specified explicitly
+    LLMProvider.TYPESAFE: "jev-latest",
 }
 
 # Required environment variables per provider
@@ -34,6 +36,7 @@ PROVIDER_API_KEYS: dict[LLMProvider, str] = {
     LLMProvider.MISTRAL: "MISTRAL_API_KEY",
     LLMProvider.GROQ: "GROQ_API_KEY",
     LLMProvider.OPENROUTER: "OPENROUTER_API_KEY",
+    LLMProvider.TYPESAFE: "TYPESAFE_API_KEY",
     # Ollama doesn't require an API key
 }
 
@@ -44,6 +47,7 @@ PROVIDER_PACKAGES: dict[LLMProvider, str] = {
     LLMProvider.OLLAMA: "langchain-ollama",
     LLMProvider.GROQ: "langchain-groq",
     LLMProvider.OPENROUTER: "langchain-openai",
+    LLMProvider.TYPESAFE: "typesafe-sdk",
 }
 
 

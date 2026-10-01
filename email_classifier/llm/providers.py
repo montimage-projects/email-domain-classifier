@@ -42,6 +42,11 @@ def create_llm(config: LLMConfig) -> Any:
         return _create_groq_llm(config)
     elif config.provider == LLMProvider.OPENROUTER:
         return _create_openrouter_llm(config)
+    elif config.provider == LLMProvider.TYPESAFE:
+        raise LLMConfigError(
+            "TypeSafe is not a LangChain provider. "
+            "Use email_classifier.llm.create_classifier() instead."
+        )
     else:
         raise LLMConfigError(f"Unknown provider: {config.provider}")
 
@@ -162,6 +167,7 @@ def check_provider_available(provider: LLMProvider) -> tuple[bool, Optional[str]
         LLMProvider.OLLAMA: "langchain_ollama",
         LLMProvider.GROQ: "langchain_groq",
         LLMProvider.OPENROUTER: "langchain_openai",
+        LLMProvider.TYPESAFE: "typesafe_sdk",
     }
 
     package = package_map.get(provider)

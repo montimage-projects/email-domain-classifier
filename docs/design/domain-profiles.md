@@ -149,6 +149,10 @@ fit but the classifier's confidence is low". Therefore:
 Paste this block as the question and option descriptions in #17. It is written to
 be read literally.
 
+`email_classifier/llm/typesafe_classifier.py` (#17) uses this text word for word
+(`DOMAIN_QUESTION` and `DOMAIN_OPTIONS`), and `tests/test_typesafe_classifier.py`
+fails if the two drift apart. Change both together.
+
 ```text
 Question:
 Which business sector does this email claim to come from? Judge only what the

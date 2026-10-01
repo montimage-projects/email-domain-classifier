@@ -15,6 +15,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   11 output files, including `email_unsure.csv`, each labeled with a domain or
   `none` (data/ground-truth/, scripts/sample_ground_truth.py, #16). The labels
   are agent-generated and not yet verified by a human
+- `TypeSafeClassifier`, a Method 3 classifier that asks TypeSafe one Choice
+  question over the ten domains plus `none` and returns the usual
+  `ClassificationResult` (domain = choice, scores = probabilities, confidence =
+  TypeSafe confidence). Select it with `LLM_PROVIDER=typesafe` and
+  `TYPESAFE_API_KEY`; install with `pip install email-domain-classifier[typesafe]`.
+  The LangChain `LLMClassifier` stays the default for every other provider (#17)
 - Standard Python project structure for GitHub publication
 - Comprehensive documentation and development workflow
 - GitHub Actions CI/CD pipelines

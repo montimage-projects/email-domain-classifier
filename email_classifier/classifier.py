@@ -17,7 +17,7 @@ from typing import IO, TYPE_CHECKING, Any, Dict, List, Optional, Protocol, Tuple
 from .domains import DOMAINS, DomainProfile, get_domain_names
 
 if TYPE_CHECKING:
-    from .llm import LLMClassifier, LLMConfig
+    from .llm import LLMConfig, Method3Classifier
 
 logger = logging.getLogger(__name__)
 
@@ -613,7 +613,7 @@ class EmailClassifier:
         self.method2 = StructuralTemplateClassifier(self.domains)
 
         # LLM classifier (optional)
-        self.method3: Optional["LLMClassifier"] = None
+        self.method3: Optional["Method3Classifier"] = None
         self._llm_config: Optional["LLMConfig"] = llm_config
 
         # Set weights based on LLM availability
@@ -629,13 +629,13 @@ class EmailClassifier:
             config: LLM configuration. If None, loads from environment.
         """
         try:
-            from .llm import LLMClassifier, LLMConfig
+            from .llm import LLMConfig, create_classifier
 
             if config is None:
                 config = LLMConfig.from_env()
 
             self._llm_config = config
-            self.method3 = LLMClassifier(config)
+            self.method3 = create_classifier(config)
             logger.info(
                 f"LLM classifier initialized with {config.provider.value}/{config.model}"
             )
@@ -854,7 +854,7 @@ class HybridClassifier:
         self.stats = HybridWorkflowStats()
 
         # Initialize LLM classifier
-        self.llm_classifier: Optional["LLMClassifier"] = None
+        self.llm_classifier: Optional["Method3Classifier"] = None
         self._llm_config = llm_config
         if llm_config is not None:
             self._init_llm_classifier(llm_config)
@@ -862,9 +862,9 @@ class HybridClassifier:
     def _init_llm_classifier(self, config: "LLMConfig") -> None:
         """Initialize the LLM classifier."""
         try:
-            from .llm import LLMClassifier
+            from .llm import create_classifier
 
-            self.llm_classifier = LLMClassifier(config)
+            self.llm_classifier = create_classifier(config)
             logger.info(
                 f"Hybrid classifier LLM initialized: {config.provider.value}/{config.model}"
             )
