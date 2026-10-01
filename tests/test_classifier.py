@@ -1,5 +1,11 @@
 """Tests for the main EmailClassifier."""
 
+import json
+import os
+import subprocess
+import sys
+from pathlib import Path
+
 import pytest
 
 from email_classifier import EmailClassifier, EmailData
@@ -1226,3 +1232,228 @@ class TestHybridConfidenceGate:
 
         with pytest.raises(LLMConfigError, match="llm_confidence_cutoff"):
             HybridClassifier(llm_confidence_cutoff=cutoff)
+
+
+class TestParseUrlFlag:
+    """Shared urls/has_url flag parsing (issue #26).
+
+    The single copy used by the classifier, analyzer and processor.
+    """
+
+    @pytest.mark.parametrize(
+        "value",
+        ["0", "false", "FALSE", "False", "no", "off", "", "   ", "\t0 "],
+    )
+    def test_false_spellings(self, value):
+        """'0'/'false'/'no'/'off'/blank spellings parse as false."""
+        from email_classifier.parsing import parse_url_flag
+
+        assert parse_url_flag(value) is False
+
+    @pytest.mark.parametrize(
+        "value",
+        [
+            "1",
+            "true",
+            "TRUE",
+            "yes",
+            "on",
+            "http://example.com",
+            "https://a.b/c?d=1",
+            "2",  # any non-empty non-false text means "URL present"
+        ],
+    )
+    def test_true_spellings(self, value):
+        """'1'/'true'/'yes'/'on' and real URL text parse as true."""
+        from email_classifier.parsing import parse_url_flag
+
+        assert parse_url_flag(value) is True
+
+    def test_non_string_falls_back_to_truthiness(self):
+        """Booleans, ints and None fall back to bool()."""
+        from email_classifier.parsing import parse_url_flag
+
+        assert parse_url_flag(True) is True
+        assert parse_url_flag(False) is False
+        assert parse_url_flag(None) is False
+        assert parse_url_flag(1) is True
+        assert parse_url_flag(0) is False
+
+
+class TestEmailDataHasUrl:
+    """EmailData.has_url parses the raw CEAS_08 '0'/'1' urls values (issue #26).
+
+    The raw column is a flag, not 'non-empty string is true'.
+    """
+
+    @pytest.mark.parametrize(
+        "urls,expected",
+        [
+            ("0", False),
+            ("1", True),
+            ("false", False),
+            ("no", False),
+            ("off", False),
+            ("", False),
+            ("   ", False),
+            ("true", True),
+            ("http://example.com", True),
+        ],
+    )
+    def test_raw_urls_values(self, urls, expected):
+        """Raw CEAS '0'/'1' and the other spellings set has_url correctly."""
+        email = EmailData(
+            sender="a@b.com",
+            receiver="c@d.com",
+            date="2024-01-15",
+            subject="Test",
+            body="Body",
+            urls=urls,
+        )
+        assert email.has_url is expected
+
+    @pytest.mark.parametrize(
+        "has_url_value,expected",
+        [
+            ("0", False),
+            ("1", True),
+            ("false", False),
+            ("true", True),
+            (True, True),
+            (False, False),
+        ],
+    )
+    def test_from_dict_has_url_key(self, has_url_value, expected):
+        """A string '0'/'false' in the has_url dict key must not read as true."""
+        email = EmailData.from_dict({"has_url": has_url_value})
+        assert email.has_url is expected
+
+    def test_matches_shared_parser(self):
+        """has_url delegates to parse_url_flag.
+
+        The classifier cannot drift from the analyzer/processor paths.
+        """
+        from email_classifier.parsing import parse_url_flag
+
+        for value in ["0", "1", "false", "no", "off", "", "true", "http://x"]:
+            email = EmailData(
+                sender="", receiver="", date="", subject="", body="", urls=value
+            )
+            assert email.has_url is parse_url_flag(value)
+
+
+class TestDeterministicTieBreak:
+    """Combined-score ties break on alphabetical domain order (issue #27).
+
+    The winner and the serialized scores must not depend on the process's
+    string-hash seed.
+    """
+
+    @staticmethod
+    def _tied_results():
+        """Two method results where three domains tie on the combined score."""
+        result1 = ClassificationResult(
+            domain="technology",
+            confidence=0.5,
+            scores={"technology": 0.5, "retail": 0.5, "finance": 0.5},
+            method="method1",
+        )
+        result2 = ClassificationResult(
+            domain="retail",
+            confidence=0.0,
+            scores={"technology": 0.0, "retail": 0.0, "finance": 0.0},
+            method="method2",
+        )
+        return result1, result2
+
+    def test_tie_breaks_alphabetically(self):
+        """On a three-way tie the alphabetically first domain wins.
+
+        combined_scores is emitted in sorted order.
+        """
+        classifier = EmailClassifier()
+        result1, result2 = self._tied_results()
+        classifier.method1.classify = lambda email: result1
+        classifier.method2.classify = lambda email: result2
+
+        email = EmailData(
+            sender="a@b.com",
+            receiver="c@d.com",
+            date="2024-01-15",
+            subject="Test",
+            body="Body",
+            urls="0",
+        )
+        domain, details = classifier.classify(email)
+
+        assert domain == "finance"  # sorted() first of the tied domains
+        assert list(details["combined_scores"].keys()) == [
+            "finance",
+            "retail",
+            "technology",
+        ]
+
+    def test_classification_identical_across_hash_seeds(self):
+        """Classification output is identical under different PYTHONHASHSEEDs.
+
+        Runs the classifier in subprocesses; the winner and the serialized
+        combined_scores must match.
+        """
+        script = (
+            "import json;"
+            "from email_classifier.classifier import ("
+            "ClassificationResult, EmailClassifier, EmailData, HybridClassifier);"
+            "r1 = ClassificationResult(domain='technology', confidence=0.5,"
+            " scores={'technology': 0.5, 'retail': 0.5, 'finance': 0.5},"
+            " method='m1');"
+            "r2 = ClassificationResult(domain='retail', confidence=0.0,"
+            " scores={'technology': 0.0, 'retail': 0.0, 'finance': 0.0},"
+            " method='m2');"
+            "clf = EmailClassifier();"
+            "clf.method1.classify = lambda e: r1;"
+            "clf.method2.classify = lambda e: r2;"
+            "email = EmailData(sender='a@b.com', receiver='c@d.com', date='d',"
+            " subject='s', body='b', urls='0');"
+            "domain, details = clf.classify(email);"
+            "hybrid = HybridClassifier();"
+            "fd = {};"
+            "fallback = hybrid._fallback_classification(r1, r2, fd);"
+            "print(json.dumps({"
+            "'domain': domain,"
+            " 'combined_scores': details['combined_scores'],"
+            " 'fallback': fallback,"
+            " 'fallback_scores': fd['combined_scores']}))"
+        )
+        repo_root = Path(__file__).resolve().parent.parent
+        outputs = []
+        for seed in ("0", "1"):
+            env = {**os.environ, "PYTHONHASHSEED": seed}
+            proc = subprocess.run(
+                [sys.executable, "-c", script],
+                capture_output=True,
+                text=True,
+                cwd=repo_root,
+                env=env,
+                timeout=60,
+                check=False,
+            )
+            assert proc.returncode == 0, proc.stderr
+            outputs.append(proc.stdout.strip())
+
+        assert outputs[0] == outputs[1], (
+            f"Classifier output differs across hash seeds:\n"
+            f"seed 0: {outputs[0]}\nseed 1: {outputs[1]}"
+        )
+        result = json.loads(outputs[0])
+        assert result["domain"] == "finance"
+        assert result["fallback"] == "finance"
+        assert list(result["combined_scores"].keys()) == [
+            "finance",
+            "retail",
+            "technology",
+        ]
+        assert list(result["fallback_scores"].keys()) == [
+            "finance",
+            "retail",
+            "technology",
+        ]

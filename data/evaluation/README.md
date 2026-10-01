@@ -34,8 +34,9 @@ python scripts/evaluate_classifiers.py collect --set sample \
 python scripts/evaluate_classifiers.py report --md-out /tmp/evaluation.md
 ```
 
-`report` re-runs itself with `PYTHONHASHSEED=0`, because the classic methods break
-score ties in set order; with it pinned the results file is reproducible.
+`report` needs no `PYTHONHASHSEED` pin: the classic methods break score ties on
+a fixed alphabetical domain order, so the results file is reproducible under
+any seed. The seed in effect is still recorded as `python_hash_seed`.
 
 `collect` resumes: it skips every email that already has a successful record in
 the cache. `--rps` (default 10, at most 40) limits HTTP attempts per second and

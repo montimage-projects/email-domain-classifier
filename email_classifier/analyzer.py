@@ -14,6 +14,8 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from .parsing import parse_url_flag
+
 
 @dataclass
 class AnalysisResult:
@@ -258,12 +260,7 @@ class DatasetAnalyzer:
                         invalid_receiver += 1
 
                     # URL presence
-                    has_url = row.get("has_url", row.get("urls", ""))
-                    if isinstance(has_url, str):
-                        has_url = has_url.lower() in ("true", "1", "yes", "on") or (
-                            has_url and has_url not in ("false", "0", "no", "off", "")
-                        )
-                    if has_url:
+                    if parse_url_flag(row.get("has_url", row.get("urls", ""))):
                         url_count += 1
 
                 result.total_rows = idx + 1 if "idx" in dir() else 0

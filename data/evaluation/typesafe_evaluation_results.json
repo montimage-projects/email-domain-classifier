@@ -29,8 +29,8 @@
     "email_unsure.csv|0": 288,
     "email_unsure.csv|1": 1534
   },
-  "python_hash_seed": "0",
-  "classic_reproduces_source_file": 173,
+  "python_hash_seed": null,
+  "classic_reproduces_source_file": 174,
   "collection": {
     "requested_models": [
       "jev-latest"
@@ -495,7 +495,7 @@
       },
       "none_precision": 0.45,
       "none_recall": 0.1875,
-      "macro_f1": 0.1998,
+      "macro_f1": 0.2,
       "macro_f1_classes": [
         "education",
         "healthcare",
@@ -549,7 +549,7 @@
           "recall": null,
           "f1": 0.0,
           "support": 0,
-          "predicted": 20,
+          "predicted": 21,
           "insufficient_support": true
         },
         "none": {
@@ -561,11 +561,11 @@
           "insufficient_support": false
         },
         "retail": {
-          "precision": 0.1176,
+          "precision": 0.125,
           "recall": 0.1053,
-          "f1": 0.1111,
+          "f1": 0.1143,
           "support": 19,
-          "predicted": 17,
+          "predicted": 16,
           "insufficient_support": false
         },
         "social_media": {
@@ -577,11 +577,11 @@
           "insufficient_support": true
         },
         "technology": {
-          "precision": 0.4667,
+          "precision": 0.4375,
           "recall": 0.1014,
-          "f1": 0.1667,
+          "f1": 0.1647,
           "support": 69,
-          "predicted": 15,
+          "predicted": 16,
           "insufficient_support": false
         },
         "telecommunications": {
@@ -589,7 +589,7 @@
           "recall": null,
           "f1": 0.0,
           "support": 0,
-          "predicted": 12,
+          "predicted": 11,
           "insufficient_support": true
         }
       },
@@ -607,9 +607,9 @@
           "finance": 2,
           "healthcare": 7,
           "hr": 6,
-          "logistics": 6,
+          "logistics": 7,
           "none": 3,
-          "retail": 7,
+          "retail": 6,
           "technology": 1,
           "telecommunications": 3
         },
@@ -636,8 +636,8 @@
           "logistics": 1,
           "none": 3,
           "retail": 2,
-          "technology": 2,
-          "telecommunications": 2
+          "technology": 3,
+          "telecommunications": 1
         },
         "social_media": {
           "social_media": 1
@@ -2555,8 +2555,8 @@
       "path": "llm_assisted",
       "method1": "retail",
       "method2": "technology",
-      "classic": "retail",
-      "classic_fallback": "retail",
+      "classic": "logistics",
+      "classic_fallback": "logistics",
       "typesafe_status": "ok",
       "typesafe": "healthcare",
       "typesafe_confidence": 0.52,
@@ -3035,8 +3035,8 @@
       "path": "llm_assisted",
       "method1": "technology",
       "method2": "social_media",
-      "classic": "telecommunications",
-      "classic_fallback": "telecommunications",
+      "classic": "technology",
+      "classic_fallback": "technology",
       "typesafe_status": "ok",
       "typesafe": "healthcare",
       "typesafe_confidence": 0.97,

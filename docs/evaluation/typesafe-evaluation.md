@@ -47,11 +47,12 @@ below are copied from its markdown output.
 >    `classified-data/ceas_08/`. Rows the sampler could never draw (non-unique
 >    keys) still count in those sizes.
 > 5. **Re-running the classic classifier does not exactly reproduce the
->    pipeline's output file.** It matches `source_file` for 173/180 rows. That
->    count changes with Python's string-hash seed (173–180 over seeds 0–11),
->    because the classic methods break score ties in set order. The headline
->    accuracies did not change over those seeds. The report pins
->    `PYTHONHASHSEED=0`.
+>    pipeline's output file.** It matches `source_file` for 174/180 rows. Earlier
+>    runs matched anywhere from 173 to 180 rows depending on Python's
+>    string-hash seed, because the classic methods broke score ties in set
+>    iteration order; ties now break on alphabetical domain order, so the count
+>    is identical under every seed and the report no longer pins
+>    `PYTHONHASHSEED`.
 > 6. **The model may change.** `jev-latest` resolved to `jev-1.13.0` on
 >    2026-10-01, and collecting again later may give different answers. The
 >    reproducible artifact is the committed cache,
@@ -60,10 +61,14 @@ below are copied from its markdown output.
 >    This shows no degradation on CEAS bulk spam. It does **not** show robustness
 >    to adversarial content: these are bulk spam emails, not targeted prompt
 >    injection.
-> 8. **Known bug, out of scope here:** the raw CEAS `urls` column holds the
->    string `'0'` or `'1'`, and `EmailData.has_url` treats `'0'` as true. Method 2's
->    URL feature is therefore true on every raw row. Fixing it needs a follow-up
->    issue, and it would change the classic numbers.
+>
+> **Fixed since the first version of this page:** `EmailData.has_url` used to
+> treat the raw CEAS `urls` value `'0'` as true, so Method 2's URL feature was
+> on for every raw row, and classic score ties depended on `PYTHONHASHSEED`.
+> Both were fixed in #26/#27 (`has_url` parses `'0'`/`'false'`/`'no'`/`'off'`/
+> blank as false through the shared `parse_url_flag`; ties break
+> alphabetically), and the classic numbers on this page come from the fixed
+> code.
 
 ## Method
 
@@ -126,7 +131,7 @@ below are copied from its markdown output.
 Labeled rows: 180. None and 'unsure' count as a 'none' prediction; failed TypeSafe calls are errors and are not scored.
 Intervals are Wilson 95%.
 
-Re-running the classic classifier reproduces the pipeline's output file (`source_file`) for 173/180 rows (PYTHONHASHSEED=0).
+Re-running the classic classifier reproduces the pipeline's output file (`source_file`) for 174/180 rows; the count is identical under every `PYTHONHASHSEED` (ties break alphabetically).
 
 TypeSafe model requested: jev-latest; resolved (records): jev-1.13.0 (380); collected on 2026-10-01.
 
@@ -178,12 +183,12 @@ The other systems' per-class tables are in the results JSON.
 | government | 0.000 | — | 0.000 | 0 | 15 | insufficient support |
 | healthcare | 0.438 | 0.200 | 0.275 | 35 | 16 |  |
 | hr | 0.000 | 0.000 | 0.000 | 1 | 16 | insufficient support |
-| logistics | 0.000 | — | 0.000 | 0 | 20 | insufficient support |
+| logistics | 0.000 | — | 0.000 | 0 | 21 | insufficient support |
 | none | 0.450 | 0.188 | 0.265 | 48 | 20 |  |
-| retail | 0.118 | 0.105 | 0.111 | 19 | 17 |  |
+| retail | 0.125 | 0.105 | 0.114 | 19 | 16 |  |
 | social_media | 0.062 | 1.000 | 0.118 | 1 | 16 | insufficient support |
-| technology | 0.467 | 0.101 | 0.167 | 69 | 15 |  |
-| telecommunications | 0.000 | — | 0.000 | 0 | 12 | insufficient support |
+| technology | 0.438 | 0.101 | 0.165 | 69 | 16 |  |
+| telecommunications | 0.000 | — | 0.000 | 0 | 11 | insufficient support |
 
 #### hybrid@0.50
 
@@ -325,7 +330,9 @@ python scripts/evaluate_classifiers.py report --md-out /tmp/typesafe-evaluation.
 
 - `collect` skips every email that is already cached. With the committed cache it
   therefore makes no calls.
-- `report` re-runs itself with `PYTHONHASHSEED=0` and writes
-  `data/evaluation/typesafe_evaluation_results.json`.
-- These numbers come from the script at commit `c13b9bd`. The answers were
-  collected on 2026-10-01.
+- `report` is deterministic — the classic methods break score ties on
+  alphabetical domain order — and writes
+  `data/evaluation/typesafe_evaluation_results.json` without pinning
+  `PYTHONHASHSEED`.
+- These numbers come from the script on this branch (the #26/#27 fix); the
+  TypeSafe answers were collected on 2026-10-01.
