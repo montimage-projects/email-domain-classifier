@@ -48,6 +48,38 @@ email-cli sample_emails.csv -o output/
 email-cli sample_emails.csv -o output/ --use-llm
 ```
 
+## Parallel Processing
+
+Processing is serial by default (`--workers 1`). To allow up to four concurrent
+classifications, while keeping CSV rows and hybrid workflow JSONL events in
+input order:
+
+```bash
+email-cli sample_emails.csv -o output/ --use-llm --workers 4
+```
+
+`--workers` must be a positive integer. The streaming scheduler holds at most
+that many uncommitted input rows, including completed tasks waiting for earlier
+rows. Invalid and overlong emails still use the normal validation/filtering
+paths. `--chunk-size` controls progress-update frequency, **not** worker count.
+
+Parallelism can improve throughput for remote LLM calls only when the server
+supports concurrent requests and its rate limits permit them; it is not a
+promised speedup for local models or CPU-bound classic classification. Workers
+use independent classifiers/clients and a snapshot of the run's configuration.
+All output writes, workflow replay, and progress updates happen on the coordinator.
+Cancellation discards queued work and waits for running calls; existing provider
+timeouts still apply (including configured retries).
+
+Library callers can pass `workers=4` to `StreamingProcessor`. For custom
+classifiers, subclasses, or post-construction method/client injections, also
+pass `classifier_factory`, a zero-argument callable returning a fresh independent
+classifier per worker. Automatic cloning supports fresh built-in templates with
+normal constructor settings, not arbitrary in-place customization. Templates
+with already initialized LLM clients also require a factory, since initialized
+and manually injected clients cannot safely be distinguished. Worker hybrid callbacks are disabled;
+the coordinator reports committed throughput rather than summed worker times.
+
 ## Supported Domains
 
 | Domain | Description |
