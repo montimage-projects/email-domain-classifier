@@ -22,8 +22,11 @@ Before relying on #19's numbers:
 
 1. Have a human spot-check at least every row with `ambiguous=true` (32 rows)
    plus a random sample of the others.
-2. When a human confirms or corrects a row, set `verified=true` and change
-   `labeler` to `human` if the domain changed.
+2. When a human checks a row, set `verified=true`. If the human confirms the
+   domain unchanged, leave `labeler=agent`. If the human changes the domain, also
+   set `labeler=human`. `labeler` records who chose the domain, and `verified`
+   records whether a human checked it. A `labeler=human` row must therefore have
+   `verified=true`, and the tests enforce this.
 3. Report results separately for verified and unverified rows until all rows are
    verified.
 
@@ -45,7 +48,7 @@ records the version each label used.
 | `ambiguous` | `true` when a reasonable reader could pick a different answer under the definition. The rationale names the alternative |
 | `rationale` | A short reason, paraphrased (no email text is copied) |
 | `labeler` | `agent` (AI-generated) or `human` |
-| `verified` | `false` until a human has checked the row |
+| `verified` | `false` until a human has checked the row, then `true` (always `true` when `labeler=human`) |
 | `definition_ref` | The version of the definition the label follows |
 
 The file stores identifiers only, not subjects or bodies. To read an email, look

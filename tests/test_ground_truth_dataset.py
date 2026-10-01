@@ -6,6 +6,7 @@ import csv
 import importlib.util
 import sys
 from collections import Counter
+from collections.abc import Iterable
 from functools import lru_cache
 from pathlib import Path
 from types import ModuleType
@@ -84,6 +85,20 @@ needs_lfs_data = pytest.mark.skipif(
 )
 
 
+def _provenance_violations(rows: Iterable[dict[str, str]]) -> list[str]:
+    """Return ids of rows that claim a human label but are unverified.
+
+    `labeler` records who assigned the domain; `verified` records whether a
+    human has checked it. An agent label a human confirmed unchanged stays
+    `labeler=agent` with `verified=true`, so only the reverse is invalid.
+    """
+    return [
+        r["email_id"]
+        for r in rows
+        if r["labeler"] == "human" and r["verified"] != "true"
+    ]
+
+
 class TestDatasetFile:
     """Shape and content checks that need only the committed CSV."""
 
@@ -138,11 +153,19 @@ class TestDatasetFile:
             assert r["definition_ref"].startswith("docs/design/domain-profiles.md@")
             assert r["raw_row"].isdigit() and r["source_row"].isdigit()
 
-    def test_unverified_agent_labels_are_flagged(self) -> None:
-        """Agent labels stay marked unverified until a human checks them."""
-        for r in _rows():
-            if r["labeler"] == "agent":
-                assert r["verified"] == "false"
+    def test_no_row_claims_human_labeling_while_unverified(self) -> None:
+        """A `labeler=human` row is human-checked, so it must be verified."""
+        assert _provenance_violations(_rows()) == []
+
+    def test_provenance_rule_accepts_the_readme_workflow(self) -> None:
+        """Unchecked, confirmed and corrected rows pass; unverified human fails."""
+        rows = [
+            {"email_id": "unchecked", "labeler": "agent", "verified": "false"},
+            {"email_id": "confirmed", "labeler": "agent", "verified": "true"},
+            {"email_id": "corrected", "labeler": "human", "verified": "true"},
+            {"email_id": "bogus", "labeler": "human", "verified": "false"},
+        ]
+        assert _provenance_violations(rows) == ["bogus"]
 
     def test_ambiguous_rows_have_a_rationale(self) -> None:
         """Every ambiguous row explains the alternative reading."""
