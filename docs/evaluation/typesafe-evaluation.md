@@ -23,8 +23,8 @@ below are copied from its markdown output.
 - **The hybrid scores below TypeSafe alone at every cutoff:** at best 131 against
   136. See [Why the hybrid scores below TypeSafe alone](#why-the-hybrid-scores-below-typesafe-alone).
 - **TypeSafe's main error:** it answers `none` for emails labeled `technology`. This
-  happens on 27 of its 44 errors, and 26 of those 27 are legitimate (label 0)
-  emails.
+  happens on 27 of its 44 errors, and all 27 are legitimate (label 0) emails:
+  every one of the 69 `technology` rows in the labeled set is legitimate.
 - **Live run:** 380 TypeSafe calls (180 labeled + 200 sample emails) on
   2026-10-01, with no errors, no retries and no HTTP 429 responses.
 
@@ -276,9 +276,10 @@ fallback should stay in front of TypeSafe. This issue does not change that desig
 ### TypeSafe's main error
 
 The confusion counts in the results JSON show that TypeSafe answers `none` for
-emails labeled `technology` 27 times, out of 44 errors. 26 of those 27 are
-legitimate (label 0) rows. As a result, `technology` has precision 1.000 but
-recall 0.594, and TypeSafe predicts `none` 69 times against a support of 48. This
+emails labeled `technology` 27 times, out of 44 errors. All 27 are legitimate
+(label 0) rows; in fact all 69 `technology` rows in the labeled set are label 0.
+As a result, `technology` has precision 1.000 but recall 0.594, and TypeSafe
+predicts `none` 69 times against a support of 48. This
 one confusion explains most of the gap between spam accuracy (0.844) and
 legitimate accuracy (0.667). Before changing the option text, check these rows
 against the definition's rule for software projects' mailing lists.

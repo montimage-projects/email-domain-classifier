@@ -25,8 +25,10 @@ Both commands need the Git LFS data (`git lfs pull`).
 # Live: needs the TypeSafe SDK (pip install -e ".[typesafe]") and a key.
 # The key is read from the environment only.
 export TYPESAFE_API_KEY=...
-python scripts/evaluate_classifiers.py collect --set labeled
-python scripts/evaluate_classifiers.py collect --set sample --sample-size 100
+python scripts/evaluate_classifiers.py collect --set labeled \
+    --rps 10 --workers 4 --max-calls 260
+python scripts/evaluate_classifiers.py collect --set sample \
+    --sample-size 200 --rps 20 --workers 8 --max-calls 250
 
 # Offline: no key, no network.
 python scripts/evaluate_classifiers.py report --md-out /tmp/evaluation.md

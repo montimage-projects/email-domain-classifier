@@ -20,9 +20,10 @@ the metrics as JSON plus a markdown summary.
 
 Usage::
 
-    TYPESAFE_API_KEY=... python scripts/evaluate_classifiers.py collect --set labeled
     TYPESAFE_API_KEY=... python scripts/evaluate_classifiers.py collect \\
-        --set sample --sample-size 100
+        --set labeled --rps 10 --workers 4 --max-calls 260
+    TYPESAFE_API_KEY=... python scripts/evaluate_classifiers.py collect \\
+        --set sample --sample-size 200 --rps 20 --workers 8 --max-calls 250
     python scripts/evaluate_classifiers.py report
 
 ``collect`` exit codes: 0 done, 1 call budget (``--max-calls``) exhausted,
