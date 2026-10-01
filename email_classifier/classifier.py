@@ -777,6 +777,8 @@ class HybridWorkflowStats:
     classic_agreement_count: int = 0
     total_processed: int = 0
     total_processing_time_ms: float = 0.0  # Total time for all emails
+    # LLM answers the confidence gate did not accept (issue #18)
+    llm_rejected_count: int = 0
 
     @property
     def llm_avg_time_ms(self) -> float:
@@ -812,6 +814,7 @@ class HybridWorkflowStats:
             "classic_agreement_count": self.classic_agreement_count,
             "total_processed": self.total_processed,
             "agreement_rate": round(self.agreement_rate, 2),
+            "llm_rejected_count": self.llm_rejected_count,
             "avg_time_per_email_ms": round(self.avg_time_per_email_ms, 2),
             "total_processing_time_ms": round(self.total_processing_time_ms, 2),
         }
@@ -827,9 +830,16 @@ class HybridClassifier:
     2. Run Structural Template classifier
     3. If both agree on domain, accept that result (skip LLM)
     4. If they disagree, invoke LLM for tie-breaking
+    5. Accept the LLM answer only if its confidence is at least
+       ``llm_confidence_cutoff``; otherwise use the classic weighted fallback
     """
 
     GLOBAL_THRESHOLD = 0.15
+
+    # ClassificationResult.method of the TypeSafe classifier, whose confidence
+    # comes from its Choice distribution. Every other Method 3 result carries a
+    # confidence the model reported about itself.
+    TYPESAFE_METHOD = "typesafe"
 
     def __init__(
         self,
@@ -837,6 +847,7 @@ class HybridClassifier:
         domains: dict[str, DomainProfile] | None = None,
         status_callback: Optional[Callable[[str], None]] = None,
         workflow_logger: Optional[HybridWorkflowLogger] = None,
+        llm_confidence_cutoff: Optional[float] = None,
     ) -> None:
         """Initialize the hybrid classifier.
 
@@ -845,13 +856,33 @@ class HybridClassifier:
             domains: Optional custom domain profiles.
             status_callback: Optional callback for status updates.
             workflow_logger: Optional logger for structured workflow logging.
+            llm_confidence_cutoff: Minimum LLM confidence accepted when the
+                classic methods disagree, from 0.0 to 1.0. Defaults to
+                ``llm_config.llm_confidence_cutoff``, or to the provisional
+                ``DEFAULT_LLM_CONFIDENCE_CUTOFF`` without a config.
+
+        Raises:
+            LLMConfigError: If ``llm_confidence_cutoff`` is outside 0.0 to 1.0.
         """
+        from .llm.config import (
+            DEFAULT_LLM_CONFIDENCE_CUTOFF,
+            validate_confidence_cutoff,
+        )
+
         self.domains = domains or DOMAINS
         self.method1 = KeywordTaxonomyClassifier(self.domains)
         self.method2 = StructuralTemplateClassifier(self.domains)
         self.status_callback = status_callback
         self.workflow_logger = workflow_logger
         self.stats = HybridWorkflowStats()
+
+        if llm_confidence_cutoff is None:
+            llm_confidence_cutoff = (
+                llm_config.llm_confidence_cutoff
+                if llm_config is not None
+                else DEFAULT_LLM_CONFIDENCE_CUTOFF
+            )
+        self.llm_confidence_cutoff = validate_confidence_cutoff(llm_confidence_cutoff)
 
         # Initialize LLM classifier
         self.llm_classifier: Optional["Method3Classifier"] = None
@@ -1043,19 +1074,33 @@ class HybridClassifier:
                         "response_time_ms": round(elapsed_ms, 2),
                     }
 
-                    final_domain = result3.domain or "unsure"
+                    gate = self._gate_llm_result(result3)
+                    details["llm_gate"] = gate
 
-                    self._update_status(
-                        f"LLM responded ({elapsed_ms:.0f}ms) - '{final_domain}'",
-                        email_idx,
-                        total_emails,
-                    )
+                    if gate["accepted"]:
+                        # A None domain means no listed domain fits the email.
+                        final_domain = result3.domain or "unsure"
+                        status = (
+                            f"LLM responded ({elapsed_ms:.0f}ms) - '{final_domain}'"
+                        )
+                    else:
+                        self.stats.llm_rejected_count += 1
+                        final_domain = self._fallback_classification(
+                            result1, result2, details
+                        )
+                        status = (
+                            f"LLM answer rejected ({gate['reason']}) - "
+                            f"fallback '{final_domain}'"
+                        )
+
+                    self._update_status(status, email_idx, total_emails)
                     if self.workflow_logger:
                         self.workflow_logger.log_step(
                             email_idx,
                             "llm_classify",
                             result=final_domain,
                             llm_time_ms=elapsed_ms,
+                            extra={"llm_gate": gate},
                         )
 
                 except Exception as e:
@@ -1094,13 +1139,56 @@ class HybridClassifier:
         details["processing_time_ms"] = round(email_elapsed_ms, 2)
         return final_result, details
 
+    def _gate_llm_result(self, result: ClassificationResult) -> dict[str, Any]:
+        """Decide whether the hybrid workflow accepts a Method 3 answer.
+
+        An answer is accepted when its confidence is at least
+        ``llm_confidence_cutoff``. A failed call (``details["fallback"]``) is
+        never accepted, whatever the cutoff.
+
+        The rule is the same for both Method 3 classifiers. TypeSafe's confidence
+        comes from its Choice distribution. The legacy ``LLMClassifier`` uses the
+        confidence the model reports about itself, which is not calibrated, and
+        reports an "unsure" answer as confidence 0.0. ``confidence_source`` in the
+        returned record tells the two apart so they can be analysed separately.
+
+        Args:
+            result: Method 3 classification result.
+
+        Returns:
+            Gate record with ``accepted``, ``reason`` (``at_or_above_cutoff``,
+            ``below_cutoff`` or ``llm_failed``), ``confidence``, ``cutoff`` and
+            ``confidence_source`` (``typesafe`` or ``self_reported``).
+        """
+        if result.details and result.details.get("fallback"):
+            accepted, reason = False, "llm_failed"
+        elif result.confidence >= self.llm_confidence_cutoff:
+            accepted, reason = True, "at_or_above_cutoff"
+        else:
+            # Also covers a NaN confidence, which compares False.
+            accepted, reason = False, "below_cutoff"
+
+        return {
+            "accepted": accepted,
+            "reason": reason,
+            "confidence": result.confidence,
+            "cutoff": self.llm_confidence_cutoff,
+            "confidence_source": (
+                "typesafe" if result.method == self.TYPESAFE_METHOD else "self_reported"
+            ),
+        }
+
     def _fallback_classification(
         self,
         result1: ClassificationResult,
         result2: ClassificationResult,
         details: dict[str, Any],
     ) -> str:
-        """Fall back to weighted combination when LLM is unavailable."""
+        """Fall back to weighted combination when the LLM answer is not used.
+
+        Used when no LLM is available, the LLM call raised, or the confidence
+        gate rejected the LLM answer.
+        """
         # Use 60/40 weighting like dual-method
         combined_scores: dict[str, float] = {}
         all_domains = set(result1.scores.keys()) | set(result2.scores.keys())

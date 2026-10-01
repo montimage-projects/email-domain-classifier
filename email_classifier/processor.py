@@ -34,6 +34,8 @@ class HybridWorkflowProcessingStats:
     llm_total_time_ms: float = 0.0
     classic_agreement_count: int = 0
     total_hybrid_processed: int = 0
+    # LLM answers the confidence gate did not accept (issue #18)
+    llm_rejected_count: int = 0
 
     @property
     def llm_avg_time_ms(self) -> float:
@@ -58,6 +60,7 @@ class HybridWorkflowProcessingStats:
             "classic_agreement_count": self.classic_agreement_count,
             "total_hybrid_processed": self.total_hybrid_processed,
             "agreement_rate": round(self.agreement_rate, 2),
+            "llm_rejected_count": self.llm_rejected_count,
         }
 
 
@@ -642,6 +645,9 @@ class StreamingProcessor:
             self.stats.hybrid_workflow.total_hybrid_processed = (
                 hybrid_stats.total_processed
             )
+            self.stats.hybrid_workflow.llm_rejected_count = (
+                hybrid_stats.llm_rejected_count
+            )
 
         # Log summary
         duration = (self.stats.end_time - self.stats.start_time).total_seconds()
@@ -671,6 +677,10 @@ class StreamingProcessor:
                 self.logger.info(
                     f"Hybrid workflow - Avg LLM time: "
                     f"{self.stats.hybrid_workflow.llm_avg_time_ms:.0f}ms"
+                )
+                self.logger.info(
+                    f"Hybrid workflow - LLM answers rejected by confidence gate: "
+                    f"{self.stats.hybrid_workflow.llm_rejected_count}"
                 )
 
         return self.stats

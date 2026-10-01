@@ -36,6 +36,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and structural methods chose the same domain, over classified emails. It
   previously reported the classification rate (94.77% on CEAS_08; the real
   agreement is 21.62%) (#14)
+- The hybrid workflow no longer accepts the LLM's domain whatever its
+  confidence. When the classic methods disagree, an LLM answer below the
+  confidence cutoff, or a failed LLM call, now falls back to the classic
+  weighted result (or `unsure`). The cutoff is set with `LLM_CONFIDENCE_CUTOFF`
+  or `--llm-confidence-cutoff`; its default, 0.5, is provisional until #19
+  measures one. The gate applies to every provider. Each decision is recorded
+  under `llm_gate` in the details and the workflow log, and rejected answers
+  are counted in `llm_rejected_count` (#18)
 
 ## [1.0.0] - 2024-12-22
 

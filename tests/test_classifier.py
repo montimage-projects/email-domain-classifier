@@ -934,3 +934,295 @@ class TestHybridWorkflowStats:
         assert d["classic_agreement_count"] == 90
         assert d["total_processed"] == 100
         assert d["agreement_rate"] == 90.0
+
+
+def _disagreeing_hybrid(llm_result, **kwargs):
+    """Build a HybridClassifier whose classic methods disagree.
+
+    Method 1 says finance and Method 2 says retail. Their 60/40 weighted
+    fallback is finance (0.42 >= GLOBAL_THRESHOLD), so a test can tell the
+    classic fallback apart from the LLM answer.
+    """
+    from unittest.mock import MagicMock
+
+    from email_classifier.classifier import HybridClassifier
+
+    classifier = HybridClassifier(**kwargs)
+    classifier.method1 = MagicMock()
+    classifier.method1.classify.return_value = ClassificationResult(
+        domain="finance",
+        confidence=0.5,
+        scores={"finance": 0.5, "retail": 0.1},
+        method="keyword_taxonomy",
+    )
+    classifier.method2 = MagicMock()
+    classifier.method2.classify.return_value = ClassificationResult(
+        domain="retail",
+        confidence=0.4,
+        scores={"finance": 0.3, "retail": 0.4},
+        method="structural_template",
+    )
+    classifier.llm_classifier = MagicMock()
+    classifier.llm_classifier.classify.return_value = llm_result
+    return classifier
+
+
+def _gate_email():
+    """Build a neutral email; the mocked methods decide its classification."""
+    return EmailData(
+        sender="info@example.com",
+        receiver="user@example.com",
+        date="2024-01-15",
+        subject="Hello",
+        body="Some text",
+        urls="",
+    )
+
+
+class TestHybridConfidenceGate:
+    """The hybrid path gates the LLM answer on its confidence (#18)."""
+
+    def test_low_confidence_answer_does_not_override_classic(self):
+        """A 0.3-confidence LLM answer no longer overrides both classic methods."""
+        llm_result = ClassificationResult(
+            domain="healthcare",
+            confidence=0.3,
+            scores={"healthcare": 0.3},
+            method="typesafe",
+        )
+        classifier = _disagreeing_hybrid(llm_result)
+
+        domain, details = classifier.classify(_gate_email())
+
+        classifier.llm_classifier.classify.assert_called_once()
+        assert details["path"] == "llm_assisted"
+        assert domain == "finance"
+
+    def test_answer_above_cutoff_is_accepted(self):
+        """An answer above the cutoff is used and recorded as accepted."""
+        llm_result = ClassificationResult(
+            domain="healthcare",
+            confidence=0.8,
+            scores={"healthcare": 0.8},
+            method="typesafe",
+        )
+        classifier = _disagreeing_hybrid(llm_result, llm_confidence_cutoff=0.5)
+
+        domain, details = classifier.classify(_gate_email())
+
+        assert domain == "healthcare"
+        assert details["llm_gate"] == {
+            "accepted": True,
+            "reason": "at_or_above_cutoff",
+            "confidence": 0.8,
+            "cutoff": 0.5,
+            "confidence_source": "typesafe",
+        }
+        assert classifier.stats.llm_rejected_count == 0
+        assert "combined_scores" not in details
+
+    def test_answer_at_cutoff_is_accepted(self):
+        """The cutoff itself is inclusive."""
+        llm_result = ClassificationResult(
+            domain="healthcare", confidence=0.6, scores={}, method="typesafe"
+        )
+        classifier = _disagreeing_hybrid(llm_result, llm_confidence_cutoff=0.6)
+
+        domain, details = classifier.classify(_gate_email())
+
+        assert domain == "healthcare"
+        assert details["llm_gate"]["accepted"] is True
+
+    def test_answer_below_cutoff_falls_back_to_classic(self):
+        """An answer below the cutoff uses the classic weighted fallback."""
+        llm_result = ClassificationResult(
+            domain="healthcare",
+            confidence=0.4,
+            scores={"healthcare": 0.4},
+            method="typesafe",
+        )
+        classifier = _disagreeing_hybrid(llm_result, llm_confidence_cutoff=0.5)
+
+        domain, details = classifier.classify(_gate_email())
+
+        assert domain == "finance"
+        assert details["final_domain"] == "finance"
+        assert details["llm_gate"]["accepted"] is False
+        assert details["llm_gate"]["reason"] == "below_cutoff"
+        # The raw LLM answer is kept so the cutoff can be re-evaluated (#19)
+        assert details["method3"]["domain"] == "healthcare"
+        assert details["method3"]["confidence"] == 0.4
+        assert details["combined_scores"]["finance"] == pytest.approx(0.42)
+        assert classifier.stats.llm_rejected_count == 1
+        assert classifier.stats.to_dict()["llm_rejected_count"] == 1
+
+    def test_below_cutoff_fallback_can_be_unsure(self):
+        """If the classic fallback is below its own threshold, the result is unsure."""
+        llm_result = ClassificationResult(
+            domain="healthcare", confidence=0.1, scores={}, method="typesafe"
+        )
+        classifier = _disagreeing_hybrid(llm_result, llm_confidence_cutoff=0.5)
+        classifier.method1.classify.return_value = ClassificationResult(
+            domain="finance", confidence=0.1, scores={"finance": 0.1}, method="m1"
+        )
+        classifier.method2.classify.return_value = ClassificationResult(
+            domain="retail", confidence=0.1, scores={"retail": 0.1}, method="m2"
+        )
+
+        domain, details = classifier.classify(_gate_email())
+
+        assert domain == "unsure"
+        assert details["llm_gate"]["accepted"] is False
+
+    def test_none_answer_above_cutoff_is_unsure(self):
+        """A confident TypeSafe 'none' answer (domain None) gives unsure."""
+        llm_result = ClassificationResult(
+            domain=None,
+            confidence=0.9,
+            scores={"finance": 0.02},
+            method="typesafe",
+            details={"choice": "none"},
+        )
+        classifier = _disagreeing_hybrid(llm_result, llm_confidence_cutoff=0.5)
+
+        domain, details = classifier.classify(_gate_email())
+
+        assert domain == "unsure"
+        assert details["llm_gate"]["accepted"] is True
+
+    def test_none_answer_below_cutoff_falls_back_to_classic(self):
+        """An unconfident 'none' answer does not force unsure."""
+        llm_result = ClassificationResult(
+            domain=None,
+            confidence=0.2,
+            scores={},
+            method="typesafe",
+            details={"choice": "none"},
+        )
+        classifier = _disagreeing_hybrid(llm_result, llm_confidence_cutoff=0.5)
+
+        domain, details = classifier.classify(_gate_email())
+
+        assert domain == "finance"
+        assert details["llm_gate"]["reason"] == "below_cutoff"
+
+    def test_legacy_unsure_answer_falls_back_to_classic(self):
+        """The legacy classifier reports 'unsure' as None with confidence 0.0."""
+        llm_result = ClassificationResult(
+            domain=None, confidence=0.0, scores={}, method="llm_agent"
+        )
+        classifier = _disagreeing_hybrid(llm_result, llm_confidence_cutoff=0.5)
+
+        domain, details = classifier.classify(_gate_email())
+
+        assert domain == "finance"
+        assert details["llm_gate"]["reason"] == "below_cutoff"
+        assert details["llm_gate"]["confidence_source"] == "self_reported"
+
+    def test_legacy_confident_answer_is_accepted(self):
+        """The gate applies to the legacy classifier's self-reported confidence."""
+        llm_result = ClassificationResult(
+            domain="healthcare", confidence=0.9, scores={}, method="llm_agent"
+        )
+        classifier = _disagreeing_hybrid(llm_result, llm_confidence_cutoff=0.5)
+
+        domain, details = classifier.classify(_gate_email())
+
+        assert domain == "healthcare"
+        assert details["llm_gate"]["confidence_source"] == "self_reported"
+
+    def test_failed_call_is_never_accepted(self):
+        """A failed call falls back even when the cutoff is 0.0."""
+        llm_result = ClassificationResult(
+            domain=None,
+            confidence=0.0,
+            scores={},
+            method="typesafe",
+            details={"error": "timeout", "fallback": True},
+        )
+        classifier = _disagreeing_hybrid(llm_result, llm_confidence_cutoff=0.0)
+
+        domain, details = classifier.classify(_gate_email())
+
+        assert domain == "finance"
+        assert details["llm_gate"]["reason"] == "llm_failed"
+        assert classifier.stats.llm_rejected_count == 1
+
+    def test_zero_cutoff_accepts_any_answer(self):
+        """A cutoff of 0.0 accepts every answer that is not a failed call."""
+        llm_result = ClassificationResult(
+            domain="healthcare", confidence=0.0, scores={}, method="typesafe"
+        )
+        classifier = _disagreeing_hybrid(llm_result, llm_confidence_cutoff=0.0)
+
+        domain, _ = classifier.classify(_gate_email())
+
+        assert domain == "healthcare"
+
+    def test_nan_confidence_is_rejected(self):
+        """A NaN confidence never passes the gate."""
+        llm_result = ClassificationResult(
+            domain="healthcare", confidence=float("nan"), scores={}, method="typesafe"
+        )
+        classifier = _disagreeing_hybrid(llm_result, llm_confidence_cutoff=0.0)
+
+        domain, details = classifier.classify(_gate_email())
+
+        assert domain == "finance"
+        assert details["llm_gate"]["accepted"] is False
+
+    def test_gate_is_written_to_workflow_log(self):
+        """The workflow log records the gate decision for later analysis."""
+        from unittest.mock import MagicMock
+
+        llm_result = ClassificationResult(
+            domain="healthcare", confidence=0.3, scores={}, method="typesafe"
+        )
+        workflow_logger = MagicMock()
+        classifier = _disagreeing_hybrid(
+            llm_result, llm_confidence_cutoff=0.5, workflow_logger=workflow_logger
+        )
+
+        classifier.classify(_gate_email())
+
+        llm_steps = [
+            call
+            for call in workflow_logger.log_step.call_args_list
+            if call.args[1] == "llm_classify"
+        ]
+        assert len(llm_steps) == 1
+        assert llm_steps[0].kwargs["result"] == "finance"
+        assert llm_steps[0].kwargs["extra"]["llm_gate"]["accepted"] is False
+
+    def test_cutoff_defaults_to_provisional_value(self):
+        """Without a config or argument, the provisional default is used."""
+        from email_classifier.classifier import HybridClassifier
+        from email_classifier.llm.config import DEFAULT_LLM_CONFIDENCE_CUTOFF
+
+        assert HybridClassifier().llm_confidence_cutoff == DEFAULT_LLM_CONFIDENCE_CUTOFF
+
+    def test_cutoff_comes_from_llm_config(self):
+        """The cutoff is read from LLMConfig, and an explicit argument wins."""
+        from email_classifier.classifier import HybridClassifier
+        from email_classifier.llm.config import LLMConfig, LLMProvider
+
+        config = LLMConfig(
+            provider=LLMProvider.OLLAMA, model="llama3.2", llm_confidence_cutoff=0.7
+        )
+
+        assert HybridClassifier(llm_config=config).llm_confidence_cutoff == 0.7
+        assert (
+            HybridClassifier(
+                llm_config=config, llm_confidence_cutoff=0.2
+            ).llm_confidence_cutoff
+            == 0.2
+        )
+
+    @pytest.mark.parametrize("cutoff", [-0.1, 1.5, float("nan")])
+    def test_invalid_cutoff_argument_raises(self, cutoff):
+        """An out-of-range cutoff argument is rejected."""
+        from email_classifier.classifier import HybridClassifier
+        from email_classifier.llm.config import LLMConfigError
+
+        with pytest.raises(LLMConfigError, match="llm_confidence_cutoff"):
+            HybridClassifier(llm_confidence_cutoff=cutoff)

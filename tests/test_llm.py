@@ -7,10 +7,12 @@ import pytest
 
 from email_classifier import EmailData
 from email_classifier.llm.config import (
+    DEFAULT_LLM_CONFIDENCE_CUTOFF,
     DEFAULT_MODELS,
     LLMConfig,
     LLMConfigError,
     LLMProvider,
+    parse_confidence_cutoff,
 )
 from email_classifier.llm.schemas import (
     DomainClassification,
@@ -283,6 +285,121 @@ class TestLLMConfig:
         )
         repr_str = repr(config)
         assert "secret-key-12345" not in repr_str
+
+
+class TestLLMConfidenceCutoff:
+    """Configuration of the hybrid workflow's LLM confidence cutoff (#18)."""
+
+    def test_default_cutoff_is_provisional_default(self):
+        """The config uses the provisional default when no cutoff is given."""
+        config = LLMConfig(provider=LLMProvider.OLLAMA, model="llama3.2")
+        assert config.llm_confidence_cutoff == DEFAULT_LLM_CONFIDENCE_CUTOFF
+
+    @pytest.mark.parametrize("cutoff", [0.0, 0.5, 1.0])
+    def test_valid_cutoff(self, cutoff):
+        """The bounds 0.0 and 1.0 are valid."""
+        config = LLMConfig(
+            provider=LLMProvider.OLLAMA, model="llama3.2", llm_confidence_cutoff=cutoff
+        )
+        assert config.llm_confidence_cutoff == cutoff
+
+    @pytest.mark.parametrize("cutoff", [-0.01, 1.01, float("nan"), float("inf")])
+    def test_invalid_cutoff_raises(self, cutoff):
+        """A cutoff outside 0.0 to 1.0, or NaN, is rejected."""
+        with pytest.raises(LLMConfigError, match="llm_confidence_cutoff"):
+            LLMConfig(
+                provider=LLMProvider.OLLAMA,
+                model="llama3.2",
+                llm_confidence_cutoff=cutoff,
+            )
+
+    @patch("email_classifier.llm.config.load_dotenv")
+    @patch.dict(os.environ, {"LLM_PROVIDER": "ollama"}, clear=True)
+    def test_from_env_unset_uses_default(self, mock_load_dotenv):
+        """Without LLM_CONFIDENCE_CUTOFF the default is used."""
+        config = LLMConfig.from_env()
+        assert config.llm_confidence_cutoff == DEFAULT_LLM_CONFIDENCE_CUTOFF
+
+    @patch("email_classifier.llm.config.load_dotenv")
+    @patch.dict(
+        os.environ,
+        {"LLM_PROVIDER": "ollama", "LLM_CONFIDENCE_CUTOFF": "  "},
+        clear=True,
+    )
+    def test_from_env_blank_uses_default(self, mock_load_dotenv):
+        """A blank LLM_CONFIDENCE_CUTOFF counts as unset."""
+        config = LLMConfig.from_env()
+        assert config.llm_confidence_cutoff == DEFAULT_LLM_CONFIDENCE_CUTOFF
+
+    @patch("email_classifier.llm.config.load_dotenv")
+    @patch.dict(
+        os.environ,
+        {"LLM_PROVIDER": "ollama", "LLM_CONFIDENCE_CUTOFF": " 0.7 "},
+        clear=True,
+    )
+    def test_from_env_reads_cutoff(self, mock_load_dotenv):
+        """LLM_CONFIDENCE_CUTOFF sets the cutoff."""
+        config = LLMConfig.from_env()
+        assert config.llm_confidence_cutoff == 0.7
+
+    @pytest.mark.parametrize("raw", ["high", "0,7", "1.5", "-0.2", "nan"])
+    @patch("email_classifier.llm.config.load_dotenv")
+    def test_from_env_invalid_cutoff_raises(self, mock_load_dotenv, raw):
+        """An invalid LLM_CONFIDENCE_CUTOFF is an error, not a silent default."""
+        env = {"LLM_PROVIDER": "ollama", "LLM_CONFIDENCE_CUTOFF": raw}
+        with patch.dict(os.environ, env, clear=True):
+            with pytest.raises(LLMConfigError):
+                LLMConfig.from_env()
+
+    def test_parse_confidence_cutoff(self):
+        """parse_confidence_cutoff parses text and names the variable on error."""
+        assert parse_confidence_cutoff("0.25") == 0.25
+        assert parse_confidence_cutoff("") == DEFAULT_LLM_CONFIDENCE_CUTOFF
+        with pytest.raises(LLMConfigError, match="LLM_CONFIDENCE_CUTOFF"):
+            parse_confidence_cutoff("abc")
+
+    def test_cli_flag_parses_cutoff(self):
+        """--llm-confidence-cutoff accepts 0.0 to 1.0 and rejects other values."""
+        import argparse
+
+        from email_classifier.cli import _confidence_cutoff_arg
+
+        assert _confidence_cutoff_arg("0.65") == 0.65
+        for raw in ("abc", "2", "-1", "nan"):
+            with pytest.raises(argparse.ArgumentTypeError):
+                _confidence_cutoff_arg(raw)
+
+    @pytest.mark.parametrize(
+        "llm_flags", [[], ["--use-llm", "--force-llm"]], ids=["no-llm", "force-llm"]
+    )
+    def test_cli_flag_requires_hybrid_mode(self, tmp_path, llm_flags):
+        """The flag is refused outside hybrid mode instead of being ignored."""
+        import subprocess
+        import sys
+
+        result = subprocess.run(
+            [
+                sys.executable,
+                "-m",
+                "email_classifier.cli",
+                "classify",
+                str(tmp_path / "missing.csv"),
+                "-o",
+                str(tmp_path / "out"),
+                "--llm-confidence-cutoff",
+                "0.5",
+                "-q",
+                *llm_flags,
+            ],
+            capture_output=True,
+            text=True,
+            timeout=60,
+        )
+
+        assert result.returncode == 1
+        assert "--llm-confidence-cutoff requires --use-llm" in (
+            result.stdout + result.stderr
+        )
 
 
 class TestLLMSchemas:
