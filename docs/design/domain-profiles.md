@@ -238,8 +238,8 @@ with no readable content that shows a sector.
   survives as rule 2, which applies only when no organization is claimed.
 
 The owner can override this proposal by choosing one of these alternatives in the
-pull request review; the per-domain table, examples and Choice text would then be
-revised to match.
+follow-up sign-off on issue #15; the per-domain table, examples and Choice text
+would then be revised to match.
 
 ## Domain Profile Structure
 
