@@ -7,7 +7,7 @@ of record keys and value shapes.
 
 | File | Written by | Contents |
 |------|------------|----------|
-| `typesafe_outputs.jsonl` | `collect` | One record per TypeSafe call: `email_id`, `set` (`labeled` or `sample`), `choice`, `probabilities`, `confidence`, `domain`, `fallback`, `error_type` (an exception class name or HTTP code, never a message), token `usage`, `latency_ms`, `attempts`, `http_statuses`, `model`, `timestamp` |
+| `typesafe_outputs.jsonl` | `collect` | One record per TypeSafe call: `email_id`, `set` (`labeled` or `sample`), `choice`, `probabilities`, `confidence`, `domain`, `fallback`, `error_type` (an exception class name or HTTP code, never a message), token `usage`, `latency_ms` (time in `classify()`, SDK retries and backoff included, minus the wait for the harness's own rate limiter), `attempts`, `http_statuses`, `model`, `timestamp` |
 | `typesafe_runs.json` | `collect` | One summary per run: set, start and end times, wall time, emails, HTTP attempts (retries included), 429 responses, errors, `--rps`, `--workers`, achieved emails/s and attempts/s |
 | `typesafe_evaluation_results.json` | `report` | Every metric, the cutoff sweep, the cutoff choice, the token and runtime statistics, and per-row predictions keyed by `email_id` |
 

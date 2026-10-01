@@ -304,8 +304,10 @@ class TestSweepAndCutoff:
         best = [True] * 10
         sweep = self._sweep({0.3: best, 0.5: [False] + [True] * 9, 0.6: best})
         assert ev.choose_cutoff(sweep, 0.5)["candidate"] == 0.6
-        sweep = self._sweep({0.4: best, 0.5: [False] + [True] * 9, 0.6: best})
-        assert ev.choose_cutoff(sweep, 0.5)["candidate"] == 0.4
+        worse = [False] + [True] * 9
+        for low, high in [(0.4, 0.6), (0.3, 0.7), (0.05, 0.95)]:
+            sweep = self._sweep({low: best, 0.5: worse, high: best})
+            assert ev.choose_cutoff(sweep, 0.5)["candidate"] == low
 
     def test_keeps_incumbent_when_not_significant(self) -> None:
         incumbent = [True, True, True, True, False, False, False, True]
@@ -392,15 +394,23 @@ class FakeClock:
 
 
 class TestLimits:
-    def test_rate_limiter_never_exceeds_rate(self) -> None:
+    @pytest.mark.parametrize("rate", [4, 5, 10, 40])
+    def test_rate_limiter_never_exceeds_rate(self, rate: int) -> None:
         fake = FakeClock()
-        # 0.25 s spacing is exact in binary floating point.
-        limiter = ev.RateLimiter(4, clock=fake.clock, sleep=fake.sleep)
-        starts = [limiter.acquire() for _ in range(23)]
+        limiter = ev.RateLimiter(rate, clock=fake.clock, sleep=fake.sleep)
+        starts = [limiter.acquire() for _ in range(5 * rate + 3)]
         for t in starts:
-            assert sum(1 for s in starts if t <= s < t + 1) <= 4
-        assert min(b - a for a, b in zip(starts, starts[1:])) >= 0.25
-        assert starts[-1] == pytest.approx(22 / 4)
+            assert sum(1 for s in starts if t <= s < t + 1) <= rate
+        assert min(b - a for a, b in zip(starts, starts[1:])) >= 1 / rate
+        assert starts[-1] == pytest.approx((5 * rate + 2) / rate)
+
+    def test_recorder_measures_rate_limit_wait(self) -> None:
+        recorder = ev.AttemptRecorder(ev.RateLimiter(20), ev.CallBudget(5))
+        recorder.before_attempt()
+        recorder.before_attempt()  # waits about 1/20 s for its slot
+        assert recorder.wait_seconds >= 0.04
+        recorder.reset()
+        assert recorder.wait_seconds == 0.0
 
     def test_rate_limiter_rejects_non_positive_rate(self) -> None:
         with pytest.raises(ValueError):

@@ -531,6 +531,8 @@ class RateLimiter:
     """Thread-safe limiter that spaces calls at least ``1 / rate`` apart.
 
     Any half-open window of one second therefore holds at most ``rate`` calls.
+    The interval is widened by one part in a billion so that floating-point
+    rounding of the accumulated slot times can never fit an extra call in.
     """
 
     def __init__(
@@ -548,7 +550,7 @@ class RateLimiter:
         """
         if not rate > 0:
             raise ValueError("rate must be positive")
-        self.interval = 1.0 / rate
+        self.interval = (1.0 / rate) * (1 + 1e-9)
         self._clock = clock
         self._sleep = sleep
         self._lock = threading.Lock()
@@ -601,7 +603,9 @@ class AttemptRecorder:
     """Per-thread record of the HTTP attempts made for the current email.
 
     The counting transport calls ``before_attempt`` and ``after_attempt``
-    around every HTTP attempt, SDK retries included.
+    around every HTTP attempt, SDK retries included. ``wait_seconds`` is the
+    time spent waiting for this harness's rate limiter, which is not part of
+    the classifier's latency.
     """
 
     def __init__(self, limiter: RateLimiter, budget: CallBudget) -> None:
@@ -611,12 +615,14 @@ class AttemptRecorder:
         self.attempts = 0
         self.http_statuses: list[int] = []
         self.error_type: Optional[str] = None
+        self.wait_seconds = 0.0
 
     def reset(self) -> None:
         """Start recording a new email."""
         self.attempts = 0
         self.http_statuses = []
         self.error_type = None
+        self.wait_seconds = 0.0
 
     def before_attempt(self) -> None:
         """Charge the budget, then wait for a rate-limit slot.
@@ -626,7 +632,9 @@ class AttemptRecorder:
         """
         if not self.budget.try_acquire():
             raise BudgetExhausted("call budget exhausted")
+        start = time.perf_counter()
         self.limiter.acquire()
+        self.wait_seconds += time.perf_counter() - start
         self.attempts += 1
 
     def after_attempt(self, status: Optional[int]) -> None:
@@ -770,6 +778,10 @@ class Collector:
     def classify(self, eid: str, email: EmailData) -> Optional[CachedRecord]:
         """Classify one email and build its record.
 
+        ``latency_ms`` is the wall time of ``classify()`` minus the time spent
+        waiting for this harness's rate limiter. It includes SDK retries and
+        their backoff, which production also pays.
+
         Returns:
             The cache record, or None when the call budget refused an attempt
             (the email is left for a later run).
@@ -778,7 +790,8 @@ class Collector:
         recorder.reset()
         start = time.perf_counter()
         result = classifier.classify(email)
-        latency_ms = (time.perf_counter() - start) * 1000
+        elapsed = time.perf_counter() - start
+        latency_ms = max(0.0, elapsed - recorder.wait_seconds) * 1000
         fallback = bool((result.details or {}).get("fallback"))
         if fallback and recorder.error_type == BudgetExhausted.__name__:
             return None
@@ -1361,7 +1374,10 @@ def choose_cutoff(
         raise ValueError(f"incumbent cutoff {incumbent} is not in the sweep")
     best = max(sum(v) for v in by_cutoff.values())
     tied = sorted(c for c, v in by_cutoff.items() if sum(v) == best)
-    candidate = min(tied, key=lambda c: (abs(c - incumbent), c))
+    # Distances in integer hundredths: float subtraction would make 0.7 look
+    # closer to 0.5 than 0.3 is.
+    hundredths = round(incumbent * 100)
+    candidate = min(tied, key=lambda c: (abs(round(c * 100) - hundredths), c))
     cand, inc = by_cutoff[candidate], by_cutoff[incumbent]
     b = sum(1 for x, y in zip(cand, inc) if x and not y)
     c = sum(1 for x, y in zip(cand, inc) if y and not x)
